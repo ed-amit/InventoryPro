@@ -6,7 +6,6 @@ public class ChallanModel {
 	private int challan_id;
 	private int counter;
 	private int firm_id;
-	//private int challan_no;
 	private int store_id;
 	private int year_id;
 	private int home_delivery;

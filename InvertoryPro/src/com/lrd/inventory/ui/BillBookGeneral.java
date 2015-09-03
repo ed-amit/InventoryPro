@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.lrd.inventory.database.DatabaseDelete;
+import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
@@ -704,29 +706,83 @@ public class BillBookGeneral extends JFrame
 
 	private void deleteProductFromBill() {
 		// TODO Auto-generated method stub
+		boolean status = true;
 
+		if (table2.getSelectedRowCount() != 1) {
+			status = false;
+			new ValidationMSG(this, "Please Select A Row from Table Then Click");
+		}
+
+		if (status) {
+			BillModel bill = billList.get(table1.getSelectedRow());
+			BillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
+			double subtotal = (billDetail.getProductQuantity() * billDetail
+					.getProductRate())
+					+ billDetail.getVatAmt()
+					- billDetail.getDiscountAmt();
+			
+			bill.setTotalAmt(bill.getTotalAmt()-subtotal);
+			new DatabaseUpdate(connection).updateSalesBillAmount(bill);
+			new DatabaseDelete(connection).deleteProductFromSaleBill(billDetail.getBillDetailId());
+			billDetailList.remove(table2.getSelectedRow());
+			loadTable2Data(billDetailList);
+		}
 	}
 
 	private void saveBillAsPDF() {
 		// TODO Auto-generated method stub
-
+		/*********************************************************************************/
 	}
 
 	private void saveBill() {
 		// TODO Auto-generated method stub
-
+		boolean status=true;
+		if(billDetail==null){
+			status=false;
+			new ValidationMSG(this, "Please Select A Row from Table Then Click on View to Update Rack Details");
+		}else if( comboBox3.getSelectedIndex()<0){
+			status=false;
+			new ValidationMSG(this, "Please Select Unit Name");
+		}else if( comboBox4.getSelectedIndex()<0){
+			status=false;
+			new ValidationMSG(this, "Please Select vat Rate");
+		}else if( valid.isEmpty(textField7.getText())){
+			status=false;
+			new ValidationMSG(this, "Please Insert Quantity");
+		}
+		
+		if (status) {
+			billDetail.setProductQuantity(Double.parseDouble(textField7.getText()));
+			billDetail.setVatPercent(Double.parseDouble(comboBox4.getSelectedItem().toString()));
+			billDetail.setProductUnit(comboBox3.getSelectedItem().toString());
+			billDetail.setDiscountAmt(Double.parseDouble(textField9.getText()));
+			double mrp,vatPercent,vatAmt,discountPer,discountAmt,rate;
+			mrp=billDetail.getMrp();
+			vatPercent=billDetail.getVatPercent();
+			vatAmt=mrp*(vatPercent/100);
+			discountAmt=billDetail.getDiscountAmt();
+			discountPer=(discountAmt*100)/mrp;
+			rate=mrp-discountAmt+vatAmt;
+			billDetail.setVatAmt(vatAmt);
+			billDetail.setDiscountPercent(discountPer);
+			billDetail.setProductRate(rate);
+			
+			new DatabaseUpdate(connection).updateSalesBillProduct(billDetail);
+			reset();
+			billDetail=null;
+		}
 	}
 
 	private void printBill() {
 		// TODO Auto-generated method stub
-
+		/************************************************************************/
 	}
 
 	private void editBillDetail() {
 		// TODO Auto-generated method stub
 		boolean status = true;
 
-		if (table2.getSelectedRowCount() < 1) {
+		if (table2.getSelectedRowCount() != 1) {
 			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
@@ -737,9 +793,9 @@ public class BillBookGeneral extends JFrame
 			textField4.setText(billDetail.getProductCode());
 			comboBox3.removeAllItems();
 			comboBox3.addItem(billDetail.getProductUnit());
-			try {
-				comboBox4.setSelectedItem(billDetail.getVatPercent());
-			} catch (Exception e) {
+			comboBox4.setSelectedItem(billDetail.getVatPercent());
+			if (Double.parseDouble(comboBox4.getSelectedItem().toString()) != billDetail
+					.getVatPercent()) {
 				comboBox4.addItem(billDetail.getVatPercent());
 				comboBox4.setSelectedItem(billDetail.getVatPercent());
 			}
@@ -782,7 +838,7 @@ public class BillBookGeneral extends JFrame
 
 	private void printGeneralCustomer() {
 		// TODO Auto-generated method stub
-
+		/************************************************************************/
 	}
 
 	private void reset() {

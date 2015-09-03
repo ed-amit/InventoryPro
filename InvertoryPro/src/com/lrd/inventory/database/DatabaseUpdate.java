@@ -142,10 +142,18 @@ public class DatabaseUpdate {
 		}
 	}
 
+	
+	
 	public void updateSalesBillProduct(BillDetailModel billDetail) {
 
 		try {
-			stmt.executeUpdate("update distributors set product_quantity= ,vat_amount= ,vat_percentage= ,discount_per= ,discount_rs= );
+			stmt.executeUpdate("update distributors set product_quantity="
+					+ billDetail.getProductQuantity() + " ,vat_amount="
+					+ billDetail.getVatAmt() + " ,vat_percentage="
+					+ billDetail.getVatPercent() + " ,discount_per="
+					+ billDetail.getDiscountPercent() + " ,discount_rs="
+					+ billDetail.getDiscountAmt() + " where bill_details_id="
+					+ billDetail.getBillDetailId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
