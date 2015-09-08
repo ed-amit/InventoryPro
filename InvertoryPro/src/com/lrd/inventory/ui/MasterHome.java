@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import javax.swing.*;
 
+import com.lrd.inventory.database.DatabaseConnection;
 import com.lrd.inventory.utility.Calculator;
 import com.lrd.inventory.utility.MediaPlayer;
 import com.lrd.inventory.utility.NotePad;
@@ -222,22 +223,23 @@ public class MasterHome extends JFrame implements ActionListener {
 
 	private final int WIDTH;
 	private final int HEIGHT;
-	
+
+	DatabaseConnection db_connect;
 	Owner owner;
 	Connection connection = null;
 
 	// End of variables declaration
 
-	public MasterHome(Owner owner, Connection connection) {
-		
+	public MasterHome() {
+
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = kit.getScreenSize();
-		WIDTH=screenSize.width;
-		HEIGHT=screenSize.height;
-		
-		
-		this.owner = owner;
-		this.connection = connection;
+		WIDTH = screenSize.width;
+		HEIGHT = screenSize.height;
+
+		owner = new Owner();
+		db_connect = new DatabaseConnection();
+		this.connection = db_connect.getConnection();
 		initComponents();
 	}
 
@@ -1192,57 +1194,64 @@ public class MasterHome extends JFrame implements ActionListener {
 				panel3.setLayout(null);
 
 				// ---- button1 ----
-				button1.setText("button 1");
+				button1.setText("Category");
 				panel3.add(button1);
 				button1.setBounds(20, 20, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button1.addActionListener(this);
 
 				// ---- button2 ----
-				button2.setText("button 2");
+				button2.setText("Brand");
 				panel3.add(button2);
 				button2.setBounds(160, 20, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button2.addActionListener(this);
 
 				// ---- button3 ----
-				button3.setText("button 3");
+				button3.setText("Products");
 				panel3.add(button3);
 				button3.setBounds(300, 20, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button3.addActionListener(this);
 
 				// ---- button4 ----
-				button4.setText("button 5");
+				button4.setText("Distributors");
 				panel3.add(button4);
-				button4.setBounds(20, 200, ScreenElementDimention.SM_WIDTH,
+				button4.setBounds(440, 20, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button4.addActionListener(this);
 
 				// ---- button5 ----
-				button5.setText("button 6");
+				button5.setText("Sale Bill");
 				panel3.add(button5);
 				button5.setBounds(160, 200, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button5.addActionListener(this);
 
 				// ---- button6 ----
-				button6.setText("button 7");
+				button6.setText("Purchase Bill");
 				panel3.add(button6);
 				button6.setBounds(300, 200, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button6.addActionListener(this);
 
 				// ---- button7 ----
-				button7.setText("button 4");
+				button7.setText("Due Bill Payment");
 				panel3.add(button7);
-				button7.setBounds(440, 20, ScreenElementDimention.SM_WIDTH,
+				button7.setBounds(20, 200, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button7.addActionListener(this);
 
 				// ---- button8 ----
-				button8.setText("button 8");
+				button8.setText("Change Password");
 				panel3.add(button8);
 				button8.setBounds(440, 200, ScreenElementDimention.SM_WIDTH,
 						ScreenElementDimention.SM_WIDTH);
+				button8.addActionListener(this);
 
 			}
 			panel1.add(panel3);
-			panel3.setBounds(0, 100, WIDTH / 2,
-					HEIGHT - 200);
+			panel3.setBounds(0, 100, WIDTH / 2, HEIGHT - 200);
 
 			// ======== panel4 ========
 			{
@@ -1310,7 +1319,7 @@ public class MasterHome extends JFrame implements ActionListener {
 
 			}
 			panel1.add(panel4);
-			panel4.setBounds(WIDTH / 2, 100,WIDTH / 2, HEIGHT - 200);
+			panel4.setBounds(WIDTH / 2, 100, WIDTH / 2, HEIGHT - 200);
 
 		}
 		contentPane.add(panel1);
@@ -1466,357 +1475,405 @@ public class MasterHome extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String temp = event.getActionCommand();
-
-		switch (temp) {
-		case MenuItemName.MenuItem64:
-			new ManageRack(connection);
-			break;
-			
-		case MenuItemName.MenuItem65:
+		
+		if (this.connection == null) {
+			this.connection = db_connect.getConnection();
+		}
+		
+		
+		if (event.getSource() == button1) {
 			new ManageCategory(connection);
-			break;
-			
-		case MenuItemName.MenuItem66:
+			return;
+		}
+
+		if (event.getSource() == button2) {
 			new ManageBrand(connection);
-			break;
-			
-		case MenuItemName.MenuItem67:
-			new ManageVat(connection);
-			break;
-			
-		case MenuItemName.MenuItem68:
-			new ManageProduct(connection);
-			break;
-			
-		case MenuItemName.MenuItem69:
-			break;
-			
-		case MenuItemName.MenuItem70:
-			break;
-			
-		case MenuItemName.MenuItem71:
-			break;
-			
-		case MenuItemName.MenuItem72:
-			new ManageWarranty(connection);
-			break;
-			
-		case MenuItemName.MenuItem73:
-			break;
-			
-		case MenuItemName.MenuItem74:
+			return;
+		}
+
+		if (event.getSource() == button3) {
 			new ProductList(connection);
-			break;
-			
-		case MenuItemName.MenuItem2:
-			new CreditCustomer(connection);
-			break;
-			
-		case MenuItemName.MenuItem3:
+			return;
+		}
+
+		if (event.getSource() == button4) {
 			new ManageDistributor(connection);
-			break;
-			
-		case MenuItemName.MenuItem76:
-			break;
-			
-		case MenuItemName.MenuItem81:
-			break;
-			
-		case MenuItemName.MenuItem82:
-			break;
-			
-		case MenuItemName.MenuItem83:
-			break;
-			
-		case MenuItemName.MenuItem84:
-			break;
-			
-		case MenuItemName.MenuItem77:
-			break;
-			
-		case MenuItemName.MenuItem78:
-			break;
-			
-		case MenuItemName.MenuItem79:
-			break;
-			
-		case MenuItemName.MenuItem80:
-			break;
-			
-		case MenuItemName.MenuItem8:
+			return;
+		}
+
+		if (event.getSource() == button5) {
 			new SalesBill(connection);
-			break;
-			
-		case MenuItemName.MenuItem85:
-			new SalesBill(connection);
-			break;
-			
-		case MenuItemName.MenuItem9:
-			new SalesBill(connection);
-			break;
-			
-		case MenuItemName.MenuItem10:
-			new SalesBill(connection);
-			break;
-			
-		case MenuItemName.MenuItem11:
-			new SaleReturn(connection);
-			break;
-			
-		case MenuItemName.MenuItem12:
-			new DueBillPayment(connection);
-			break;
-			
-		case MenuItemName.MenuItem13:
-			break;
-			
-		case MenuItemName.MenuItem14:
-			break;
-			
-		case MenuItemName.MenuItem86:
-			break;
-			
-		case MenuItemName.MenuItem87:
-			break;
-			
-		case MenuItemName.MenuItem88:
-			break;
-			
-		case MenuItemName.MenuItem89:
-			break;
-			
-		case MenuItemName.MenuItem15:
+			return;
+		}
+
+		if (event.getSource() == button6) {
 			new PurchaseBill(connection);
-			break;
-			
-		case MenuItemName.MenuItem16:
-			new PurchaseReturn(connection);
-			break;
-			
-		case MenuItemName.MenuItem17:
-			new PurchaseOrder(connection);
-			break;
-			
-		case MenuItemName.MenuItem27:
-			break;
-		case MenuItemName.MenuItem90:
-			break;
-		case MenuItemName.MenuItem91:
-			break;
-		case MenuItemName.MenuItem92:
-			break;
-		case MenuItemName.MenuItem93:
-			break;
-		case MenuItemName.MenuItem94:
-			break;
-		case MenuItemName.MenuItem95:
-			break;
-		case MenuItemName.MenuItem96:
-			break;
-		case MenuItemName.MenuItem30:
-			new BillBookGeneral(connection);
-			break;
-		case MenuItemName.MenuItem31:
-			new BillBookCredit(connection);
-			break;
-		case MenuItemName.MenuItem32:
-			new BillBookChallan(connection);
-			break;
-		case MenuItemName.MenuItem33:
-			new BillBookPurchase(connection);
-			break;
-		case MenuItemName.MenuItem34:
-			new BillBookPurchaseDue(connection);
-			break;
-		case MenuItemName.MenuItem35:
-			new BillBookMargin(connection);
-			break;
-		case MenuItemName.MenuItem36:
-			new BillBookDiscount(connection);
-			break;
-		case MenuItemName.MenuItem97:
-			new PendingOrder(connection);
-			break;
-		case MenuItemName.MenuItem101:
-			break;
-		case MenuItemName.MenuItem102:
-			break;
-		case MenuItemName.MenuItem103:
-			break;
-		case MenuItemName.MenuItem104:
-			break;
-		case MenuItemName.MenuItem105:
-			break;
-		case MenuItemName.MenuItem106:
-			break;
-		case MenuItemName.MenuItem107:
-			break;
-		case MenuItemName.MenuItem108:
-			break;
-		case MenuItemName.MenuItem109:
-			break;
-		case MenuItemName.MenuItem110:
-			break;
-		case MenuItemName.MenuItem111:
-			break;
-		case MenuItemName.MenuItem112:
-			break;
-		case MenuItemName.MenuItem113:
-			break;
-		case MenuItemName.MenuItem114:
-			break;
-		case MenuItemName.MenuItem115:
-			break;
-		case MenuItemName.MenuItem116:
-			break;
-		case MenuItemName.MenuItem117:
-			break;
-		case MenuItemName.MenuItem118:
-			break;
-		case MenuItemName.MenuItem119:
-			break;
-		case MenuItemName.MenuItem120:
-			break;
-		case MenuItemName.MenuItem121:
-			break;
-		case MenuItemName.MenuItem122:
-			break;
-		case MenuItemName.MenuItem123:
-			break;
-		case MenuItemName.MenuItem124:
-			break;
-		case MenuItemName.MenuItem37:
-			break;
-		case MenuItemName.MenuItem38:
-			break;
-		case MenuItemName.MenuItem39:
-			break;
-		case MenuItemName.MenuItem125:
-			break;
-		case MenuItemName.MenuItem126:
-			break;
-		case MenuItemName.MenuItem127:
-			break;
-		case MenuItemName.MenuItem128:
-			break;
-		case MenuItemName.MenuItem129:
-			break;
-		case MenuItemName.MenuItem130:
-			break;
-		case MenuItemName.MenuItem131:
-			break;
-		case MenuItemName.MenuItem132:
-			break;
-		case MenuItemName.MenuItem133:
-			break;
-		case MenuItemName.MenuItem134:
-			break;
-		case MenuItemName.MenuItem135:
-			break;
-		case MenuItemName.MenuItem136:
-			break;
-		case MenuItemName.MenuItem137:
-			break;
-		case MenuItemName.MenuItem138:
-			break;
-		case MenuItemName.MenuItem139:
-			break;
-		case MenuItemName.MenuItem140:
-			break;
-		case MenuItemName.MenuItem141:
-			break;
-		case MenuItemName.MenuItem40:
-			break;
-		case MenuItemName.MenuItem41:
-			break;
-		case MenuItemName.MenuItem42:
-			break;
-		case MenuItemName.MenuItem43:
-			break;
-		case MenuItemName.MenuItem98:
-			break;
-		case MenuItemName.MenuItem99:
-			break;
-		case MenuItemName.MenuItem100:
-			break;
-		case MenuItemName.MenuItem44:
-			break;
-		case MenuItemName.MenuItem151:
-			break;
-		case MenuItemName.MenuItem152:
-			break;
-		case MenuItemName.MenuItem153:
-			break;
-		case MenuItemName.MenuItem45:
-			break;
-		case MenuItemName.MenuItem46:
-			break;
-		case MenuItemName.MenuItem47:
-			break;
-		case MenuItemName.MenuItem48:
-			break;
-		case MenuItemName.MenuItem49:
-			break;
-		case MenuItemName.MenuItem154:
-			break;
-		case MenuItemName.MenuItem155:
-			break;
-		case MenuItemName.MenuItem50:
-			break;
-		case MenuItemName.MenuItem51:
-			break;
-		case MenuItemName.MenuItem142:
-			break;
-		case MenuItemName.MenuItem143:
-			break;
-		case MenuItemName.MenuItem157:
-			break;
-		case MenuItemName.MenuItem158:
-			break;
-		case MenuItemName.MenuItem159:
-			break;
-		case MenuItemName.MenuItem160:
-			break;
-		case MenuItemName.MenuItem161:
-			break;
-		case MenuItemName.MenuItem156:
-			break;
-		case MenuItemName.MenuItem144:
-			break;
-		case MenuItemName.MenuItem145:
-			break;
-		case MenuItemName.MenuItem146:
-			break;
-		case MenuItemName.MenuItem147:
-			break;
-		case MenuItemName.MenuItem148:
-			break;
-		case MenuItemName.MenuItem149:
-			break;
-		case MenuItemName.MenuItem150:
-			break;
-		case MenuItemName.MenuItem57:
-			break;
-		case MenuItemName.MenuItem56:
-			break;
-		case MenuItemName.MenuItem58:
-			break;
-		case MenuItemName.MenuItem59:
-			break;
-		case MenuItemName.MenuItem60:
-			break;
-		case MenuItemName.MenuItem52:
-			new Calculator();
-			break;
-		case MenuItemName.MenuItem53:
-			new NotePad();
-			break;
-		case MenuItemName.MenuItem54:
-			new MediaPlayer();
-			break;
+			return;
+		}
+
+		if (event.getSource() == button7) {
+			new DueBillPayment(connection);
+			return;
+		}
+
+		if (event.getSource() == button8) {
+			//new ChangePassword(connection);
+			//return;
+		}
+		
+		
+		String temp = event.getActionCommand();
+		switch (temp) {
+			case MenuItemName.MenuItem64 :
+				new ManageRack(connection);
+				break;
+
+			case MenuItemName.MenuItem65 :
+				new ManageCategory(connection);
+				break;
+
+			case MenuItemName.MenuItem66 :
+				new ManageBrand(connection);
+				break;
+
+			case MenuItemName.MenuItem67 :
+				new ManageVat(connection);
+				break;
+
+			case MenuItemName.MenuItem68 :
+				new ManageProduct(connection);
+				break;
+
+			case MenuItemName.MenuItem69 :
+				break;
+
+			case MenuItemName.MenuItem70 :
+				break;
+
+			case MenuItemName.MenuItem71 :
+				break;
+
+			case MenuItemName.MenuItem72 :
+				new ManageWarranty(connection);
+				break;
+
+			case MenuItemName.MenuItem73 :
+				break;
+
+			case MenuItemName.MenuItem74 :
+				new ProductList(connection);
+				break;
+
+			case MenuItemName.MenuItem2 :
+				new CreditCustomer(connection);
+				break;
+
+			case MenuItemName.MenuItem3 :
+				new ManageDistributor(connection);
+				break;
+
+			case MenuItemName.MenuItem76 :
+				break;
+
+			case MenuItemName.MenuItem81 :
+				break;
+
+			case MenuItemName.MenuItem82 :
+				break;
+
+			case MenuItemName.MenuItem83 :
+				break;
+
+			case MenuItemName.MenuItem84 :
+				break;
+
+			case MenuItemName.MenuItem77 :
+				break;
+
+			case MenuItemName.MenuItem78 :
+				break;
+
+			case MenuItemName.MenuItem79 :
+				break;
+
+			case MenuItemName.MenuItem80 :
+				break;
+
+			case MenuItemName.MenuItem8 :
+				new SalesBill(connection);
+				break;
+
+			case MenuItemName.MenuItem85 :
+				new SalesBill(connection);
+				break;
+
+			case MenuItemName.MenuItem9 :
+				new SalesBill(connection);
+				break;
+
+			case MenuItemName.MenuItem10 :
+				new SalesBill(connection);
+				break;
+
+			case MenuItemName.MenuItem11 :
+				new SaleReturn(connection);
+				break;
+
+			case MenuItemName.MenuItem12 :
+				new DueBillPayment(connection);
+				break;
+
+			case MenuItemName.MenuItem13 :
+				break;
+
+			case MenuItemName.MenuItem14 :
+				break;
+
+			case MenuItemName.MenuItem86 :
+				break;
+
+			case MenuItemName.MenuItem87 :
+				break;
+
+			case MenuItemName.MenuItem88 :
+				break;
+
+			case MenuItemName.MenuItem89 :
+				break;
+
+			case MenuItemName.MenuItem15 :
+				new PurchaseBill(connection);
+				break;
+
+			case MenuItemName.MenuItem16 :
+				new PurchaseReturn(connection);
+				break;
+
+			case MenuItemName.MenuItem17 :
+				new PurchaseOrder(connection);
+				break;
+
+			case MenuItemName.MenuItem27 :
+				break;
+			case MenuItemName.MenuItem90 :
+				break;
+			case MenuItemName.MenuItem91 :
+				break;
+			case MenuItemName.MenuItem92 :
+				break;
+			case MenuItemName.MenuItem93 :
+				break;
+			case MenuItemName.MenuItem94 :
+				break;
+			case MenuItemName.MenuItem95 :
+				break;
+			case MenuItemName.MenuItem96 :
+				break;
+			case MenuItemName.MenuItem30 :
+				new BillBookGeneral(connection);
+				break;
+			case MenuItemName.MenuItem31 :
+				new BillBookCredit(connection);
+				break;
+			case MenuItemName.MenuItem32 :
+				new BillBookChallan(connection);
+				break;
+			case MenuItemName.MenuItem33 :
+				new BillBookPurchase(connection);
+				break;
+			case MenuItemName.MenuItem34 :
+				new BillBookPurchaseDue(connection);
+				break;
+			case MenuItemName.MenuItem35 :
+				new BillBookMargin(connection);
+				break;
+			case MenuItemName.MenuItem36 :
+				new BillBookDiscount(connection);
+				break;
+			case MenuItemName.MenuItem97 :
+				new PendingOrder(connection);
+				break;
+			case MenuItemName.MenuItem101 :
+				break;
+			case MenuItemName.MenuItem102 :
+				break;
+			case MenuItemName.MenuItem103 :
+				break;
+			case MenuItemName.MenuItem104 :
+				break;
+			case MenuItemName.MenuItem105 :
+				break;
+			case MenuItemName.MenuItem106 :
+				break;
+			case MenuItemName.MenuItem107 :
+				break;
+			case MenuItemName.MenuItem108 :
+				break;
+			case MenuItemName.MenuItem109 :
+				break;
+			case MenuItemName.MenuItem110 :
+				break;
+			case MenuItemName.MenuItem111 :
+				break;
+			case MenuItemName.MenuItem112 :
+				break;
+			case MenuItemName.MenuItem113 :
+				break;
+			case MenuItemName.MenuItem114 :
+				break;
+			case MenuItemName.MenuItem115 :
+				break;
+			case MenuItemName.MenuItem116 :
+				break;
+			case MenuItemName.MenuItem117 :
+				break;
+			case MenuItemName.MenuItem118 :
+				break;
+			case MenuItemName.MenuItem119 :
+				break;
+			case MenuItemName.MenuItem120 :
+				break;
+			case MenuItemName.MenuItem121 :
+				break;
+			case MenuItemName.MenuItem122 :
+				break;
+			case MenuItemName.MenuItem123 :
+				break;
+			case MenuItemName.MenuItem124 :
+				break;
+			case MenuItemName.MenuItem37 :
+				break;
+			case MenuItemName.MenuItem38 :
+				break;
+			case MenuItemName.MenuItem39 :
+				break;
+			case MenuItemName.MenuItem125 :
+				break;
+			case MenuItemName.MenuItem126 :
+				break;
+			case MenuItemName.MenuItem127 :
+				break;
+			case MenuItemName.MenuItem128 :
+				break;
+			case MenuItemName.MenuItem129 :
+				break;
+			case MenuItemName.MenuItem130 :
+				break;
+			case MenuItemName.MenuItem131 :
+				break;
+			case MenuItemName.MenuItem132 :
+				break;
+			case MenuItemName.MenuItem133 :
+				break;
+			case MenuItemName.MenuItem134 :
+				break;
+			case MenuItemName.MenuItem135 :
+				break;
+			case MenuItemName.MenuItem136 :
+				break;
+			case MenuItemName.MenuItem137 :
+				break;
+			case MenuItemName.MenuItem138 :
+				break;
+			case MenuItemName.MenuItem139 :
+				break;
+			case MenuItemName.MenuItem140 :
+				break;
+			case MenuItemName.MenuItem141 :
+				break;
+			case MenuItemName.MenuItem40 :
+				break;
+			case MenuItemName.MenuItem41 :
+				break;
+			case MenuItemName.MenuItem42 :
+				break;
+			case MenuItemName.MenuItem43 :
+				break;
+			case MenuItemName.MenuItem98 :
+				break;
+			case MenuItemName.MenuItem99 :
+				break;
+			case MenuItemName.MenuItem100 :
+				break;
+			case MenuItemName.MenuItem44 :
+				break;
+			case MenuItemName.MenuItem151 :
+				break;
+			case MenuItemName.MenuItem152 :
+				break;
+			case MenuItemName.MenuItem153 :
+				break;
+			case MenuItemName.MenuItem45 :
+				break;
+			case MenuItemName.MenuItem46 :
+				break;
+			case MenuItemName.MenuItem47 :
+				break;
+			case MenuItemName.MenuItem48 :
+				break;
+			case MenuItemName.MenuItem49 :
+				break;
+			case MenuItemName.MenuItem154 :
+				break;
+			case MenuItemName.MenuItem155 :
+				break;
+			case MenuItemName.MenuItem50 :
+				break;
+			case MenuItemName.MenuItem51 :
+				break;
+			case MenuItemName.MenuItem142 :
+				break;
+			case MenuItemName.MenuItem143 :
+				break;
+			case MenuItemName.MenuItem157 :
+				break;
+			case MenuItemName.MenuItem158 :
+				break;
+			case MenuItemName.MenuItem159 :
+				break;
+			case MenuItemName.MenuItem160 :
+				break;
+			case MenuItemName.MenuItem161 :
+				break;
+			case MenuItemName.MenuItem156 :
+				break;
+			case MenuItemName.MenuItem144 :
+				break;
+			case MenuItemName.MenuItem145 :
+				break;
+			case MenuItemName.MenuItem146 :
+				break;
+			case MenuItemName.MenuItem147 :
+				break;
+			case MenuItemName.MenuItem148 :
+				break;
+			case MenuItemName.MenuItem149 :
+				break;
+			case MenuItemName.MenuItem150 :
+				break;
+			case MenuItemName.MenuItem57 :
+				break;
+			case MenuItemName.MenuItem56 :
+				break;
+			case MenuItemName.MenuItem58 :
+				break;
+			case MenuItemName.MenuItem59 :
+				break;
+			case MenuItemName.MenuItem60 :
+				break;
+			case MenuItemName.MenuItem52 :
+				new Calculator();
+				break;
+			case MenuItemName.MenuItem53 :
+				new NotePad();
+				break;
+			case MenuItemName.MenuItem54 :
+				new MediaPlayer();
+				break;
 
 		}
+
+		
 
 	}
 }

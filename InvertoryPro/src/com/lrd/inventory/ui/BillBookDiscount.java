@@ -5,22 +5,32 @@
 package com.lrd.inventory.ui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import com.lrd.inventory.database.GetDBValue;
+import com.lrd.inventory.database.SpecificFieldValue;
+import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.Validate;
+import com.lrd.inventory.model.BillModel;
 
 /**
  * @author dharmendra singh
  */
-public class BillBookDiscount extends JFrame {
-
-
+public class BillBookDiscount extends JFrame
+		implements
+			ActionListener,
+			ItemListener {
 
 	private static final long serialVersionUID = 1L;
-	//  Variables declaration 
+	// Variables declaration
 	private JPanel panel1;
 	private JPanel panel2;
 	private JLabel label1;
@@ -38,15 +48,27 @@ public class BillBookDiscount extends JFrame {
 	private JTextField textField2;
 	private JTextField textField3;
 	private JScrollPane scrollPane1;
+	private DefaultTableModel tableModel1;
 	private JTable table1;
 	private JLabel label7;
 	private JTextField textField4;
-	//  End of variables declaration
-	
+	private JButton button5;
+	private JButton button6;
+	// End of variables declaration
+
 	Connection connection = null;
 
+	SpecificFieldValue fieldName = null;
+	GetDBValue dbvalue = null;
+	TableId tableid = null;
+	Validate valid = null;
+
+	java.text.SimpleDateFormat sdf;
+
+	ArrayList<BillModel> saleBillList = null;
+
 	public BillBookDiscount(Connection connection) {
-		this.connection=connection;
+		this.connection = connection;
 		initComponents();
 		storeName();
 	}
@@ -70,117 +92,149 @@ public class BillBookDiscount extends JFrame {
 		textField2 = new JTextField();
 		textField3 = new JTextField();
 		scrollPane1 = new JScrollPane();
+		tableModel1 = new DefaultTableModel();
 		table1 = new JTable();
 		label7 = new JLabel();
 		textField4 = new JTextField();
-
-		//======== this ========
+		button5 = new JButton();
+		button6 = new JButton();
+		// ======== this ========
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
-		//======== panel1 ========
+		// ======== panel1 ========
 		{
-
 
 			panel1.setLayout(null);
 
-			//======== panel2 ========
+			// ======== panel2 ========
 			{
 				panel2.setLayout(null);
 
-				//---- label1 ----
+				// ---- label1 ----
 				label1.setText("Discount Book");
-				label1.setFont(label1.getFont().deriveFont(label1.getFont().getSize() + 15f));
+				label1.setFont(label1.getFont().deriveFont(
+						label1.getFont().getSize() + 15f));
 				panel2.add(label1);
-				label1.setBounds(new Rectangle(new Point(385, 10), label1.getPreferredSize()));
+				label1.setBounds(new Rectangle(new Point(385, 10), label1
+						.getPreferredSize()));
 
 			}
 			panel1.add(panel2);
 			panel2.setBounds(0, 0, 930, 60);
 
-			//======== panel3 ========
+			// ======== panel3 ========
 			{
 				panel3.setLayout(null);
 
-				//---- label2 ----
+				// ---- label2 ----
 				label2.setText("Select Store");
 				panel3.add(label2);
-				label2.setBounds(new Rectangle(new Point(200, 30), label2.getPreferredSize()));
+				label2.setBounds(new Rectangle(new Point(200, 30), label2
+						.getPreferredSize()));
 
 				panel3.add(comboBox1);
-				comboBox1.setBounds(300, 30, 200, comboBox1.getPreferredSize().height);
-				
-				//---- label3 ----
+				comboBox1.setBounds(300, 30, 200,
+						comboBox1.getPreferredSize().height);
+				comboBox1.addItemListener(this);
+
+				// ---- label3 ----
 				label3.setText("Search Criteria");
 				panel3.add(label3);
-				label3.setBounds(new Rectangle(new Point(200, 70), label3.getPreferredSize()));
+				label3.setBounds(new Rectangle(new Point(200, 70), label3
+						.getPreferredSize()));
 
 				panel3.add(comboBox2);
-				comboBox2.setBounds(300, 70, 200, comboBox2.getPreferredSize().height);
-				
-				//---- label4 ----
+				comboBox2.setBounds(300, 70, 200,
+						comboBox2.getPreferredSize().height);
+				comboBox2.addItem("Date Wise");
+				comboBox2.addItem("Bill No");
+				comboBox2.addItem("Customer Name");
+				comboBox2.addItemListener(this);
+
+				// ---- label4 ----
 				label4.setText("From Date");
 				panel3.add(label4);
-				label4.setBounds(new Rectangle(new Point(200, 110), label4.getPreferredSize()));
+				label4.setBounds(new Rectangle(new Point(200, 110), label4
+						.getPreferredSize()));
 
 				panel3.add(textField1);
-				textField1.setBounds(300, 110, 150, textField1.getPreferredSize().height);
-				
-				//---- label7 ----
+				textField1.setBounds(300, 110, 150,
+						textField1.getPreferredSize().height);
+				// ---- button5 ----
+				button5.setText("...");
+				panel3.add(button5);
+				button5.setBounds(450, 110, 27, 20);
+				button5.addActionListener(this);
+
+				// ---- label7 ----
 				label7.setText("To Date");
 				panel3.add(label7);
-				label7.setBounds(new Rectangle(new Point(490, 110), label7.getPreferredSize()));
+				label7.setBounds(new Rectangle(new Point(490, 110), label7
+						.getPreferredSize()));
 				panel3.add(textField4);
-				textField4.setBounds(565, 110, 150, textField4.getPreferredSize().height);
-				
-				//---- label5 ----
+				textField4.setBounds(565, 110, 150,
+						textField4.getPreferredSize().height);
+				// ---- button6 ----
+				button6.setText("...");
+				panel3.add(button6);
+				button6.setBounds(715, 110, 27, 20);
+				button6.addActionListener(this);
+
+				// ---- label5 ----
 				label5.setText("Bill No.");
 				panel3.add(label5);
-				label5.setBounds(new Rectangle(new Point(200, 150), label5.getPreferredSize()));
+				label5.setBounds(new Rectangle(new Point(200, 150), label5
+						.getPreferredSize()));
 
 				panel3.add(textField2);
-				textField2.setBounds(300, 150, 200, textField2.getPreferredSize().height);
-				
-				//---- label6 ----
+				textField2.setBounds(300, 150, 200,
+						textField2.getPreferredSize().height);
+
+				// ---- label6 ----
 				label6.setText("Customer Name");
 				panel3.add(label6);
-				label6.setBounds(new Rectangle(new Point(200, 190), label6.getPreferredSize()));
+				label6.setBounds(new Rectangle(new Point(200, 190), label6
+						.getPreferredSize()));
 
 				panel3.add(textField3);
-				textField3.setBounds(300, 190, 200, textField3.getPreferredSize().height);
-				
-				//---- button1 ----
+				textField3.setBounds(300, 190, 200,
+						textField3.getPreferredSize().height);
+
+				// ---- button1 ----
 				button1.setText("Search");
 				panel3.add(button1);
 				button1.setBounds(285, 230, 100, 30);
+				button1.addActionListener(this);
 
-				//---- button2 ----
+				// ---- button2 ----
 				button2.setText("Clear");
 				panel3.add(button2);
 				button2.setBounds(440, 230, 100, 30);
-				
-				
+				button2.addActionListener(this);
 
-				//======== scrollPane1 ========
+				tableModel1.addColumn("Sr No");
+				tableModel1.addColumn("Bill No");
+				tableModel1.addColumn("Date");
+				tableModel1.addColumn("Customer Name");
+				tableModel1.addColumn("Discount %");
+				tableModel1.addColumn("Discount Rs");
+				tableModel1.addColumn("Total Amt");
+				// ======== scrollPane1 ========
 				{
 					scrollPane1.setViewportView(table1);
 				}
 				panel3.add(scrollPane1);
 				scrollPane1.setBounds(30, 270, 865, 250);
 
-				
-
-
 			}
 			panel1.add(panel3);
 			panel3.setBounds(0, 60, 925, 540);
-
 
 		}
 		contentPane.add(panel1);
 		panel1.setBounds(0, 0, 925, 660);
 
-		
 		pack();
 		setVisible(true);
 		setSize(940, 660);
@@ -188,23 +242,84 @@ public class BillBookDiscount extends JFrame {
 
 	}
 
-
-
-	public static void main (String[] args){
-		//new BillBookDiscount();
+	public static void main(String[] args) {
+		// new BillBookDiscount();
 	}
-	
-	private void storeName(){
-		try {
-			Statement stmt=connection.createStatement();
-			ResultSet result=stmt.executeQuery("select * from store_details");
-			while(result.next()){
-				comboBox1.addItem(result.getString("store_name"));
+
+	private void storeName() {
+		ArrayList<String> storeNames = (ArrayList<String>) fieldName
+				.getAllStoreName();
+		for (String name : storeNames) {
+			comboBox1.addItem(name);
+		}
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getSource() == comboBox1) {
+
+		}
+
+		if (event.getSource() == comboBox2) {
+			// System.out.println("sjdhgldfhgldfh");
+			if (comboBox2.getSelectedItem().toString() == "Date Wise") {
+				textField1.setText("");
+				textField1.setEnabled(true);
+				button5.setEnabled(true);
+				textField2.setText("");
+				textField2.setEnabled(false);
+				textField3.setText("");
+				textField3.setEnabled(false);
+				textField4.setText("");
+				textField4.setEnabled(true);
+				button6.setEnabled(true);
+			} else if (comboBox2.getSelectedItem().toString() == "Order No") {
+				textField1.setText("");
+				textField1.setEnabled(false);
+				button5.setEnabled(false);
+				textField2.setText("");
+				textField2.setEnabled(true);
+				textField3.setText("");
+				textField3.setEnabled(false);
+				textField4.setText("");
+				textField4.setEnabled(false);
+				button6.setEnabled(false);
+			} else {
+				textField1.setText("");
+				textField1.setEnabled(false);
+				button5.setEnabled(false);
+				textField2.setText("");
+				textField2.setEnabled(false);
+				textField3.setText("");
+				textField3.setEnabled(true);
+				textField4.setText("");
+				textField4.setEnabled(false);
+				button6.setEnabled(false);
 			}
-			result.close();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getSource() == button1) {
+			boolean status = true;
+			int storeId = tableid.getStoreId(comboBox1.getSelectedItem()
+					.toString());
+			if (comboBox2.getSelectedItem().toString() == "Date Wise") {
+				String fromDate = textField1.getText();
+				String toDate = textField4.getText();
+				if (valid.isEmpty(fromDate) && valid.isEmpty(toDate)) {
+					this.saleBillList = dbvalue.getAllBill(storeId, fromDate,
+							toDate);
+				}
+			} else if (comboBox2.getSelectedItem().toString() == "Order No") {
+
+			} else {
+
+			}
 		}
 	}
 }

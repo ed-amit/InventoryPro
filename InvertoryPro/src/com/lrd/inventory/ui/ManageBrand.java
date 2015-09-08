@@ -230,9 +230,9 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 	}
 
 	public void loadTableData() {
-		int j = 0;
-		while (j < tableModel.getRowCount()) {
-			tableModel.removeRow(j);
+		
+		while (tableModel.getRowCount() > 0) {
+			tableModel.removeRow(0);
 		}
 		brandList = dbValue.getBrandDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
 		for (int i = 0; i < brandList.size(); i++) {

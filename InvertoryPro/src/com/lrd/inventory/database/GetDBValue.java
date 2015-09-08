@@ -20,6 +20,7 @@ import com.lrd.inventory.model.PurchaseBillDetailModel;
 import com.lrd.inventory.model.PurchaseBillModel;
 import com.lrd.inventory.model.PurchaseOrderModel;
 import com.lrd.inventory.model.RackModel;
+import com.lrd.inventory.model.SaleOrderModel;
 import com.lrd.inventory.model.VatModel;
 
 public class GetDBValue {
@@ -378,6 +379,92 @@ public class GetDBValue {
 	}
 	
 	
+	
+	public ArrayList<BillModel> getAllBill( String arg0, String argType, int storeId){
+		ArrayList<BillModel> billList = new ArrayList<>();
+		String query="";
+		if(argType.equals("billNo"))
+		query="select * from bill where store_id="+storeId+" and bill_no LIKE '"+arg0+"%'";
+		else if(argType.equals("customerName"))
+			 query="select * from bill where store_id="+storeId+" and customer_name LIKE '"+arg0+"%'";
+		else
+			query="select * from bill where store_id="+storeId;
+		try {
+			ResultSet result = stmt.executeQuery(query);
+			while(result.next()){
+				BillModel bill = new BillModel();
+				
+				bill.setBillId(result.getInt("bill_id"));
+				bill.setCounter(result.getInt("counter"));
+				bill.setFirmId(result.getInt("firm_id"));
+				bill.setChallanNo(result.getInt("challan_no"));
+				bill.setStoreId(result.getInt("store_id"));
+				bill.setYearId(result.getInt("year_id"));
+				bill.setHomeDelivery(result.getInt("home_delivery"));
+				bill.setDiscount(result.getDouble("discount"));
+				bill.setTotalAmt(result.getDouble("grand_total"));
+				bill.setBillVatPercent(result.getDouble("whole_bill_vat"));
+				bill.setBillVatAmt(result.getDouble("whole_bill_vat_amount"));
+				bill.setBillNo(result.getString("bill_no"));
+				bill.setBillDate(result.getString("bill_date"));
+				bill.setCustomerName(result.getString("customer_name"));
+				bill.setCustomerAddress(result.getString("customer_address"));
+				bill.setCustomerType(result.getString("customer_type"));
+				bill.setMobileNo(result.getString("mobile_number"));
+				bill.setNarration(result.getString("narration"));
+				bill.setUserName(result.getString("username"));
+				bill.setPrefix(result.getString("prefix"));
+				
+				billList.add(bill);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return billList;
+	}
+	
+	
+	
+	
+	public ArrayList<BillModel> getAllBill(int storeId,String fromDate, String toDate){
+		ArrayList<BillModel> billList = new ArrayList<>();
+		String query="select * from bill where store_id="+storeId+" AND bill_date BETWEEN "+fromDate+" AND "+toDate;
+		try {
+			ResultSet result = stmt.executeQuery(query);
+			while(result.next()){
+				BillModel bill = new BillModel();
+				
+				bill.setBillId(result.getInt("bill_id"));
+				bill.setCounter(result.getInt("counter"));
+				bill.setFirmId(result.getInt("firm_id"));
+				bill.setChallanNo(result.getInt("challan_no"));
+				bill.setStoreId(result.getInt("store_id"));
+				bill.setYearId(result.getInt("year_id"));
+				bill.setHomeDelivery(result.getInt("home_delivery"));
+				bill.setDiscount(result.getDouble("discount"));
+				bill.setTotalAmt(result.getDouble("grand_total"));
+				bill.setBillVatPercent(result.getDouble("whole_bill_vat"));
+				bill.setBillVatAmt(result.getDouble("whole_bill_vat_amount"));
+				bill.setBillNo(result.getString("bill_no"));
+				bill.setBillDate(result.getString("bill_date"));
+				bill.setCustomerName(result.getString("customer_name"));
+				bill.setCustomerAddress(result.getString("customer_address"));
+				bill.setCustomerType(result.getString("customer_type"));
+				bill.setMobileNo(result.getString("mobile_number"));
+				bill.setNarration(result.getString("narration"));
+				bill.setUserName(result.getString("username"));
+				bill.setPrefix(result.getString("prefix"));
+				
+				billList.add(bill);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return billList;
+	}
+	
+	
+	
 	public ArrayList<BillModel> getGeneralCustomerBill(int storeId){
 		ArrayList<BillModel> billList = new ArrayList<>();
 		String query="select * from bill where store_id="+storeId+" AND customer_type='General Customer'";
@@ -555,6 +642,35 @@ public class GetDBValue {
 		}
 		return purchaseOrderList;
 	}
+	
+	
+	public ArrayList<PurchaseOrderModel> getAllPendingPurchaseOrder(int storeId){
+		ArrayList<PurchaseOrderModel> purchaseOrderList = new ArrayList<>();
+		String query="select * from purchase_order where status ='pending' AND store_id="+storeId+";";
+		try {
+			ResultSet result = stmt.executeQuery(query);
+			while(result.next()){
+				PurchaseOrderModel purchaseOrder = new PurchaseOrderModel();
+				
+				purchaseOrder.setOrderId(result.getInt("order_id"));
+				purchaseOrder.setExceptedDate(result.getString("expected_date"));
+				purchaseOrder.setOrderDate(result.getString("order_date"));
+				purchaseOrder.setStatus(result.getString("status"));
+				purchaseOrder.setSupplierName(result.getString("supplier_name"));
+				purchaseOrder.setTotalProduct(result.getInt("total_products"));
+				purchaseOrder.setReceiptId(result.getInt("recepiteid"));
+				purchaseOrder.setStoreId(result.getInt("store_id"));
+				purchaseOrder.setYearId(result.getInt("year_id"));
+				
+				purchaseOrderList.add(purchaseOrder);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return purchaseOrderList;
+	}
+	
+	
 	public ArrayList<PurchaseOrderModel> getPurchaseOrder(String supplierName){
 		ArrayList<PurchaseOrderModel> purchaseOrderList = new ArrayList<>();
 		String query="select * from purchase_order where supplier_name LIKE '%"+supplierName+"%';";
@@ -606,9 +722,9 @@ public class GetDBValue {
 		return purchaseOrderList;
 	}
 	
-	public ArrayList<PurchaseBillModel> getPurchaseBill(int storeId){
+	public ArrayList<PurchaseBillModel> getPurchaseBill(String fieldName, int storeId){
 		ArrayList<PurchaseBillModel> purchaseBillList = new ArrayList<>();
-		String query="select * from purchase_bill where store_id="+storeId;
+		String query="select * from purchase_bill where "+fieldName+"="+storeId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while(result.next()){
@@ -686,5 +802,49 @@ public class GetDBValue {
 		}
 		return purchaseBillDetailList;
 	}
+	
+	
+	
+	
+	public ArrayList<SaleOrderModel> getAllPendingSaleOrder(int storeId){
+		ArrayList<SaleOrderModel> saleOrderList = new ArrayList<>();
+//		String query="SELECT * FROM `sale_order` WHERE DATE_SUB(NOW(), INTERVAL `number_of_days` DAY) < `order_date` AND store_id="+storeId;
+		String query="SELECT * FROM `sale_order` WHERE status='pending' AND store_id="+storeId;
+		try {
+			ResultSet result = stmt.executeQuery(query);
+			while(result.next()){
+				SaleOrderModel saleOrder = new SaleOrderModel();
+				
+				saleOrder.setOrderId(result.getInt("ORDER_ID"));
+				saleOrder.setOrderDate(result.getString("ORDER_DATE"));
+				saleOrder.setOrderNo(result.getString("ORDER_NO"));
+				saleOrder.setCustomerAddress(result.getString("CUSTOMER_ADDRESS"));
+				saleOrder.setCustomerName(result.getString("CUSTOMER_NAME"));
+				saleOrder.setCustomerType(result.getString("CUSTOMER_TYPE"));
+				saleOrder.setDiscount(result.getDouble("DISCOUNT"));
+				saleOrder.setTotalAmt(result.getDouble("GRAND_TOTAL"));
+				saleOrder.setHomeDelivery(result.getInt("HOME_DELIVERY"));
+				saleOrder.setMobileNo(result.getString("MOBILE_NUMBER"));
+				saleOrder.setNarration(result.getString("NARRATION"));
+				saleOrder.setUserName(result.getString("USERNAME"));
+				saleOrder.setOrderVatPercent(result.getDouble("WHOLE_BILL_VAT"));
+				saleOrder.setOrderVatAmt(result.getDouble("WHOLE_BILL_VAT_AMOUNT"));
+				saleOrder.setCounter(result.getInt("COUNTER"));
+				saleOrder.setFirmId(result.getInt("FIRM_ID"));
+				saleOrder.setPrefix(result.getString("PREFIX"));
+				saleOrder.setStoreId(result.getInt("STORE_ID"));
+				saleOrder.setYearId(result.getInt("YEAR_ID"));
+				saleOrder.setNumberOfDays(result.getInt("NUMBER_OF_DAYS"));
+				saleOrder.setStatus(result.getString("STATUS"));
+				
+				saleOrderList.add(saleOrder);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return saleOrderList;
+	}
+	
+	
 	
 }

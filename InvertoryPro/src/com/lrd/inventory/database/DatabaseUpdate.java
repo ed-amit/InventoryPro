@@ -12,6 +12,7 @@ import com.lrd.inventory.model.CategoryModel;
 import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.DistributorModel;
 import com.lrd.inventory.model.ProductModel;
+import com.lrd.inventory.model.PurchaseBillModel;
 import com.lrd.inventory.model.RackModel;
 
 public class DatabaseUpdate {
@@ -154,6 +155,17 @@ public class DatabaseUpdate {
 					+ billDetail.getDiscountPercent() + " ,discount_rs="
 					+ billDetail.getDiscountAmt() + " where bill_details_id="
 					+ billDetail.getBillDetailId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	public void updatePurchaseBill(int PurchaseBillId, double paymentAmount) {
+
+		try {
+			stmt.executeUpdate("update purchase_bill set paid_amount=paid_amount+"+paymentAmount+" where bill_id="+PurchaseBillId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

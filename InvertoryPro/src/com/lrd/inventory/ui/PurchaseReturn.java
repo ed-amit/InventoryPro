@@ -97,7 +97,7 @@ public class PurchaseReturn extends JFrame
 		dbValue = new GetDBValue(connection);
 		initComponents();
 		storeName();
-		purchaseBillList = dbValue.getPurchaseBill(tableid.getStoreId(comboBox1
+		purchaseBillList = dbValue.getPurchaseBill("store_id", tableid.getStoreId(comboBox1
 				.getSelectedItem().toString()));
 		purchaseBillDisplayList = new ArrayList<>();
 	}
@@ -427,7 +427,7 @@ public class PurchaseReturn extends JFrame
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == comboBox1) {
-			purchaseBillList = dbValue.getPurchaseBill(tableid
+			purchaseBillList = dbValue.getPurchaseBill("store_id", tableid
 					.getStoreId(comboBox1.getSelectedItem().toString()));
 		}
 	}
@@ -517,7 +517,7 @@ public class PurchaseReturn extends JFrame
 	private void resetAllField() {
 		textField1.setText("");
 		textField1.requestFocus();
-		purchaseBillList = dbValue.getPurchaseBill(tableid.getStoreId(comboBox1
+		purchaseBillList = dbValue.getPurchaseBill("store_id", tableid.getStoreId(comboBox1
 				.getSelectedItem().toString()));
 		loadTable1Data();
 	}

@@ -1,25 +1,42 @@
-/*
- * Created by JFormDesigner on Mon Jun 01 23:42:05 IST 2015
- */
-
 package com.lrd.inventory.ui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import com.lrd.inventory.database.DatabaseUpdate;
+import com.lrd.inventory.database.GetDBValue;
+import com.lrd.inventory.database.SpecificFieldValue;
+import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.Validate;
+import com.lrd.inventory.main.ValidationMSG;
+import com.lrd.inventory.model.DistributorModel;
+import com.lrd.inventory.model.PurchaseBillDetailModel;
+import com.lrd.inventory.model.PurchaseBillModel;
 
 /**
  * @author dharmendra singh
  */
-public class BillBookPurchaseDue extends JFrame {
-	
-
+public class BillBookPurchaseDue extends JFrame
+		implements
+			ActionListener,
+			ItemListener,
+			ListSelectionListener {
 
 	private static final long serialVersionUID = 1L;
+
 	// Variables declaration
 	private JPanel panel1;
 	private JPanel panel2;
@@ -27,17 +44,20 @@ public class BillBookPurchaseDue extends JFrame {
 	private JPanel panel3;
 	private JLabel label2;
 	private JScrollPane scrollPane1;
+	private DefaultTableModel tableModel1;
 	private JTable table1;
 	private JButton button1;
 	private JPanel panel4;
 	private JLabel label3;
 	private JScrollPane scrollPane2;
+	private DefaultTableModel tableModel2;
 	private JTable table2;
 	private JButton button2;
 	private JButton button3;
 	private JPanel panel5;
 	private JLabel label4;
 	private JScrollPane scrollPane3;
+	private DefaultTableModel tableModel3;
 	private JTable table3;
 	private JLabel label5;
 	private JTextField textField1;
@@ -79,15 +99,20 @@ public class BillBookPurchaseDue extends JFrame {
 	private JComboBox<Object> comboBox1;
 
 	// End of variables declaration
+	ArrayList<DistributorModel> distributorList = null;
+	ArrayList<PurchaseBillModel> purchaseBillList = null;
+	ArrayList<PurchaseBillDetailModel> purchaseBillDetailList = null;
 
+	SpecificFieldValue fieldName;
 	Connection connection = null;
-	
+
 	public BillBookPurchaseDue(Connection connection) {
 		this.connection = connection;
+		fieldName = new SpecificFieldValue(connection);
 		initComponents();
 		storeName();
-	}
 
+	}
 	private void initComponents() {
 
 		panel1 = new JPanel();
@@ -96,18 +121,21 @@ public class BillBookPurchaseDue extends JFrame {
 		panel3 = new JPanel();
 		label2 = new JLabel();
 		scrollPane1 = new JScrollPane();
-		table1 = new JTable();
+		tableModel1 = new DefaultTableModel();
+		table1 = new JTable(tableModel1);
 		button1 = new JButton();
 		panel4 = new JPanel();
 		label3 = new JLabel();
 		scrollPane2 = new JScrollPane();
-		table2 = new JTable();
+		tableModel2 = new DefaultTableModel();
+		table2 = new JTable(tableModel2);
 		button2 = new JButton();
 		button3 = new JButton();
 		panel5 = new JPanel();
 		label4 = new JLabel();
 		scrollPane3 = new JScrollPane();
-		table3 = new JTable();
+		tableModel3 = new DefaultTableModel();
+		table3 = new JTable(tableModel3);
 		label5 = new JLabel();
 		textField1 = new JTextField();
 		label6 = new JLabel();
@@ -183,9 +211,12 @@ public class BillBookPurchaseDue extends JFrame {
 				label2.setBounds(new Rectangle(new Point(15, 15), label2
 						.getPreferredSize()));
 
+				tableModel1.addColumn("Name");
+				tableModel1.addColumn("Contact");
 				// ======== scrollPane1 ========
 				{
 					scrollPane1.setViewportView(table1);
+					table1.getSelectionModel().addListSelectionListener(this);
 				}
 				panel3.add(scrollPane1);
 				scrollPane1.setBounds(10, 40, 200, 430);
@@ -194,6 +225,7 @@ public class BillBookPurchaseDue extends JFrame {
 				button1.setText("Refresh");
 				panel3.add(button1);
 				button1.setBounds(40, 480, 100, 30);
+				button1.addActionListener(this);
 
 			}
 			panel1.add(panel3);
@@ -210,9 +242,12 @@ public class BillBookPurchaseDue extends JFrame {
 				label3.setBounds(new Rectangle(new Point(15, 15), label3
 						.getPreferredSize()));
 
+				tableModel2.addColumn("Bill No");
+				tableModel2.addColumn("Date");
 				// ======== scrollPane2 ========
 				{
 					scrollPane2.setViewportView(table2);
+					table2.getSelectionModel().addListSelectionListener(this);
 				}
 				panel4.add(scrollPane2);
 				scrollPane2.setBounds(10, 40, 200, 430);
@@ -221,11 +256,13 @@ public class BillBookPurchaseDue extends JFrame {
 				button2.setText("Delete");
 				panel4.add(button2);
 				button2.setBounds(10, 480, 80, 30);
+				button2.addActionListener(this);
 
 				// ---- button3 ----
 				button3.setText("Refresh");
 				panel4.add(button3);
 				button3.setBounds(110, 480, 80, 30);
+				button3.addActionListener(this);
 
 			}
 			panel1.add(panel4);
@@ -242,9 +279,16 @@ public class BillBookPurchaseDue extends JFrame {
 				label4.setBounds(new Rectangle(new Point(15, 15), label4
 						.getPreferredSize()));
 
+				tableModel3.addColumn("P. Name");
+				tableModel3.addColumn("Quantity");
+				tableModel3.addColumn("Unit");
+				tableModel3.addColumn("Rate");
+				tableModel3.addColumn("Vat%");
+				tableModel3.addColumn("total");
 				// ======== scrollPane3 ========
 				{
 					scrollPane3.setViewportView(table3);
+					table3.getSelectionModel().addListSelectionListener(this);
 				}
 				panel5.add(scrollPane3);
 				scrollPane3.setBounds(20, 50,
@@ -398,21 +442,25 @@ public class BillBookPurchaseDue extends JFrame {
 				button4.setText("Discounts");
 				panel5.add(button4);
 				button4.setBounds(25, 480, 100, 30);
+				button4.addActionListener(this);
 
 				// ---- button5 ----
 				button5.setText("Pay Amt");
 				panel5.add(button5);
 				button5.setBounds(140, 480, 100, 30);
+				button5.addActionListener(this);
 
 				// ---- button6 ----
 				button6.setText("Refresh");
 				panel5.add(button6);
 				button6.setBounds(255, 480, 100, 30);
+				button6.addActionListener(this);
 
 				// ---- button7 ----
-				button7.setText("Edit");
+				button7.setText("Paid Details");
 				panel5.add(button7);
 				button7.setBounds(370, 480, 100, 30);
+				button7.addActionListener(this);
 
 			}
 			panel1.add(panel5);
@@ -426,6 +474,7 @@ public class BillBookPurchaseDue extends JFrame {
 
 			panel1.add(comboBox1);
 			comboBox1.setBounds(105, 60, 200, 20);
+			comboBox1.addItemListener(this);
 
 		}
 		contentPane.add(panel1);
@@ -439,25 +488,212 @@ public class BillBookPurchaseDue extends JFrame {
 
 	}
 
-	
-	
-	
-	
-	public static void main(String[] args){
-		//new BillBookPurchaseDue();
+	public static void main(String[] args) {
+		// new BillBookPurchase();
 	}
-	
-	private void storeName(){
-		try {
-			Statement stmt=connection.createStatement();
-			ResultSet result=stmt.executeQuery("select * from store_details");
-			while(result.next()){
-				comboBox1.addItem(result.getString("store_name"));
-			}
-			result.close();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+
+	private void storeName() {
+		ArrayList<String> storeNames = (ArrayList<String>) fieldName
+				.getAllStoreName();
+		for (String name : storeNames) {
+			comboBox1.addItem(name);
 		}
+	}
+
+	private void loadTable1data() {
+		table1.getSelectionModel().clearSelection();
+		while (tableModel1.getRowCount() > 0) {
+			tableModel1.removeRow(0);
+		}
+		distributorList = new GetDBValue(connection)
+				.getDistributorDetail(new TableId(connection)
+						.getStoreId(comboBox1.getSelectedItem().toString()));
+		for (int i = 0; i < distributorList.size(); i++) {
+			DistributorModel distributor = distributorList.get(i);
+			tableModel1.addRow(new Object[]{distributor.getAgencyName(),
+					distributor.getMobileNo()});
+		}
+	}
+
+	private void loadTable2data() {
+		table2.getSelectionModel().clearSelection();
+
+		while (tableModel2.getRowCount() > 0) {
+			tableModel2.removeRow(0);
+		}
+		if (table1.getSelectedRowCount() > 0)
+			purchaseBillList = new GetDBValue(connection).getPurchaseBill(
+					"Distributor_id",
+					distributorList.get(table1.getSelectedRow())
+							.getDistributorId());
+		else
+			purchaseBillList = new ArrayList<>();
+		for (int i = 0; i < purchaseBillList.size(); i++) {
+			PurchaseBillModel purchaseBill = purchaseBillList.get(i);
+			tableModel2.addRow(new Object[]{purchaseBill.getBillNo(),
+					purchaseBill.getPurchaseDate()});
+		}
+	}
+
+	private void loadTable3data() {
+
+		while (tableModel3.getRowCount() > 0) {
+			tableModel3.removeRow(0);
+		}
+		if (table2.getSelectedRowCount() > 0)
+			purchaseBillDetailList = new GetDBValue(connection)
+					.getPurchaseBillDetail(purchaseBillList.get(
+							table2.getSelectedRow()).getBillId());
+		else
+			purchaseBillDetailList = new ArrayList<>();
+		for (int i = 0; i < purchaseBillDetailList.size(); i++) {
+			PurchaseBillDetailModel purchaseBillDetail = purchaseBillDetailList
+					.get(i);
+			tableModel3.addRow(new Object[]{
+					purchaseBillDetail.getProductName(),
+					purchaseBillDetail.getQuantity(),
+					purchaseBillDetail.getUnit(),
+					purchaseBillDetail.getPurchasePrice(),
+					purchaseBillDetail.getVatPercent(),
+					purchaseBillDetail.getTotalCost()});
+		}
+	}
+	@Override
+	public void valueChanged(ListSelectionEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getSource() == table1.getSelectionModel()) {
+			loadTable2data();
+		}
+
+		if (event.getSource() == table2.getSelectionModel()) {
+
+			loadTable3data();
+			if (table2.getSelectedColumnCount() > 0) {
+				setTextFields();
+			}
+		}
+
+		if (event.getSource() == table3.getSelectionModel()) {
+			// /do something here for showing value in text
+			// field****************
+		}
+	}
+	@Override
+	public void itemStateChanged(ItemEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getStateChange() == ItemEvent.SELECTED) {
+			if (event.getSource() == comboBox1) {
+				loadTable1data();
+			}
+		}
+	}
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getSource() == button1) {
+			loadTable1data();
+		}
+
+		if (event.getSource() == button2) {
+
+		}
+
+		if (event.getSource() == button3) {
+			loadTable2data();
+		}
+
+		if (event.getSource() == button4) {
+
+		}
+
+		if (event.getSource() == button5) {
+			billPayment();
+		}
+
+		if (event.getSource() == button6) {
+			loadTable3data();
+			setTextFields();
+		}
+
+		if (event.getSource() == button7) {
+
+		}
+
+	}
+	private void billPayment() {
+		// TODO Auto-generated method stub
+		Validate valid = new Validate();
+		if (!valid.isEmpty(textField15.getText())) {
+			double remeningAmt = purchaseBillList.get(table2.getSelectedRow())
+					.getGrandTotal()
+					- purchaseBillList.get(table2.getSelectedRow())
+							.getPaidAmount();
+			double paymentAmt = Double.parseDouble(textField15.getText());
+			if (remeningAmt >= paymentAmt) {
+
+				int id = purchaseBillList.get(table2.getSelectedRow())
+						.getBillId();
+				new DatabaseUpdate(connection).updatePurchaseBill(id,
+						paymentAmt);
+				int table2selectedRow = table2.getSelectedRow();
+				loadTable2data();
+				table2.getSelectionModel().setLeadSelectionIndex(table2selectedRow);
+				
+			} else {
+				new ValidationMSG(
+						this,
+						"Remaining amount must be less or equal to the difference of total amount and paid amount");
+			}
+		} else {
+			new ValidationMSG(this, "Please insert remaining amount");
+		}
+
+	}
+	private void setTextFields() {
+		// TODO Auto-generated method stub
+		if (table2.getSelectedRowCount() == 1) {
+			PurchaseBillModel purchaseBill = purchaseBillList.get(table2
+					.getSelectedRow());
+			textField1.setText(String.valueOf(purchaseBillDetailList.size()));
+			textField2.setText(String.valueOf(purchaseBill.getGrandTotal()));
+			textField16.setText(String.valueOf(purchaseBill.getPaidAmount()));
+			textField15.setText(String.valueOf(purchaseBill.getGrandTotal()
+					- purchaseBill.getPaidAmount()));
+			textField9.setText(String.valueOf(purchaseBill.getNoOfDays()));
+			textField8.setText(purchaseBill.getPaymentMode());
+			textField7.setText(String.valueOf(purchaseBill.getLbtPercent()));
+			textField6.setText(String.valueOf(purchaseBill.getTransportatin()));
+			textField5.setText(String.valueOf(purchaseBill.getOctrai()));
+			textField4.setText(String.valueOf(purchaseBill.getHamali()));
+			textField3.setText(String.valueOf(purchaseBill.getMiscellaneous()));
+			textField14.setText(String.valueOf(purchaseBill.getDiscount()));
+			textField13.setText(String.valueOf(purchaseBill.getEntaryTax()));
+			textField12
+					.setText(String.valueOf(purchaseBill.getExcisePercent()));
+			textField11.setText(String.valueOf(purchaseBill.getCstPercent()));
+			textField10.setText(String.valueOf(purchaseBill.getVatPercent()));
+		} else {
+			resetTextFields();
+		}
+	}
+	private void resetTextFields() {
+		// TODO Auto-generated method stub
+		textField1.setText("");
+		textField2.setText("");
+		textField16.setText("");
+		textField15.setText("");
+		textField9.setText("");
+		textField8.setText("");
+		textField7.setText("");
+		textField6.setText("");
+		textField5.setText("");
+		textField4.setText("");
+		textField3.setText("");
+		textField14.setText("");
+		textField13.setText("");
+		textField12.setText("");
+		textField11.setText("");
+		textField10.setText("");
+
 	}
 }
