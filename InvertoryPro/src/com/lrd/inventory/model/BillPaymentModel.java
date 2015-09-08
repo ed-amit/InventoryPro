@@ -3,15 +3,15 @@ package com.lrd.inventory.model;
 public class BillPaymentModel {
 	
 	
-	int payment_id;
-	int bill_id;
-	double paid_amount;
+	private int payment_id;
+	private int bill_id;
+	private double paid_amount;
 	
-	String bank_name;
-	String code;
-	String Description;
-	String payment_date;
-	String payment_mode;
+	private String bank_name;
+	private String code;
+	private String Description;
+	private String payment_date;
+	private String payment_mode;
 	
 	
 
