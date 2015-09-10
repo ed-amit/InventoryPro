@@ -20,7 +20,6 @@ import javax.swing.table.DefaultTableModel;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
-import com.lrd.inventory.model.BrandModel;
 import com.lrd.inventory.model.DistributorModel;
 import com.lrd.inventory.model.PurchaseBillDetailModel;
 import com.lrd.inventory.model.PurchaseBillModel;

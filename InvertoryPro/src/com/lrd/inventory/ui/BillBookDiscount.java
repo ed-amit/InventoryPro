@@ -12,14 +12,18 @@ import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.DatePicker;
 import com.lrd.inventory.main.Validate;
+import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.BillModel;
+
 
 /**
  * @author dharmendra singh
@@ -54,6 +58,8 @@ public class BillBookDiscount extends JFrame
 	private JTextField textField4;
 	private JButton button5;
 	private JButton button6;
+	private JLabel totalAmountLabel;
+	private JLabel totalDiscountLabel;
 	// End of variables declaration
 
 	Connection connection = null;
@@ -63,12 +69,16 @@ public class BillBookDiscount extends JFrame
 	TableId tableid = null;
 	Validate valid = null;
 
-	java.text.SimpleDateFormat sdf;
+	
 
 	ArrayList<BillModel> saleBillList = null;
 
 	public BillBookDiscount(Connection connection) {
 		this.connection = connection;
+		fieldName = new SpecificFieldValue(connection);
+		dbvalue = new GetDBValue(connection);
+		tableid = new TableId(connection);
+		valid = new Validate();
 		initComponents();
 		storeName();
 	}
@@ -93,11 +103,13 @@ public class BillBookDiscount extends JFrame
 		textField3 = new JTextField();
 		scrollPane1 = new JScrollPane();
 		tableModel1 = new DefaultTableModel();
-		table1 = new JTable();
+		table1 = new JTable(tableModel1);
 		label7 = new JLabel();
 		textField4 = new JTextField();
 		button5 = new JButton();
 		button6 = new JButton();
+		totalAmountLabel = new JLabel("");
+		totalDiscountLabel = new JLabel("");
 		// ======== this ========
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
@@ -161,6 +173,7 @@ public class BillBookDiscount extends JFrame
 				panel3.add(textField1);
 				textField1.setBounds(300, 110, 150,
 						textField1.getPreferredSize().height);
+				textField1.setEnabled(false);
 				// ---- button5 ----
 				button5.setText("...");
 				panel3.add(button5);
@@ -175,6 +188,7 @@ public class BillBookDiscount extends JFrame
 				panel3.add(textField4);
 				textField4.setBounds(565, 110, 150,
 						textField4.getPreferredSize().height);
+				textField4.setEnabled(false);
 				// ---- button6 ----
 				button6.setText("...");
 				panel3.add(button6);
@@ -190,6 +204,7 @@ public class BillBookDiscount extends JFrame
 				panel3.add(textField2);
 				textField2.setBounds(300, 150, 200,
 						textField2.getPreferredSize().height);
+				textField2.setEnabled(false);
 
 				// ---- label6 ----
 				label6.setText("Customer Name");
@@ -200,6 +215,7 @@ public class BillBookDiscount extends JFrame
 				panel3.add(textField3);
 				textField3.setBounds(300, 190, 200,
 						textField3.getPreferredSize().height);
+				textField3.setEnabled(false);
 
 				// ---- button1 ----
 				button1.setText("Search");
@@ -217,7 +233,7 @@ public class BillBookDiscount extends JFrame
 				tableModel1.addColumn("Bill No");
 				tableModel1.addColumn("Date");
 				tableModel1.addColumn("Customer Name");
-				tableModel1.addColumn("Discount %");
+				// tableModel1.addColumn("Discount %");
 				tableModel1.addColumn("Discount Rs");
 				tableModel1.addColumn("Total Amt");
 				// ======== scrollPane1 ========
@@ -226,6 +242,14 @@ public class BillBookDiscount extends JFrame
 				}
 				panel3.add(scrollPane1);
 				scrollPane1.setBounds(30, 270, 865, 250);
+				
+				totalDiscountLabel.setBounds(600, 520, 100, 20);
+				totalDiscountLabel.setForeground(Color.BLUE);
+				panel3.add(totalDiscountLabel);
+				
+				totalAmountLabel.setBounds(750, 520, 100, 20);
+				totalAmountLabel.setForeground(Color.BLUE);
+				panel3.add(totalAmountLabel);
 
 			}
 			panel1.add(panel3);
@@ -265,21 +289,23 @@ public class BillBookDiscount extends JFrame
 			// System.out.println("sjdhgldfhgldfh");
 			if (comboBox2.getSelectedItem().toString() == "Date Wise") {
 				textField1.setText("");
-				textField1.setEnabled(true);
+				textField1.setEnabled(false);
 				button5.setEnabled(true);
+				button5.requestFocus();
 				textField2.setText("");
 				textField2.setEnabled(false);
 				textField3.setText("");
 				textField3.setEnabled(false);
 				textField4.setText("");
-				textField4.setEnabled(true);
+				textField4.setEnabled(false);
 				button6.setEnabled(true);
-			} else if (comboBox2.getSelectedItem().toString() == "Order No") {
+			} else if (comboBox2.getSelectedItem().toString() == "Bill No") {
 				textField1.setText("");
 				textField1.setEnabled(false);
 				button5.setEnabled(false);
 				textField2.setText("");
 				textField2.setEnabled(true);
+				textField2.requestFocus();
 				textField3.setText("");
 				textField3.setEnabled(false);
 				textField4.setText("");
@@ -293,6 +319,7 @@ public class BillBookDiscount extends JFrame
 				textField2.setEnabled(false);
 				textField3.setText("");
 				textField3.setEnabled(true);
+				textField3.requestFocus();
 				textField4.setText("");
 				textField4.setEnabled(false);
 				button6.setEnabled(false);
@@ -305,21 +332,72 @@ public class BillBookDiscount extends JFrame
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == button1) {
-			boolean status = true;
 			int storeId = tableid.getStoreId(comboBox1.getSelectedItem()
 					.toString());
 			if (comboBox2.getSelectedItem().toString() == "Date Wise") {
 				String fromDate = textField1.getText();
 				String toDate = textField4.getText();
-				if (valid.isEmpty(fromDate) && valid.isEmpty(toDate)) {
+				if (!valid.isEmpty(fromDate) && !valid.isEmpty(toDate)) {
 					this.saleBillList = dbvalue.getAllBill(storeId, fromDate,
 							toDate);
+				} else {
+					new ValidationMSG(this, "Please Select From And To Date");
 				}
-			} else if (comboBox2.getSelectedItem().toString() == "Order No") {
-
+			} else if (comboBox2.getSelectedItem().toString() == "Bill No") {
+				String billNo = textField2.getText();
+				
+				if (!valid.isEmpty(billNo)) {
+					this.saleBillList = dbvalue.getAllBill(billNo, "billId",
+							storeId);
+					//System.out.println(saleBillList.size());
+				}
 			} else {
-
+				String customerName = textField3.getText();
+				if (!valid.isEmpty(customerName)) {
+					this.saleBillList = dbvalue.getAllBill(customerName,
+							"customerName", storeId);
+				}
 			}
+			loadTable1Data(saleBillList);
 		}
+
+		if (event.getSource() == button2) {
+			textField1.setText("");
+			textField2.setText("");
+			textField3.setText("");
+			textField4.setText("");
+		}
+
+		if (event.getSource() == button5) {
+			final JFrame f = new JFrame();
+			textField1.setText(new DatePicker(f).setPickedDate());
+		}
+
+		if (event.getSource() == button6) {
+			final JFrame f = new JFrame();
+			textField4.setText(new DatePicker(f).setPickedDate());
+		}
+
+	}
+
+	private void loadTable1Data(ArrayList<BillModel> tempSaleBillList) {
+		// TODO Auto-generated method stub
+		while (tableModel1.getRowCount() > 0) {
+			tableModel1.removeRow(0);
+		}
+		//System.out.println(tempSaleBillList.size());
+		double totalAmt=0,totalDiscount=0;
+		int i = 1;
+		for (BillModel saleBill : tempSaleBillList) {
+			tableModel1.addRow(new Object[]{i, saleBill.getBillNo(),
+					saleBill.getBillDate(), saleBill.getCustomerName(),
+					saleBill.getDiscount(), saleBill.getTotalAmt()});
+			totalAmt += saleBill.getTotalAmt();
+			totalDiscount += saleBill.getDiscount();
+			i++;
+		}
+		
+		totalAmountLabel.setText(String.valueOf(totalAmt));
+		totalDiscountLabel.setText(String.valueOf(totalDiscount));
 	}
 }

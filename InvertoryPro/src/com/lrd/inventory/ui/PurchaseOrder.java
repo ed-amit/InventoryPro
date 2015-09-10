@@ -18,12 +18,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.lrd.inventory.database.DatabaseDelete;
 import com.lrd.inventory.database.DatabaseInsert;
+import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.DatePicker;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
+import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.ProductModel;
 import com.lrd.inventory.model.PurchaseOrderDetailModel;
 import com.lrd.inventory.model.PurchaseOrderModel;
@@ -31,8 +35,13 @@ import com.lrd.inventory.model.PurchaseOrderModel;
 /**
  * @author dharmendra singh
  */
-public class PurchaseOrder extends JFrame implements ActionListener,
-		ItemListener, KeyListener, ListSelectionListener, FocusListener {
+public class PurchaseOrder extends JFrame
+		implements
+			ActionListener,
+			ItemListener,
+			KeyListener,
+			ListSelectionListener,
+			FocusListener {
 
 	/**
 	 * 
@@ -437,6 +446,7 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 					panel3.add(button4);
 					button4.setBounds(550, 500, 100, 30);
 					button4.addActionListener(this);
+					button4.setEnabled(false);
 
 					// ---- button5 ----
 					button5.setText("Clear All");
@@ -542,7 +552,7 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 					button13.setBounds(600, 235, 100, 30);
 					button13.addActionListener(this);
 
-					// ---- button13 ----
+					// ---- button16 ----
 					button16.setText("Set Completed");
 					panel4.add(button16);
 					button16.setBounds(800, 235, 100, 30);
@@ -596,8 +606,8 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 			comboBox5.addItem(name);
 		}
 	}
-	
-	private void orderId(){
+
+	private void orderId() {
 		int id = tableid.getNewPurchaseOrderId();
 		textField1.setText(String.valueOf(id));
 	}
@@ -611,30 +621,30 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 			}
 			if (event.getSource() == comboBox4) {
 				switch (comboBox4.getSelectedIndex()) {
-				case 1:
-					button14.setEnabled(true);
-					button15.setEnabled(true);
-					textField9.setEnabled(false);
-					textField10.setEnabled(false);
-					break;
-				case 2:
-					button14.setEnabled(false);
-					button15.setEnabled(false);
-					textField9.setEnabled(true);
-					textField10.setEnabled(false);
-					break;
-				case 3:
-					button14.setEnabled(false);
-					button15.setEnabled(false);
-					textField9.setEnabled(false);
-					textField10.setEnabled(true);
-					break;
-				case 0:
-				default:
-					button14.setEnabled(false);
-					button15.setEnabled(false);
-					textField9.setEnabled(false);
-					textField10.setEnabled(false);
+					case 1 :
+						button14.setEnabled(true);
+						button15.setEnabled(true);
+						textField9.setEnabled(false);
+						textField10.setEnabled(false);
+						break;
+					case 2 :
+						button14.setEnabled(false);
+						button15.setEnabled(false);
+						textField9.setEnabled(true);
+						textField10.setEnabled(false);
+						break;
+					case 3 :
+						button14.setEnabled(false);
+						button15.setEnabled(false);
+						textField9.setEnabled(false);
+						textField10.setEnabled(true);
+						break;
+					case 0 :
+					default :
+						button14.setEnabled(false);
+						button15.setEnabled(false);
+						textField9.setEnabled(false);
+						textField10.setEnabled(false);
 
 				}
 			}
@@ -651,10 +661,10 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 		// / inserting new rows to the table
 		int i = 1;
 		for (PurchaseOrderDetailModel purchaseOrderDetail : purchaseOrderDetailList) {
-			tableModel1.addRow(new Object[] { i,
+			tableModel1.addRow(new Object[]{i,
 					purchaseOrderDetail.getProductName(),
 					purchaseOrderDetail.getUnit(),
-					purchaseOrderDetail.getQuantity() });
+					purchaseOrderDetail.getQuantity()});
 			label12.setText(String.valueOf(i));
 			i++;
 		}
@@ -669,12 +679,13 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 
 		// / inserting new rows to the table
 		for (PurchaseOrderModel purchaseOrder : purchaseOrderList) {
-			tableModel2.addRow(new Object[] { purchaseOrder.getOrderId(),
-					purchaseOrder.getSupplierName(),
-					purchaseOrder.getOrderDate(),
-					purchaseOrder.getExpectedDate(),
-					purchaseOrder.getTotalProduct(),
-					purchaseOrder.getStatus() });
+			tableModel2
+					.addRow(new Object[]{purchaseOrder.getOrderId(),
+							purchaseOrder.getSupplierName(),
+							purchaseOrder.getOrderDate(),
+							purchaseOrder.getExpectedDate(),
+							purchaseOrder.getTotalProduct(),
+							purchaseOrder.getStatus()});
 		}
 
 	}
@@ -736,21 +747,59 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 
 		// //end button of tabbed pane first
 		if (event.getSource() == button1) {
-			// printPurchaseOrder();
-			savePurchaseOrder();
+
+			if (valid.isEmpty(textField3.getText())) {
+				new ValidationMSG(this, "Please Select order Date");
+			} else if (valid.isEmpty(textField4.getText())) {
+				new ValidationMSG(this, "Please Select Excepted Date");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (itemCount <= 0) {
+				new ValidationMSG(this, "Please Add Some element to the table");
+			} else {
+				// printPurchaseOrder();
+				savePurchaseOrder();
+			}
 		}
 		if (event.getSource() == button2) {
-			savePurchaseOrder();
+			if (valid.isEmpty(textField3.getText())) {
+				new ValidationMSG(this, "Please Select order Date");
+			} else if (valid.isEmpty(textField4.getText())) {
+				new ValidationMSG(this, "Please Select Excepted Date");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (itemCount <= 0) {
+				new ValidationMSG(this, "Please Add Some element to the table");
+			} else {
+				savePurchaseOrder();
+			}
 		}
 		if (event.getSource() == button3) {
-			// savePurchaseOrderAsPdf();
-			savePurchaseOrder();
+			if (valid.isEmpty(textField3.getText())) {
+				new ValidationMSG(this, "Please Select order Date");
+			} else if (valid.isEmpty(textField4.getText())) {
+				new ValidationMSG(this, "Please Select Excepted Date");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (comboBox5.getSelectedIndex() < 1) {
+				new ValidationMSG(this, "Please Select Supplier Name");
+			} else if (itemCount <= 0) {
+				new ValidationMSG(this, "Please Add Some element to the table");
+			} else {
+				// savePurchaseOrderAsPdf();
+				savePurchaseOrder();
+			}
 		}
 		if (event.getSource() == button4) {
 
 		}
 		if (event.getSource() == button5) {
-
+			resetAll();
+			
 		}
 
 		// /button of tabbed pane second
@@ -761,12 +810,31 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 			deletePurchaseOrder();
 		}
 		if (event.getSource() == button13) {
-
+			textField7.setText("");
+			textField8.setText("");
+			textField9.setText("");
+			textField10.setText("");
 		}
 		if (event.getSource() == button16) {
-			changeStatus("completed");
+			if (table2.getSelectedRowCount() != 1) {
+				new ValidationMSG(this,
+						"Please Select a row from table then click");
+			} else {
+				changeStatus("completed");
+				loadTableData2(purchaseOrderList);
+			}
 		}
 
+	}
+	private void resetAll() {
+		// TODO Auto-generated method stub
+		textField3.setText("");
+		textField4.setText("");
+		comboBox5.setSelectedIndex(0);
+		comboBox3.setSelectedIndex(0);
+		itemCount=0;
+		tempProductCode=null;
+		purchaseOrderDetailList = new ArrayList<>();
 	}
 
 	private void setPurchaseOrderModel() {
@@ -787,40 +855,60 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 	}
 
 	private void savePurchaseOrder() {
-		if (comboBox5.getSelectedIndex() > 0) {
-			setPurchaseOrderModel();
-			int orderId = dbinsert.insertPurchaseOrder(purchaseOrderModel);
-			System.out.println(orderId);
-			for (PurchaseOrderDetailModel purchaseOrderDetailModel : purchaseOrderDetailList) {
-				purchaseOrderDetailModel.setOrderId(orderId);
-				dbinsert.insertPurchaseOrderDetail(purchaseOrderDetailModel);
-			}
-			purchaseOrderDetailList = new ArrayList<>();
-			loadTableData();
-			textField5.requestFocus();
+
+		setPurchaseOrderModel();
+		int orderId = dbinsert.insertPurchaseOrder(purchaseOrderModel);
+		System.out.println(orderId);
+		for (PurchaseOrderDetailModel purchaseOrderDetailModel : purchaseOrderDetailList) {
+			purchaseOrderDetailModel.setOrderId(orderId);
+			dbinsert.insertPurchaseOrderDetail(purchaseOrderDetailModel);
 		}
+		purchaseOrderDetailList = new ArrayList<>();
+		loadTableData();
+		textField5.requestFocus();
+
 	}
 
 	private void addProduct() {
 		// /add product to purchseOrderDetail
-		PurchaseOrderDetailModel purchaseOrderDetail = new PurchaseOrderDetailModel();
+		boolean status = true;
 
-		purchaseOrderDetail.setOrederDeatilId(0);
-		purchaseOrderDetail.setOrderId(0);
-		purchaseOrderDetail.setProductCode(tempProductCode);
-		purchaseOrderDetail.setProductName(textField5.getText());
-		purchaseOrderDetail.setUnit(comboBox2.getSelectedItem().toString());
-		purchaseOrderDetail
-				.setQuantity(Double.parseDouble(textField6.getText()));
+		if (valid.isEmpty(tempProductCode)) {
+			status = false;
+			new ValidationMSG(this, "please select product name from list");
+		} else if (valid.isEmpty(textField5.getText())) {
+			status = false;
+			new ValidationMSG(this, "please insert product name");
+		} else if (comboBox2.getSelectedIndex() < 0) {
+			status = false;
+			new ValidationMSG(this, "please select Unit");
+		} else if (valid.isEmpty(textField6.getText())) {
+			status = false;
+			new ValidationMSG(this, "please insert product Quantity");
+		}
 
-		purchaseOrderDetailList.add(purchaseOrderDetail);
+		if (status) {
+			PurchaseOrderDetailModel purchaseOrderDetail = new PurchaseOrderDetailModel();
+
+			purchaseOrderDetail.setOrederDeatilId(0);
+			purchaseOrderDetail.setOrderId(0);
+			purchaseOrderDetail.setProductCode(tempProductCode);
+			purchaseOrderDetail.setProductName(textField5.getText());
+			purchaseOrderDetail.setUnit(comboBox2.getSelectedItem().toString());
+			purchaseOrderDetail.setQuantity(Double.parseDouble(textField6
+					.getText()));
+			tempProductCode = null;
+			purchaseOrderDetailList.add(purchaseOrderDetail);
+		}
 
 	}
-
 	private void DeleteProduct() {
 		if (table1.getSelectedRow() >= 0) {
-			System.out.println("aa gaya");
-			purchaseOrderDetailList.remove(table1.getSelectedRow());
+			if (new PromptDailog().getUserResponse()) {
+				purchaseOrderDetailList.remove(table1.getSelectedRow());
+			}
+		} else {
+			new ValidationMSG(this, "please select a row from table");
 		}
 	}
 
@@ -834,30 +922,58 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 
 	private void searchPurchaseOrder() {
 		switch (comboBox4.getSelectedIndex()) {
-		case 1:
-			String startDate = textField7.getText();
-			String endDate = textField8.getText();
-			purchaseOrderList = dbValue.getPurchaseOrder(startDate, endDate);
-			break;
-		case 2:
-			purchaseOrderList = dbValue.getPurchaseOrder(Integer
-					.parseInt(textField9.getText()));
-			break;
-		case 3:
-			purchaseOrderList = dbValue.getPurchaseOrder(textField10.getText());
-			break;
-		default:
+			case 1 :
+				if (valid.isEmpty(textField7.getText())) {
+					new ValidationMSG(this, "Please Select from date");
+				} else if (valid.isEmpty(textField8.getText())) {
+					new ValidationMSG(this, "Please Select to date");
+				} else {
+					String startDate = textField7.getText();
+					String endDate = textField8.getText();
+					purchaseOrderList = dbValue.getPurchaseOrder(startDate,
+							endDate);
+				}
+				break;
+			case 2 :
+				if (valid.isEmpty(textField9.getText())) {
+					new ValidationMSG(this, "Please Insert Order No");
+				} else {
+					purchaseOrderList = dbValue.getPurchaseOrder(Integer
+							.parseInt(textField9.getText()));
+				}
+				break;
+			case 3 :
+				if (valid.isEmpty(textField9.getText())) {
+					new ValidationMSG(this, "Please Insert supplier Name");
+				} else {
+					purchaseOrderList = dbValue.getPurchaseOrder(textField10
+							.getText());
+				}
+				break;
+			default :
 
 		}
 		loadTableData2(purchaseOrderList);
 	}
 
 	private void deletePurchaseOrder() {
-
+		boolean response = new PromptDailog().getUserResponse();
+		if (response == true) {
+			int id = purchaseOrderList.get(table2.getSelectedRow())
+					.getOrderId();
+			new DatabaseDelete(connection).deletePurchaseOrder(id);
+		}
 	}
 
 	private void changeStatus(String Status) {
+		boolean response = new PromptDailog().getUserResponse();
+		if (response == true) {
+			int id = purchaseOrderList.get(table2.getSelectedRow())
+					.getOrderId();
+			new DatabaseUpdate(connection).updatePurchaseOrderStatus(id,
+					"Completed");
 
+		}
 	}
 
 	@Override
@@ -891,8 +1007,10 @@ public class PurchaseOrder extends JFrame implements ActionListener,
 				comboBox2.removeAllItems();
 				comboBox2.addItem(productDisplayList.get(
 						list1.getSelectedIndex()).getUnit());
-				textField5.setText(String.valueOf(productDisplayList.get(
-						list1.getSelectedIndex()).getProductName()));
+				textField5.setText(productDisplayList.get(
+						list1.getSelectedIndex()).getProductName());
+				tempProductCode = productDisplayList.get(
+						list1.getSelectedIndex()).getProductName();
 			}
 		}
 		if (event.getSource() == table1.getSelectionModel()) {

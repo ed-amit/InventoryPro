@@ -1,19 +1,15 @@
 package com.lrd.inventory.main;
 
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 public class ValidationMSG {
 
+	
 	JDialog dialog;
 	JButton button ;
 	JLabel label ;
@@ -25,7 +21,8 @@ public class ValidationMSG {
 	 */
 	public ValidationMSG(JFrame parent , String Msg) {
 		// TODO Auto-generated constructor stub
-		String str=formatMsg(Msg);
+		JDialog.setDefaultLookAndFeelDecorated(true);
+		/*String str=formatMsg(Msg);
 		
 		
 		dialog = new JDialog();
@@ -68,10 +65,12 @@ public class ValidationMSG {
 		dialog.setLocationRelativeTo(parent);
 		dialog.pack();
 		dialog.setSize(320, button.getY()+70);
-		dialog.setVisible(true);
+		dialog.setVisible(true);*/
+		JOptionPane.showMessageDialog (parent, Msg);
+		
 	}
 
-	private String formatMsg(String msg) {
+	/*private String formatMsg(String msg) {
 		// TODO Auto-generated method stub
 		String finalStr="<html>";
 		boolean linebreak;
@@ -94,6 +93,8 @@ public class ValidationMSG {
        
 		finalStr+="</html>";
 		return finalStr;
-	}
+		
+
+	}*/
 
 }

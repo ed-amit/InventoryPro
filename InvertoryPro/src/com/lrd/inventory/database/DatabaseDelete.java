@@ -136,4 +136,18 @@ public class DatabaseDelete {
 		return false;
 	}
 
+
+
+	public boolean deletePurchaseOrder(int orderId) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("delete from purchase_order where order_id="+orderId);
+			return true;	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+		
+	}
+
 }

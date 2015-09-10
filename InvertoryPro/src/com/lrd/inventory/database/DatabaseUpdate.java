@@ -1,6 +1,6 @@
 package com.lrd.inventory.database;
 
-import java.security.IdentityScope;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +12,6 @@ import com.lrd.inventory.model.CategoryModel;
 import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.DistributorModel;
 import com.lrd.inventory.model.ProductModel;
-import com.lrd.inventory.model.PurchaseBillModel;
 import com.lrd.inventory.model.RackModel;
 
 public class DatabaseUpdate {
@@ -166,6 +165,15 @@ public class DatabaseUpdate {
 
 		try {
 			stmt.executeUpdate("update purchase_bill set paid_amount=paid_amount+"+paymentAmount+" where bill_id="+PurchaseBillId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updatePurchaseOrderStatus(int orderId, String status) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("update purchase_order set status='"+status+"' where order_id="+orderId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

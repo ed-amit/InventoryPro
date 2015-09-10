@@ -3,28 +3,28 @@ package com.lrd.inventory.model;
 public class BillModel {
 	
 	
-	private int bill_id;
-	private int counter;
-	private int firm_id;
-	private int challan_no;
-	private int store_id;
-	private int year_id;
-	private int home_delivery;
+	protected int bill_id;
+	protected int counter;
+	protected int firm_id;
+	protected int challan_no;
+	protected int store_id;
+	protected int year_id;
+	protected int home_delivery;
 	
-	private double discount;
-	private double total_amt;
-	private double bill_vat_percent;
-	private double bill_vat_amt;
+	protected double discount;
+	protected double total_amt;
+	protected double bill_vat_percent;
+	protected double bill_vat_amt;
 	
-	private String bill_no;
-	private String bill_date;
-	private String customer_name;
-	private String customer_address;
-	private String customer_type;
-	private String mobile_no;
-	private String narration;
-	private String username;
-	private String prefix;
+	protected String bill_no;
+	protected String bill_date;
+	protected String customer_name;
+	protected String customer_address;
+	protected String customer_type;
+	protected String mobile_no;
+	protected String narration;
+	protected String username;
+	protected String prefix;
 	
 	
 	
