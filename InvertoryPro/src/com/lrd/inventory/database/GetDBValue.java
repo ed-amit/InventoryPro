@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
 import com.lrd.inventory.model.BrandModel;
 import com.lrd.inventory.model.CategoryModel;
 import com.lrd.inventory.model.ChallanDetailModel;
@@ -169,9 +169,9 @@ public class GetDBValue {
 			ResultSet result = stmt
 					.executeQuery("select * from products where STORE_ID="
 							+ storeId);
-			ProductModel product;
+			
 			while (result.next()) {
-				product = new ProductModel();
+				ProductModel product = new ProductModel();
 				product.setProductId(result.getInt("PRODUCT_ID"));
 				product.setProductCode(result.getString("PRODUCT_CODE"));
 				product.setProductName(result.getString("PRODUCT_NAME"));
@@ -272,16 +272,16 @@ public class GetDBValue {
 		return null;
 	}
 
-	public ArrayList<BillModel> getDueBillDetail(int storeId) {
+	public ArrayList<SalesBillModel> getDueBillDetail(int storeId) {
 		try {
-			ArrayList<BillModel> billList = new ArrayList<>();
+			ArrayList<SalesBillModel> billList = new ArrayList<>();
 			stmt.executeUpdate("CREATE OR REPLACE VIEW DUE_PAYMENT AS SELECT BILL_ID , SUM(PAID_AMOUNT) from bill_payment_details GROUP BY BILL_ID");
 			ResultSet result = stmt
 					.executeQuery("SELECT * FROM bill,`due_payment` WHERE GRAND_TOTAL>`sum(paid_amount)` AND bill.bill_id=due_payment.bill_id");
 
-			BillModel bill;
+			SalesBillModel bill;
 			while (result.next()) {
-				bill = new BillModel();
+				bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));
@@ -313,13 +313,13 @@ public class GetDBValue {
 		return null;
 	}
 
-	public ArrayList<BillDetailModel> getBillProductDetail(int billId) {
-		ArrayList<BillDetailModel> billDetailList = new ArrayList<>();
+	public ArrayList<SalesBillDetailModel> getBillProductDetail(int billId) {
+		ArrayList<SalesBillDetailModel> billDetailList = new ArrayList<>();
 		String query = "select * from bill_details where bill_id=" + billId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillDetailModel billDetailModel = new BillDetailModel();
+				SalesBillDetailModel billDetailModel = new SalesBillDetailModel();
 				billDetailModel.setBillDetailId(result
 						.getInt("bill_details_id"));
 				billDetailModel.setBillId(result.getInt("bill_id"));
@@ -359,13 +359,13 @@ public class GetDBValue {
 		return billDetailList;
 	}
 
-	public ArrayList<BillModel> getAllBill(int storeId) {
-		ArrayList<BillModel> billList = new ArrayList<>();
+	public ArrayList<SalesBillModel> getAllBill(int storeId) {
+		ArrayList<SalesBillModel> billList = new ArrayList<>();
 		String query = "select * from bill where store_id=" + storeId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillModel bill = new BillModel();
+				SalesBillModel bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));
@@ -396,9 +396,9 @@ public class GetDBValue {
 		return billList;
 	}
 
-	public ArrayList<BillModel> getAllBill(String arg0, String argType,
+	public ArrayList<SalesBillModel> getAllBill(String arg0, String argType,
 			int storeId) {
-		ArrayList<BillModel> billList = new ArrayList<>();
+		ArrayList<SalesBillModel> billList = new ArrayList<>();
 		String query = "";
 		if (argType.equals("billId"))
 			query = "select * from bill where store_id=" + storeId
@@ -411,7 +411,7 @@ public class GetDBValue {
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillModel bill = new BillModel();
+				SalesBillModel bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));
@@ -442,16 +442,16 @@ public class GetDBValue {
 		return billList;
 	}
 
-	public ArrayList<BillModel> getAllBill(int storeId, String fromDate,
+	public ArrayList<SalesBillModel> getAllBill(int storeId, String fromDate,
 			String toDate) {
-		ArrayList<BillModel> billList = new ArrayList<>();
+		ArrayList<SalesBillModel> billList = new ArrayList<>();
 		String query = "select * from bill where store_id=" + storeId
 				+ " AND bill_date BETWEEN '" + fromDate + "' AND '" + toDate
 				+ "';";
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillModel bill = new BillModel();
+				SalesBillModel bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));
@@ -482,14 +482,14 @@ public class GetDBValue {
 		return billList;
 	}
 
-	public ArrayList<BillModel> getGeneralCustomerBill(int storeId) {
-		ArrayList<BillModel> billList = new ArrayList<>();
+	public ArrayList<SalesBillModel> getGeneralCustomerBill(int storeId) {
+		ArrayList<SalesBillModel> billList = new ArrayList<>();
 		String query = "select * from bill where store_id=" + storeId
 				+ " AND customer_type='General Customer'";
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillModel bill = new BillModel();
+				SalesBillModel bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));
@@ -520,16 +520,16 @@ public class GetDBValue {
 		return billList;
 	}
 
-	public ArrayList<BillModel> getCreditorBill(String creditorName,
+	public ArrayList<SalesBillModel> getCreditorBill(String creditorName,
 			String contact, int storeId) {
-		ArrayList<BillModel> billList = new ArrayList<>();
+		ArrayList<SalesBillModel> billList = new ArrayList<>();
 		String query = "select * from bill where store_id=" + storeId
 				+ " AND customer_type='Credit Customer' AND customer_name='"
 				+ creditorName + "' AND mobile_number='" + contact + "'";
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
-				BillModel bill = new BillModel();
+				SalesBillModel bill = new SalesBillModel();
 
 				bill.setBillId(result.getInt("bill_id"));
 				bill.setCounter(result.getInt("counter"));

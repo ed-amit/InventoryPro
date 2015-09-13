@@ -22,7 +22,7 @@ import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.DatePicker;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
-import com.lrd.inventory.model.BillModel;
+import com.lrd.inventory.model.SalesBillModel;
 
 
 /**
@@ -71,7 +71,7 @@ public class BillBookDiscount extends JFrame
 
 	
 
-	ArrayList<BillModel> saleBillList = null;
+	ArrayList<SalesBillModel> saleBillList = null;
 
 	public BillBookDiscount(Connection connection) {
 		this.connection = connection;
@@ -380,7 +380,7 @@ public class BillBookDiscount extends JFrame
 
 	}
 
-	private void loadTable1Data(ArrayList<BillModel> tempSaleBillList) {
+	private void loadTable1Data(ArrayList<SalesBillModel> tempSaleBillList) {
 		// TODO Auto-generated method stub
 		while (tableModel1.getRowCount() > 0) {
 			tableModel1.removeRow(0);
@@ -388,7 +388,7 @@ public class BillBookDiscount extends JFrame
 		//System.out.println(tempSaleBillList.size());
 		double totalAmt=0,totalDiscount=0;
 		int i = 1;
-		for (BillModel saleBill : tempSaleBillList) {
+		for (SalesBillModel saleBill : tempSaleBillList) {
 			tableModel1.addRow(new Object[]{i, saleBill.getBillNo(),
 					saleBill.getBillDate(), saleBill.getCustomerName(),
 					saleBill.getDiscount(), saleBill.getTotalAmt()});

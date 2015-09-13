@@ -21,12 +21,12 @@ import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.Validate;
-import com.lrd.inventory.model.BillModel;
-import com.lrd.inventory.model.BillOtherChargesModel;
-import com.lrd.inventory.model.BillPaymentModel;
+import com.lrd.inventory.model.SalesBillModel;
+import com.lrd.inventory.model.SalesBillOtherChargesModel;
+import com.lrd.inventory.model.SalesBillPaymentModel;
 import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.ProductModel;
-import com.lrd.inventory.model.BillDetailModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
 
 /**
  * @author dharmendra singh
@@ -190,12 +190,12 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 	ArrayList<ProductModel> productList = null;
 	ArrayList<ProductModel> productDisplayList = null;
 
-	BillModel billModel = null;
-	BillDetailModel billDetailModel = null;
-	ArrayList<BillDetailModel> billDetailList = null;
-	BillOtherChargesModel billOtherChargesModel = null;
-	ArrayList <BillOtherChargesModel> billOtherChargesList = null;
-	BillPaymentModel billPaymentModel = null;
+	SalesBillModel billModel = null;
+	SalesBillDetailModel billDetailModel = null;
+	ArrayList<SalesBillDetailModel> billDetailList = null;
+	SalesBillOtherChargesModel billOtherChargesModel = null;
+	ArrayList <SalesBillOtherChargesModel> billOtherChargesList = null;
+	SalesBillPaymentModel billPaymentModel = null;
 	ArrayList<CreditorModel> creditors;
 
 	int itemCount=0;
@@ -215,12 +215,12 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 		valid = new Validate();
 		dbValue = new GetDBValue(connection);
 		product =new ProductModel();
-		billModel = new BillModel();
+		billModel = new SalesBillModel();
 		//billDetailModel = new BillDetailModel();
 		billDetailList = new ArrayList<>();
-		billOtherChargesModel = new BillOtherChargesModel();
+		billOtherChargesModel = new SalesBillOtherChargesModel();
 		billOtherChargesList = new ArrayList<>();
-		billPaymentModel = new BillPaymentModel();
+		billPaymentModel = new SalesBillPaymentModel();
 		initComponents();
 		storeName();
 		productList = dbValue.getProductDetail(tableid.getStoreId(comboBox2.getSelectedItem().toString()));
@@ -1003,7 +1003,7 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 		ArrayList<String> storeNames = (ArrayList<String>) fieldName
 				.getAllStoreName();
 		for (String name : storeNames) {
-			comboBox3.addItem(name);
+			comboBox2.addItem(name);
 		}
 	}
 
@@ -1163,7 +1163,7 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 	/// this method is used for add product to the bill
 	private void saveBill(){
 
-		billDetailModel=new BillDetailModel();
+		billDetailModel=new SalesBillDetailModel();
 
 		double mrp,vatPercent,vatAmt,discountPer,discountAmt,rate;
 
@@ -1216,7 +1216,7 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 	private void calculateNetAmount(double rate,String operation){
 		if(operation.equals("add")){
 			netAmount+=rate;
-			System.out.println("netamt = "+netAmount);
+			//////System.out.println("netamt = "+netAmount);
 			textField1.setText(String.format("%.2f",netAmount));
 
 			double vatper = Double.parseDouble(comboBox1.getSelectedItem().toString());
@@ -1463,7 +1463,7 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 
 		/// inserting new rows to the table
 		int i=1;
-		for(BillDetailModel billDetail : billDetailList){ 
+		for(SalesBillDetailModel billDetail : billDetailList){ 
 			tableModel1.addRow(new Object[] {i,billDetail.getProductCode(),billDetail.getProductName(),
 					billDetail.getProductQuantity(),billDetail.getProductUnit(),
 					billDetail.getMrp()});
@@ -1540,7 +1540,7 @@ public class SalesBill extends JFrame implements ItemListener , KeyListener ,Act
 
 
 		// for saving saling product details and deducting product quantity from database
-		for(BillDetailModel tempBillDetail : billDetailList){
+		for(SalesBillDetailModel tempBillDetail : billDetailList){
 			tempBillDetail.setBillId(bill_id);
 			dbinsert.insertBillDetail(tempBillDetail);
 			for(ProductModel tempProduct : productList){

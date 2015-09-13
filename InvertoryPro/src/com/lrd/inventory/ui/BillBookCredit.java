@@ -20,8 +20,8 @@ import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.ValidationMSG;
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
 import com.lrd.inventory.model.CreditorModel;
 
 /**
@@ -76,8 +76,8 @@ public class BillBookCredit extends JFrame
 	GetDBValue dbvalue = null;
 	TableId tableid = null;
 	ArrayList<CreditorModel> creditorList = null;
-	ArrayList<BillModel> billList = null;
-	ArrayList<BillDetailModel> billDetailList = null;
+	ArrayList<SalesBillModel> billList = null;
+	ArrayList<SalesBillDetailModel> billDetailList = null;
 
 	private static final long serialVersionUID = 1L;
 	public BillBookCredit(Connection connection) {
@@ -414,7 +414,7 @@ public class BillBookCredit extends JFrame
 
 		// / inserting new rows to the table
 		int i = 1;
-		for (BillModel bill : billList) {
+		for (SalesBillModel bill : billList) {
 			tableModel2.addRow(new Object[]{i, bill.getBillNo(),
 					bill.getBillDate(), bill.getTotalAmt()});
 			i++;
@@ -428,7 +428,7 @@ public class BillBookCredit extends JFrame
 		}
 		// / inserting new rows to the table
 		int i = 1;
-		for (BillDetailModel tempbilldetail : billDetailList) {
+		for (SalesBillDetailModel tempbilldetail : billDetailList) {
 			double subtotal = tempbilldetail.getProductQuantity()
 					* tempbilldetail.getProductRate();
 			tableModel3.addRow(new Object[]{i, tempbilldetail.getProductName(),

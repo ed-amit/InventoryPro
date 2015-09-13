@@ -1,6 +1,6 @@
 package com.lrd.inventory.model;
 
-public class BillOtherChargesModel {
+public class SalesBillOtherChargesModel {
 
 	int id;
 	int bill_id;
@@ -11,7 +11,7 @@ public class BillOtherChargesModel {
 	String charge_name;
 	
 	
-	public BillOtherChargesModel() {
+	public SalesBillOtherChargesModel() {
 		setDefault();
 	}
 	

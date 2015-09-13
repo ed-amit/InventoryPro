@@ -5,10 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
-import com.lrd.inventory.model.BillPaymentModel;
-import com.lrd.inventory.model.BillReturnModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
+import com.lrd.inventory.model.SalesBillPaymentModel;
+import com.lrd.inventory.model.SalesBillReturnModel;
 import com.lrd.inventory.model.BrandModel;
 import com.lrd.inventory.model.CategoryModel;
 import com.lrd.inventory.model.CreditorModel;
@@ -169,7 +169,7 @@ public class DatabaseInsert {
 	 * 
 	 *         this function is used to insert billDetailModel into db
 	 */
-	public int insertBill(BillModel bill) {
+	public int insertBill(SalesBillModel bill) {
 		int id = 0;
 		String query = "insert into bill values (null , '" + bill.getBillDate()
 				+ "' , '" + bill.getBillNo() + "' , '"
@@ -199,7 +199,7 @@ public class DatabaseInsert {
 	 * @param billDetail
 	 *            this function is used to insert billDetailModel into db
 	 */
-	public void insertBillDetail(BillDetailModel billDetail) {
+	public void insertBillDetail(SalesBillDetailModel billDetail) {
 		String query = "insert into bill_details values (null , "
 				+ billDetail.getBillId() + " , '" + billDetail.getBatchNo()
 				+ "' , '" + billDetail.getCategoryName() + "', '"
@@ -222,7 +222,7 @@ public class DatabaseInsert {
 		}
 	}
 
-	public void insertBillPayment(BillPaymentModel billPayment) {
+	public void insertBillPayment(SalesBillPaymentModel billPayment) {
 		String query = "insert into bill_payment_details values(null, '"
 				+ billPayment.getBankName() + "', '" + billPayment.getCode()
 				+ "', '" + billPayment.getDescription() + "', "
@@ -284,7 +284,7 @@ public class DatabaseInsert {
 	/**
 	 * @param billReturn
 	 */
-	public void insertBillReturn(BillReturnModel billReturn) {
+	public void insertBillReturn(SalesBillReturnModel billReturn) {
 		String query = "insert into sale_return_details values (null, '"
 				+ billReturn.getBillDate() + "', "
 				+ billReturn.getBillDetailId() + " , '"

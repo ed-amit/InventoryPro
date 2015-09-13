@@ -1,6 +1,6 @@
 package com.lrd.inventory.model;
 
-public class BillReturnModel extends BillDetailModel {
+public class SalesBillReturnModel extends SalesBillDetailModel {
 	
 	private int return_id;
 	private String bill_date;
@@ -16,7 +16,7 @@ public class BillReturnModel extends BillDetailModel {
 	public static final String REPLACE = "REPLACE";
 	
 
-	public BillReturnModel() {
+	public SalesBillReturnModel() {
 		setDefault();
 	}
 	

@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class DatabaseConnection {
 
-	static Connection connection = null;
+	Connection connection = null;
 
 	public DatabaseConnection() {
 

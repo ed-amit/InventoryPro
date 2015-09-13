@@ -18,14 +18,17 @@ import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.lrd.inventory.database.DatabaseDelete;
 import com.lrd.inventory.database.DatabaseInsert;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
-import com.lrd.inventory.model.BillPaymentModel;
+import com.lrd.inventory.main.ValidationMSG;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
+import com.lrd.inventory.model.SalesBillPaymentModel;
 
 /**
  * @author dharmendra singh
@@ -79,15 +82,15 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 
 	Connection connection =null;
 	SpecificFieldValue fieldName = null;
-	BillDetailModel billDetail = null;
+	SalesBillDetailModel billDetail = null;
 	DatabaseInsert dbinsert = null;
 	GetDBValue dbvalue = null;
 	TableId tableid = null;
 	Validate valid = null;
 
-	ArrayList<BillModel> billList = null;
-	ArrayList<BillDetailModel> billDetailList = null;
-	ArrayList<BillModel> billTempList = null;
+	ArrayList<SalesBillModel> billList = null;
+	ArrayList<SalesBillDetailModel> billDetailList = null;
+	ArrayList<SalesBillModel> billTempList = null;
 
 
 	public DueBillPayment(Connection connection) {
@@ -344,6 +347,8 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 				button5.setText("Delete");
 				panel4.add(button5);
 				button5.setBounds(195, 470, 100, 30);
+				button5.addActionListener(this);
+				button5.setEnabled(false);
 
 				//---- label13 ----
 				label13.setText("Total Bills / Challan Of Customer");
@@ -381,7 +386,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 
 	
 	
-	private void loadTable1Data(ArrayList<BillDetailModel> billdetails){
+	private void loadTable1Data(ArrayList<SalesBillDetailModel> billdetails){
 		// for removing all existing rows from table
 				while (tableModel1.getRowCount()>0) {
 					tableModel1.removeRow(0);
@@ -389,7 +394,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 
 				/// inserting new rows to the table
 
-				for(BillDetailModel tempbilldetail : billdetails){
+				for(SalesBillDetailModel tempbilldetail : billdetails){
 					double subtotal=tempbilldetail.getProductQuantity()*tempbilldetail.getProductRate();
 					tableModel1.addRow(new Object[] {tempbilldetail.getProductCode(),tempbilldetail.getProductName(),
 							tempbilldetail.getProductQuantity(),tempbilldetail.getProductUnit(),
@@ -403,7 +408,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 	
 	
 	//for loading table2 data
-	private void loadTable2Data(ArrayList<BillModel> bills){
+	private void loadTable2Data(ArrayList<SalesBillModel> bills){
 		// for removing all existing rows from table
 		while (tableModel2.getRowCount()>0) {
 			tableModel2.removeRow(0);
@@ -411,7 +416,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 
 		/// inserting new rows to the table
 
-		for(BillModel bill : bills){ 
+		for(SalesBillModel bill : bills){ 
 			tableModel2.addRow(new Object[] {bill.getCustomerName(),bill.getBillNo(),bill.getBillDate()});
 		}
 	}
@@ -444,20 +449,20 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 		String tempStr = textField7.getText();
 		if(!(valid.isEmpty(tempStr))){
 			if(comboBox2.getSelectedItem().toString()=="Name"){
-				for(BillModel tempbill : billList){
+				for(SalesBillModel tempbill : billList){
 					if(tempbill.getCustomerName().contains(tempStr)){
 						billTempList.add(tempbill);
 					}
 				}
 			}else if(comboBox2.getSelectedItem().toString()=="Bill Id"){
 				tempStr=tempStr.toUpperCase();
-				for(BillModel tempbill : billList){
+				for(SalesBillModel tempbill : billList){
 					if(tempbill.getBillNo().contains(tempStr)){
 						billTempList.add(tempbill);
 					}
 				}
 			}else if(comboBox2.getSelectedItem().toString()=="Date"){
-				for(BillModel tempbill : billList){
+				for(SalesBillModel tempbill : billList){
 					if(tempbill.getBillDate().contains(tempStr)){
 						billTempList.add(tempbill);
 					}
@@ -470,7 +475,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 	
 
 	public void insertBillPaymentModel(){
-		BillPaymentModel billPay = new BillPaymentModel();
+		SalesBillPaymentModel billPay = new SalesBillPaymentModel();
 		billPay.setBillId(billId);
 		billPay.setPaidAmt(Double.parseDouble(textField6.getText()));
 		billPay.setPaymentDate(String.valueOf(Calendar.getInstance().get(Calendar.DATE))+
@@ -530,7 +535,7 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 			double totalAmount = Double.parseDouble(textField4.getText());
 			double paidAmount = Double.parseDouble(textField5.getText());
 			double remAmount = Double.parseDouble(textField6.getText());
-			for(BillModel billModel : billList){
+			for(SalesBillModel billModel : billList){
 				if(billModel.getBillId()==billId && 
 						(totalAmount-paidAmount)==remAmount){
 					billList.remove(billModel);
@@ -545,6 +550,13 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 			break;
 		case "Close":
 			this.dispose();
+			break;
+		case "Delete":
+			if(table1.getSelectedRowCount()!=1){
+				new ValidationMSG(this, "Please Select A Row from Table Then Click");
+			}else if(new PromptDailog().getUserResponse()){
+				///do some code to delete bill and bill details
+			}
 			break;
 		default:
 		}

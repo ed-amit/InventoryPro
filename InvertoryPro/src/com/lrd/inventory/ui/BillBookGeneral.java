@@ -24,8 +24,8 @@ import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
 
 /**
  * @author dharmendra singh
@@ -114,10 +114,10 @@ public class BillBookGeneral extends JFrame
 	TableId tableid = null;
 	Validate valid = null;
 
-	ArrayList<BillModel> billList = new ArrayList<>();
-	ArrayList<BillModel> tempBillList = new ArrayList<>();
-	ArrayList<BillDetailModel> billDetailList = new ArrayList<>();
-	BillDetailModel billDetail = null;
+	ArrayList<SalesBillModel> billList = new ArrayList<>();
+	ArrayList<SalesBillModel> tempBillList = new ArrayList<>();
+	ArrayList<SalesBillDetailModel> billDetailList = new ArrayList<>();
+	SalesBillDetailModel billDetail = null;
 
 	public BillBookGeneral(Connection connection) {
 		this.connection = connection;
@@ -560,7 +560,7 @@ public class BillBookGeneral extends JFrame
 	}
 
 	// for loading table1 data
-	private void loadTable1Data(ArrayList<BillModel> bills) {
+	private void loadTable1Data(ArrayList<SalesBillModel> bills) {
 		// for removing all existing rows from table
 		while (tableModel1.getRowCount() > 0) {
 			tableModel1.removeRow(0);
@@ -568,13 +568,13 @@ public class BillBookGeneral extends JFrame
 
 		// / inserting new rows to the table
 
-		for (BillModel bill : bills) {
+		for (SalesBillModel bill : bills) {
 			tableModel1.addRow(new Object[]{bill.getCustomerName(),
 					bill.getBillNo(), bill.getBillDate(), bill.getTotalAmt()});
 		}
 	}
 
-	private void loadTable2Data(ArrayList<BillDetailModel> billdetails) {
+	private void loadTable2Data(ArrayList<SalesBillDetailModel> billdetails) {
 		// for removing all existing rows from table
 		while (tableModel2.getRowCount() > 0) {
 			tableModel2.removeRow(0);
@@ -582,7 +582,7 @@ public class BillBookGeneral extends JFrame
 
 		// / inserting new rows to the table
 
-		for (BillDetailModel tempbilldetail : billdetails) {
+		for (SalesBillDetailModel tempbilldetail : billdetails) {
 			double subtotal = (tempbilldetail.getProductQuantity() * tempbilldetail
 					.getProductRate())
 					+ tempbilldetail.getVatAmt()
@@ -635,7 +635,7 @@ public class BillBookGeneral extends JFrame
 
 		if (!(valid.isEmpty(tempStr))) {
 			if (comboBox2.getSelectedItem().toString() == "Name") {
-				for (BillModel tempbill : billList) {
+				for (SalesBillModel tempbill : billList) {
 					if (tempbill.getCustomerName().contains(tempStr)) {
 
 						tempBillList.add(tempbill);
@@ -643,13 +643,13 @@ public class BillBookGeneral extends JFrame
 				}
 			} else if (comboBox2.getSelectedItem().toString() == "Bill No") {
 				tempStr = tempStr.toUpperCase();
-				for (BillModel tempbill : billList) {
+				for (SalesBillModel tempbill : billList) {
 					if (tempbill.getBillNo().contains(tempStr)) {
 						tempBillList.add(tempbill);
 					}
 				}
 			} else if (comboBox2.getSelectedItem().toString() == "Date") {
-				for (BillModel tempbill : billList) {
+				for (SalesBillModel tempbill : billList) {
 					if (tempbill.getBillDate().contains(tempStr)) {
 						tempBillList.add(tempbill);
 					}
@@ -714,8 +714,8 @@ public class BillBookGeneral extends JFrame
 		}
 
 		if (status) {
-			BillModel bill = billList.get(table1.getSelectedRow());
-			BillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
+			SalesBillModel bill = billList.get(table1.getSelectedRow());
+			SalesBillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
 			double subtotal = (billDetail.getProductQuantity() * billDetail
 					.getProductRate())
 					+ billDetail.getVatAmt()

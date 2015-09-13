@@ -1,6 +1,6 @@
 package com.lrd.inventory.model;
 
-public class BillPaymentModel {
+public class SalesBillPaymentModel {
 	
 	
 	private int payment_id;
@@ -15,7 +15,7 @@ public class BillPaymentModel {
 	
 	
 
-	public BillPaymentModel() {
+	public SalesBillPaymentModel() {
 		setDefault();
 	}
 	

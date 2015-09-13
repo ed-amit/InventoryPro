@@ -3,6 +3,8 @@ package com.lrd.inventory.main;
 //import statements
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Calendar;
+
 import javax.swing.*;
 
 //create class
@@ -11,6 +13,7 @@ public class DatePicker
 	//define variables
       int month = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH);
       int year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+      int dayOfDate = java.util.Calendar.getInstance().get(java.util.Calendar.DATE);
       //create object of JLabel with alignment
       JLabel l = new JLabel("", JLabel.CENTER);
       //define variable
@@ -20,6 +23,8 @@ public class DatePicker
       //create object of JButton
       JButton[] button = new JButton[49];
 
+      public DatePicker(){}
+      
       public DatePicker(JFrame parent)//create constructor 
       {
       	//create object
@@ -138,5 +143,15 @@ public class DatePicker
           cal.set(year, month, Integer.parseInt(day));
           return sdf.format(cal.getTime());
       }
+      
+      public String getCurrentDate(){
+    	  return String.valueOf(year)
+  				+ "-"
+  				+ (String
+  						.valueOf(month + 1))
+  				+ "-"
+  				+ String.valueOf(dayOfDate);
+      }
+      
 }
 

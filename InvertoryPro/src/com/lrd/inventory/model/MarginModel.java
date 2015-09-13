@@ -1,6 +1,6 @@
 package com.lrd.inventory.model;
 
-public class MarginModel extends BillModel {
+public class MarginModel extends SalesBillModel {
 
 	private double productTotalRate;
 	private double margin;

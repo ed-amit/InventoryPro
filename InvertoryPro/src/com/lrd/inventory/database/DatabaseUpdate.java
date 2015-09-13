@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
 import com.lrd.inventory.model.BrandModel;
 import com.lrd.inventory.model.CategoryModel;
 import com.lrd.inventory.model.CreditorModel;
@@ -130,7 +130,7 @@ public class DatabaseUpdate {
 		}
 	}
 
-	public void updateSalesBillAmount(BillModel billModel) {
+	public void updateSalesBillAmount(SalesBillModel billModel) {
 
 		try {
 			stmt.executeUpdate("update bill set discount="
@@ -144,7 +144,7 @@ public class DatabaseUpdate {
 
 	
 	
-	public void updateSalesBillProduct(BillDetailModel billDetail) {
+	public void updateSalesBillProduct(SalesBillDetailModel billDetail) {
 
 		try {
 			stmt.executeUpdate("update distributors set product_quantity="

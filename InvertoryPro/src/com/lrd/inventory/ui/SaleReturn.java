@@ -24,10 +24,12 @@ import com.lrd.inventory.database.DatabaseInsert;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.DatePicker;
 import com.lrd.inventory.main.Validate;
-import com.lrd.inventory.model.BillDetailModel;
-import com.lrd.inventory.model.BillModel;
-import com.lrd.inventory.model.BillReturnModel;
+import com.lrd.inventory.main.ValidationMSG;
+import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.model.SalesBillModel;
+import com.lrd.inventory.model.SalesBillReturnModel;
 import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.ProductModel;
 
@@ -131,16 +133,16 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 	GetDBValue dbvalue = null;
 	Validate valid = null;
 
-	ArrayList<BillModel> billList = null;
-	ArrayList<BillModel> billDisplayList = null;
-	ArrayList<BillDetailModel> billDetailList = null;
+	ArrayList<SalesBillModel> billList = null;
+	ArrayList<SalesBillModel> billDisplayList = null;
+	ArrayList<SalesBillDetailModel> billDetailList = null;
 
 	ArrayList<ProductModel> productList1 = null;
 	ArrayList<ProductModel> productList2 = null;
 	ArrayList<ProductModel> productDisplayList1 = null;
 	ArrayList<ProductModel> productDisplayList2 = null;
 
-	ArrayList<BillReturnModel> billReturnList = null;
+	ArrayList<SalesBillReturnModel> billReturnList = null;
 	ArrayList<CreditorModel> creditors;
 
 	public SaleReturn(Connection connection) {
@@ -542,9 +544,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 					panel4.add(textField12);
 					textField12.setBounds(600, 15, 150, textField12.getPreferredSize().height);
-					textField12.setText(String.valueOf(Calendar.getInstance().get(Calendar.DATE))+
-							"/"+(String.valueOf(Calendar.getInstance().get(Calendar.MONTH)+1))+"/"+
-							String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+					textField12.setText(new DatePicker().getCurrentDate());
 					textField12.setEnabled(false);
 
 
@@ -625,7 +625,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 				billDisplayList = new ArrayList<>();
 				String tempStr = textField1.getText();
 				if(!valid.isEmpty(tempStr)){
-					for(BillModel tempBill : billList){
+					for(SalesBillModel tempBill : billList){
 						if(tempBill.getBillNo().contains(tempStr.toUpperCase())){
 							billDisplayList.add(tempBill);
 						}
@@ -640,7 +640,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 				billDisplayList = new ArrayList<>();
 				String tempStr = textField2.getText();
 				if(!valid.isEmpty(tempStr)){
-					for(BillModel tempBill : billList){
+					for(SalesBillModel tempBill : billList){
 						if(tempBill.getCustomerName().startsWith(tempStr)){
 							billDisplayList.add(tempBill);
 						}
@@ -655,7 +655,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 				billDisplayList = new ArrayList<>();
 				String tempStr = textField3.getText();
 				if(!valid.isEmpty(tempStr)){
-					for(BillModel tempBill : billList){
+					for(SalesBillModel tempBill : billList){
 						if(tempBill.getMobileNo().contains(tempStr)){
 							billDisplayList.add(tempBill);
 						}
@@ -670,7 +670,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 				billDisplayList = new ArrayList<>();
 				String tempStr = textField4.getText();
 				if(!valid.isEmpty(tempStr)){
-					for(BillModel tempBill : billList){
+					for(SalesBillModel tempBill : billList){
 						if(tempBill.getBillDate().contains(tempStr)){
 							billDisplayList.add(tempBill);
 						}
@@ -697,14 +697,25 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 			/// this block is for calculating total amount of product return
 			if(event.getSource()==textField9){
-				String tempStr=textField9.getText();
-				String tempStr2 = textField10.getText();
-				if(!valid.isEmpty(tempStr) && !valid.isEmpty(tempStr2)){
-					double total = Double.parseDouble(textField9.getText()) * Double.parseDouble(textField10.getText());
-					textField11.setText(String.valueOf(total));
-				}else{
-					textField11.setText("");
-				}
+				double tempQuantity= 0;
+				if(!valid.isEmpty(textField9.getText()))
+					tempQuantity=Double.parseDouble(textField9.getText());
+				double tempRate = 0;
+				if(!valid.isEmpty(textField10.getText()))
+					tempRate=Double.parseDouble(textField10.getText());
+				double total=tempRate*tempQuantity;
+				textField11.setText(String.valueOf(total));
+			}
+			
+			if(event.getSource() == textField10){
+				double tempQuantity= 0;
+				if(!valid.isEmpty(textField9.getText()))
+					tempQuantity=Double.parseDouble(textField9.getText());
+				double tempRate = 0;
+				if(!valid.isEmpty(textField10.getText()))
+					tempRate=Double.parseDouble(textField10.getText());
+				double total=tempRate*tempQuantity;
+				textField11.setText(String.valueOf(total));
 			}
 		}
 
@@ -733,31 +744,35 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 	public void actionPerformed(ActionEvent event) {
 
 		// For cilck on add button of bill return
-		if(event.getSource()==button6 && !valid.isEmpty(textField6.getText())){
-			if(Double.parseDouble(textField6.getText()) <= billDetailList.get(table2.getSelectedRow()).getProductQuantity()){
+		if(event.getSource()==button6){
+			if(valid.isEmpty(textField6.getText())){
+				new ValidationMSG(this, "Please Insert Quantity");
+			}else if(Double.parseDouble(textField6.getText()) <= billDetailList.get(table2.getSelectedRow()).getProductQuantity()){
 				setBillReturnModel();
 				loadTable3Data();
 			}else{
-				///Show dialog box
+				new ValidationMSG(this, "Quantity must be less Then bill product Quantity");
 			}
 		}
 
 
 		// for click on replace button of bill return
-		if(event.getSource()==button3 && billReturnList.size()>0){
-			if(table3.getRowCount()>0){
-				for(BillReturnModel billReturn : billReturnList){
-					billReturn.setStatus(BillReturnModel.REPLACE);
+		if(event.getSource()==button3){
+			if(billReturnList.size()>0){
+				for(SalesBillReturnModel billReturn : billReturnList){
+					billReturn.setStatus(SalesBillReturnModel.REPLACE);
 					dbinsert.insertBillReturn(billReturn);
 				}
+			}else{
+				new ValidationMSG(this, "Please Add A Product to the list to Replace");
 			}
 		}
 
 		// for click on return button of bill return
-		if(event.getSource()==button4 && billReturnList.size()>0){
-			if(table3.getRowCount()>0){
-				for(BillReturnModel billReturn : billReturnList){
-					billReturn.setStatus(BillReturnModel.RETURN);
+		if(event.getSource()==button4){
+			if(billReturnList.size()>0){
+				for(SalesBillReturnModel billReturn : billReturnList){
+					billReturn.setStatus(SalesBillReturnModel.RETURN);
 					dbinsert.insertBillReturn(billReturn);
 					for(ProductModel product : productList1){
 						if(product.getProductCode().equals(billReturn.getProductCode())){
@@ -767,6 +782,8 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 						}
 					}
 				}
+			}else{
+				new ValidationMSG(this, "Please Add A Product to the list to Return");
 			}
 		}
 
@@ -790,7 +807,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 		//for click on Return button of product return
 		if(event.getSource()==button7){
-			BillReturnModel billReturn = new BillReturnModel();
+			SalesBillReturnModel billReturn = new SalesBillReturnModel();
 
 			billReturn.setCategoryName(fieldName.getCategoryName(productDisplayList2.get(list1.getSelectedIndex()).getProductName()));
 			billReturn.setProductCode(productDisplayList2.get(list1.getSelectedIndex()).getProductCode());
@@ -803,7 +820,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 			billReturn.setStoreId(tableid.getStoreId(comboBox5.getSelectedItem().toString()));
 			int startYear = Calendar.getInstance().get(Calendar.YEAR);
 			billReturn.setYearId(tableid.getYearId(startYear, startYear+1));
-			billReturn.setStatus(BillReturnModel.RETURN);
+			billReturn.setStatus(SalesBillReturnModel.RETURN);
 			billReturn.setSubTotal(billReturn.getProductQuantity()*billReturn.getProductRate());
 			dbinsert.insertBillReturn(billReturn);
 			for(ProductModel product : productDisplayList2){
@@ -817,7 +834,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 		//for click on Replace button of product return
 		if(event.getSource()==button8){
-			BillReturnModel billReturn = new BillReturnModel();
+			SalesBillReturnModel billReturn = new SalesBillReturnModel();
 
 			billReturn.setCategoryName(fieldName.getCategoryName(productDisplayList2.get(list1.getSelectedIndex()).getProductName()));
 			billReturn.setProductCode(productDisplayList2.get(list1.getSelectedIndex()).getProductCode());
@@ -830,7 +847,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 			billReturn.setStoreId(tableid.getStoreId(comboBox5.getSelectedItem().toString()));
 			int startYear = Calendar.getInstance().get(Calendar.YEAR);
 			billReturn.setYearId(tableid.getYearId(startYear, startYear+1));
-			billReturn.setStatus(BillReturnModel.REPLACE);
+			billReturn.setStatus(SalesBillReturnModel.REPLACE);
 			billReturn.setSubTotal(billReturn.getProductQuantity()*billReturn.getProductRate());
 			dbinsert.insertBillReturn(billReturn);
 		}
@@ -893,7 +910,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 		/// inserting new rows to the table
 
-		for(BillModel bill : billDisplayList){ 
+		for(SalesBillModel bill : billDisplayList){ 
 			tableModel1.addRow(new Object[] {bill.getBillNo(),bill.getCustomerName(),bill.getBillDate(),bill.getMobileNo(),bill.getTotalAmt()});
 
 		}
@@ -909,7 +926,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 		/// inserting new rows to the table
 
-		for(BillDetailModel billDetail : billDetailList){
+		for(SalesBillDetailModel billDetail : billDetailList){
 			double subTotal = billDetail.getProductRate() * billDetail.getProductQuantity();
 			tableModel2.addRow(new Object[] {billDetail.getProductCode(),billDetail.getProductName(),
 					billDetail.getProductQuantity(),billDetail.getProductUnit(),billDetail.getProductRate(),
@@ -929,7 +946,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 		/// inserting new rows to the table
 		int i=1;
-		for(BillReturnModel billReturn : billReturnList){
+		for(SalesBillReturnModel billReturn : billReturnList){
 			double subTotal = billReturn.getProductRate() * billReturn.getProductQuantity();
 			tableModel3.addRow(new Object[] {i,billReturn.getProductName(),billReturn.getProductQuantity(),
 					billReturn.getProductRate(),subTotal,billReturn.getDiscountAmt()});
@@ -966,8 +983,12 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 			if(list1.getVisibleRowCount()>0 && list1.getSelectedIndex()>=0){
 				comboBox4.removeAllItems();
 				comboBox4.addItem(productDisplayList2.get(list1.getSelectedIndex()).getUnit());
-				textField10.setText(String.valueOf(productDisplayList2.get(list1.getSelectedIndex()).getSaleRate()));
-
+				double rate = productDisplayList2.get(list1.getSelectedIndex()).getSaleRate();
+				textField10.setText(String.valueOf(rate));
+				double quantity = 0;
+				if(!valid.isEmpty(textField9.getText()))
+					quantity = Double.parseDouble(textField9.getText());
+				textField11.setText(String.valueOf(quantity*rate));
 			}
 		}
 
@@ -977,11 +998,15 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 
 
 	private void setBillReturnModel(){
-		String returnDate = String.valueOf(Calendar.getInstance().get(Calendar.DATE))+
-				"/"+(String.valueOf(Calendar.getInstance().get(Calendar.MONTH)+1))+"/"+
-				String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-		BillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
-		BillReturnModel billReturn = new BillReturnModel();
+		String returnDate = new DatePicker().getCurrentDate();
+		SalesBillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
+		for(SalesBillReturnModel billReturn : billReturnList){
+			if(billReturn.getProductCode().equals(billDetail.getProductCode()) &&
+					billReturn.getProductName().equals(billDetail.getProductName())){
+				return;
+			}
+		}
+		SalesBillReturnModel billReturn = new SalesBillReturnModel();
 
 		billReturn.setReturnId(0);
 		billReturn.setBillDate(billList.get(table1.getSelectedRow()).getBillDate());
@@ -991,7 +1016,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 		billReturn.setProductCode(billDetail.getProductCode());
 		billReturn.setProductName(billDetail.getProductName());
 		billReturn.setProductRate(billDetail.getProductRate());
-		billReturn.setStatus(BillReturnModel.RETURN);
+		billReturn.setStatus(SalesBillReturnModel.RETURN);
 		billReturn.setProductType(billDetail.getProductType());
 		billReturn.setProductQuantity(Double.parseDouble(textField6.getText()));
 		billReturn.setReason("");
