@@ -23,12 +23,13 @@ import com.lrd.inventory.database.DatabaseInsert;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.DatePicker;
 import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.SalesBillDetailModel;
 import com.lrd.inventory.model.SalesBillModel;
-import com.lrd.inventory.model.SalesBillPaymentModel;
+import com.lrd.inventory.model.PaymentModel;
 
 /**
  * @author dharmendra singh
@@ -475,15 +476,13 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 	
 
 	public void insertBillPaymentModel(){
-		SalesBillPaymentModel billPay = new SalesBillPaymentModel();
-		billPay.setBillId(billId);
+		PaymentModel billPay = new PaymentModel();
+		billPay.setRefId(billId);
 		billPay.setPaidAmt(Double.parseDouble(textField6.getText()));
-		billPay.setPaymentDate(String.valueOf(Calendar.getInstance().get(Calendar.DATE))+
-				"/"+(String.valueOf(Calendar.getInstance().get(Calendar.MONTH)+1))+"/"+
-				String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+		billPay.setPaymentDate(new DatePicker().getCurrentDate());
 		billPay.setPaymentMode("Cash");
 		
-		dbinsert.insertBillPayment(billPay);
+		dbinsert.insertSalesBillPayment(billPay);
 	}
 
 

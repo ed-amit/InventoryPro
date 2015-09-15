@@ -776,9 +776,8 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 					dbinsert.insertBillReturn(billReturn);
 					for(ProductModel product : productList1){
 						if(product.getProductCode().equals(billReturn.getProductCode())){
-							double newqty = product.getQuantity()+billReturn.getProductQuantity();
 							int id = product.getProductId();
-							dbinsert.updateProduct(id, newqty);
+							dbinsert.updateProductAdd(id, billReturn.getProductQuantity());
 						}
 					}
 				}
@@ -825,9 +824,8 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 			dbinsert.insertBillReturn(billReturn);
 			for(ProductModel product : productDisplayList2){
 				if(product.getProductCode().equals(billReturn.getProductCode())){
-					double newqty = product.getQuantity()+billReturn.getProductQuantity();
 					int id = product.getProductId();
-					dbinsert.updateProduct(id, newqty);
+					dbinsert.updateProductAdd(id, billReturn.getProductQuantity());
 				}
 			}
 		}

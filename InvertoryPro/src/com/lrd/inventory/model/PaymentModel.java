@@ -1,10 +1,10 @@
 package com.lrd.inventory.model;
 
-public class SalesBillPaymentModel {
+public class PaymentModel {
 	
 	
 	private int payment_id;
-	private int bill_id;
+	private int ref_id;
 	private double paid_amount;
 	
 	private String bank_name;
@@ -15,12 +15,12 @@ public class SalesBillPaymentModel {
 	
 	
 
-	public SalesBillPaymentModel() {
+	public PaymentModel() {
 		setDefault();
 	}
 	
 	public void setDefault(){
-		payment_id=bill_id=0;
+		payment_id=ref_id=0;
 		paid_amount=0;
 		bank_name=code=Description=payment_date=payment_mode="";
 	}
@@ -32,8 +32,8 @@ public class SalesBillPaymentModel {
 		this.payment_id = paymentId;
 	}
 	
-	public void setBillId (int billId){
-		this.bill_id = billId;
+	public void setRefId (int refId){
+		this.ref_id = refId;
 	}
 	
 	public void setPaidAmt (double amt){
@@ -67,8 +67,8 @@ public class SalesBillPaymentModel {
 		return this.payment_id ;
 	}
 	
-	public int getBillId (){
-		return this.bill_id ;
+	public int getRefId (){
+		return this.ref_id ;
 	}
 	
 	public double getPaidAmt (){

@@ -5,9 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.lrd.inventory.model.ChallanDetailModel;
+import com.lrd.inventory.model.ChallanModel;
+import com.lrd.inventory.model.OtherChargesModel;
+import com.lrd.inventory.model.SaleOrderDetailModel;
+import com.lrd.inventory.model.SaleOrderModel;
+import com.lrd.inventory.model.SaleQuotationDetailModel;
+import com.lrd.inventory.model.SaleQuotationModel;
 import com.lrd.inventory.model.SalesBillDetailModel;
 import com.lrd.inventory.model.SalesBillModel;
-import com.lrd.inventory.model.SalesBillPaymentModel;
+import com.lrd.inventory.model.PaymentModel;
 import com.lrd.inventory.model.SalesBillReturnModel;
 import com.lrd.inventory.model.BrandModel;
 import com.lrd.inventory.model.CategoryModel;
@@ -22,7 +29,6 @@ import com.lrd.inventory.model.PurchaseOrderModel;
 import com.lrd.inventory.model.PurchaseReturnModel;
 import com.lrd.inventory.model.RackModel;
 import com.lrd.inventory.model.VatModel;
-
 
 public class DatabaseInsert {
 
@@ -169,7 +175,7 @@ public class DatabaseInsert {
 	 * 
 	 *         this function is used to insert billDetailModel into db
 	 */
-	public int insertBill(SalesBillModel bill) {
+	public int insertSalesBill(SalesBillModel bill) {
 		int id = 0;
 		String query = "insert into bill values (null , '" + bill.getBillDate()
 				+ "' , '" + bill.getBillNo() + "' , '"
@@ -199,7 +205,7 @@ public class DatabaseInsert {
 	 * @param billDetail
 	 *            this function is used to insert billDetailModel into db
 	 */
-	public void insertBillDetail(SalesBillDetailModel billDetail) {
+	public void insertSalesBillDetail(SalesBillDetailModel billDetail) {
 		String query = "insert into bill_details values (null , "
 				+ billDetail.getBillId() + " , '" + billDetail.getBatchNo()
 				+ "' , '" + billDetail.getCategoryName() + "', '"
@@ -214,7 +220,7 @@ public class DatabaseInsert {
 				+ billDetail.getWarrantyEndDate() + "', '"
 				+ billDetail.getWarrantyStartDate() + "', "
 				+ billDetail.getDiscountPercent() + " , "
-				+ billDetail.getDiscountAmt() + ",'','','',0,0,'',0)";
+				+ billDetail.getDiscountAmt() + ",0,0)";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -222,14 +228,278 @@ public class DatabaseInsert {
 		}
 	}
 
-	public void insertBillPayment(SalesBillPaymentModel billPayment) {
+	public void insertSalesOtherCharges(OtherChargesModel otherCharge) {
+		String query = "insert into bill_other_charges values (null , "
+				+ otherCharge.getAmount() + ", " + otherCharge.getRefId()
+				+ ", '" + otherCharge.getChargeName() + "', "
+				+ otherCharge.getFirmId() + ", " + otherCharge.getStoreId()
+				+ ", " + otherCharge.getYearId() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertSalesBillPayment(PaymentModel payment) {
 		String query = "insert into bill_payment_details values(null, '"
-				+ billPayment.getBankName() + "', '" + billPayment.getCode()
-				+ "', '" + billPayment.getDescription() + "', "
-				+ billPayment.getPaidAmt() + " , '"
-				+ billPayment.getPaymentDate() + "', '"
-				+ billPayment.getPaymentMode() + "', "
-				+ billPayment.getBillId() + ");";
+				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
+				+ payment.getDescription() + "', " + payment.getPaidAmt()
+				+ " , '" + payment.getPaymentDate() + "', '"
+				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int insertChallan(ChallanModel Challan) {
+		// TODO Auto-generated method stub
+		int id = 0;
+		String query = "insert into challan values (null , '"
+				+ Challan.getChallanDate() + "' , '" + Challan.getchallanNo()
+				+ "' , '" + Challan.getCustomerAddress() + "' , '"
+				+ Challan.getCustomerName() + "' , '"
+				+ Challan.getCustomerType() + "' , " + Challan.getDiscount()
+				+ " , " + Challan.getTotalAmt() + " , "
+				+ Challan.getHomeDelivery() + " , '" + Challan.getMobileNo()
+				+ "' , '" + Challan.getNarration() + "' , '"
+				+ Challan.getUserName() + "' , " + Challan.getVatPercent()
+				+ " , " + Challan.getVatAmt() + " , " + Challan.getCounter()
+				+ " , " + Challan.getFirmId() + " , '" + Challan.getPrefix()
+				+ "' , " + Challan.getStoreId() + " , " + Challan.getYearId()
+				+ " );";
+		try {
+			stmt.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+			ResultSet result = stmt
+					.executeQuery("select max(challan_id) from challan");
+			result.first();
+			id = result.getInt(1);
+			// System.out.println(id + "  id from db");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+
+	public void insertChallanPayment(PaymentModel payment) {
+		// TODO Auto-generated method stub
+		String query = "insert into challan_payment_details values(null, '"
+				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
+				+ payment.getDescription() + "', " + payment.getPaidAmt()
+				+ " , '" + payment.getPaymentDate() + "', '"
+				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertChallanOtherCharges(OtherChargesModel otherCharge) {
+		// TODO Auto-generated method stub
+		String query = "insert into challan_other_charges values (null , "
+				+ otherCharge.getAmount() + ", " + otherCharge.getRefId()
+				+ ", '" + otherCharge.getChargeName() + "', "
+				+ otherCharge.getFirmId() + ", " + otherCharge.getStoreId()
+				+ ", " + otherCharge.getYearId() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertChallanDetail(ChallanDetailModel tempChallanDetail) {
+		// TODO Auto-generated method stub
+		String query = "insert into challan_details values (null , "
+				+ tempChallanDetail.getChallanId() + " , '"
+				+ tempChallanDetail.getBatchNo() + "' , '"
+				+ tempChallanDetail.getCategoryName() + "', '"
+				+ tempChallanDetail.getProductCode() + "', '"
+				+ tempChallanDetail.getProductName() + "', "
+				+ tempChallanDetail.getProductQuantity() + " , "
+				+ tempChallanDetail.getProductRate() + " , '"
+				+ tempChallanDetail.getProductType() + "', '"
+				+ tempChallanDetail.getProductUnit() + "', "
+				+ tempChallanDetail.getMrp() + " , "
+				+ tempChallanDetail.getVatAmt() + " , "
+				+ tempChallanDetail.getVatPercent() + " , '"
+				+ tempChallanDetail.getWarrantyEndDate() + "', '"
+				+ tempChallanDetail.getWarrantyStartDate() + "', "
+				+ tempChallanDetail.getDiscountPercent() + " , "
+				+ tempChallanDetail.getDiscountAmt() + ", "
+				+ tempChallanDetail.getPurchaseRate() + ", "
+				+ tempChallanDetail.getSubTotal() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int insertSalesOrder(SaleOrderModel SalesOrder) {
+		// TODO Auto-generated method stub
+		int id = 0;
+		String query = "insert into sale_order values (null , '"
+				+ SalesOrder.getOrderDate() + "' , '" + SalesOrder.getOrderNo()
+				+ "' , '" + SalesOrder.getCustomerAddress() + "' , '"
+				+ SalesOrder.getCustomerName() + "' , '"
+				+ SalesOrder.getCustomerType() + "' , "
+				+ SalesOrder.getDiscount() + " , " + SalesOrder.getTotalAmt()
+				+ " , " + SalesOrder.getHomeDelivery() + " , '"
+				+ SalesOrder.getMobileNo() + "' , '"
+				+ SalesOrder.getNarration() + "' , '"
+				+ SalesOrder.getUserName() + "' , "
+				+ SalesOrder.getVatPercent() + " , " + SalesOrder.getVatAmt()
+				+ " , " + SalesOrder.getCounter() + " , "
+				+ SalesOrder.getFirmId() + " , '" + SalesOrder.getPrefix()
+				+ "' , " + SalesOrder.getStoreId() + " , "
+				+ SalesOrder.getYearId() + ", " + SalesOrder.getNumberOfDays()
+				+ ", '" + SalesOrder.getStatus() + "' );";
+		try {
+			stmt.executeUpdate(query);
+			ResultSet result = stmt
+					.executeQuery("select max(order_id) from sale_order");
+			result.first();
+			id = result.getInt(1);
+			// System.out.println(id + "  id from db");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+
+	public void insertSalesOrderPayment(PaymentModel payment) {
+		// TODO Auto-generated method stub
+		String query = "insert into sale_order_payment_details values(null, '"
+				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
+				+ payment.getDescription() + "', " + payment.getPaidAmt()
+				+ " , '" + payment.getPaymentDate() + "', '"
+				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertSalesOrderOtherCharges(OtherChargesModel otherCharge) {
+		// TODO Auto-generated method stub
+		String query = "insert into sale_order_other_charges values (null , "
+				+ otherCharge.getAmount() + ", " + otherCharge.getRefId()
+				+ ", '" + otherCharge.getChargeName() + "', "
+				+ otherCharge.getFirmId() + ", " + otherCharge.getStoreId()
+				+ ", " + otherCharge.getYearId() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertSalesOrderDetail(SaleOrderDetailModel tempSalesOrderDetail) {
+		// TODO Auto-generated method stub
+		String query = "insert into sale_order_details values (null , "
+				+ tempSalesOrderDetail.getOrderId() + " , '"
+				+ tempSalesOrderDetail.getBatchNo() + "' , '"
+				+ tempSalesOrderDetail.getCategoryName() + "', '"
+				+ tempSalesOrderDetail.getProductCode() + "', '"
+				+ tempSalesOrderDetail.getProductName() + "', "
+				+ tempSalesOrderDetail.getProductQuantity() + " , "
+				+ tempSalesOrderDetail.getProductRate() + " , '"
+				+ tempSalesOrderDetail.getProductType() + "', '"
+				+ tempSalesOrderDetail.getProductUnit() + "', "
+				+ tempSalesOrderDetail.getMrp() + " , "
+				+ tempSalesOrderDetail.getVatAmt() + " , "
+				+ tempSalesOrderDetail.getVatPercent() + " , '"
+				+ tempSalesOrderDetail.getWarrantyEndDate() + "', '"
+				+ tempSalesOrderDetail.getWarrantyStartDate() + "', "
+				+ tempSalesOrderDetail.getDiscountPercent() + " , "
+				+ tempSalesOrderDetail.getDiscountAmt() + ", "
+				+ tempSalesOrderDetail.getPurchaseRate() + ", "
+				+ tempSalesOrderDetail.getSubTotal() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int insertSalesQuotation(SaleQuotationModel SalesQuotation) {
+		// TODO Auto-generated method stub
+		int id = 0;
+		String query = "insert into sale_quotation values (null , '"
+				+ SalesQuotation.getQuotationDate() + "' , '"
+				+ SalesQuotation.getCustomerAddress() + "' , '"
+				+ SalesQuotation.getCustomerName() + "' , '"
+				+ SalesQuotation.getCustomerType() + "' , "
+				+ SalesQuotation.getDiscount() + " , "
+				+ SalesQuotation.getTotalAmt() + " , "
+				+ SalesQuotation.getHomeDelivery() + " , '"
+				+ SalesQuotation.getMobileNo() + "' , '"
+				+ SalesQuotation.getNarration() + "' , '"
+				+ SalesQuotation.getUserName() + "' , "
+				+ SalesQuotation.getVatPercent() + " , "
+				+ SalesQuotation.getVatAmt() + " , "
+				+ SalesQuotation.getCounter() + " , "
+				+ SalesQuotation.getFirmId() + " , '"
+				+ SalesQuotation.getPrefix() + "' , "
+				+ SalesQuotation.getYearId() + " , "
+				+ SalesQuotation.getStoreId() + " );";
+		try {
+			stmt.executeUpdate(query);
+			ResultSet result = stmt
+					.executeQuery("select max(quotation_id) from sale_quotation");
+			result.first();
+			id = result.getInt(1);
+			// System.out.println(id + "  id from db");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+
+	public void insertQuotationOtherCharges(OtherChargesModel otherCharge) {
+		// TODO Auto-generated method stub
+		String query = "insert into sale_quotation_other_charges values (null , "
+				+ otherCharge.getAmount()
+				+ ", "
+				+ otherCharge.getRefId()
+				+ ", '"
+				+ otherCharge.getChargeName()
+				+ "', "
+				+ otherCharge.getFirmId()
+				+ ", "
+				+ otherCharge.getStoreId()
+				+ ", " + otherCharge.getYearId() + ")";
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insertSalesQuotationDetail(
+			SaleQuotationDetailModel tempSalesQuotationDetail) {
+		// TODO Auto-generated method stub
+		String query = "insert into sale_quotation_details values (null , "
+				+ tempSalesQuotationDetail.getQuotationId() + " , '"
+
+				+ tempSalesQuotationDetail.getProductCode() + "', '"
+				+ tempSalesQuotationDetail.getProductName() + "', "
+				+ tempSalesQuotationDetail.getProductQuantity() + " , "
+				+ tempSalesQuotationDetail.getProductRate() + " , '"
+				+ tempSalesQuotationDetail.getProductType() + "', '"
+				+ tempSalesQuotationDetail.getProductUnit() + "', "
+				+ tempSalesQuotationDetail.getMrp() + " , "
+				+ tempSalesQuotationDetail.getVatAmt() + " , "
+				+ tempSalesQuotationDetail.getVatPercent() + " , "
+				+ tempSalesQuotationDetail.getDiscountAmt() + ", "
+				+ tempSalesQuotationDetail.getDiscountPercent() + " , "
+				+ tempSalesQuotationDetail.getPurchaseRate() + ", "
+				+ tempSalesQuotationDetail.getSubTotal() + ")";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -253,10 +523,26 @@ public class DatabaseInsert {
 
 	/**
 	 * @param Product_id
-	 * @param New_Quantity
+	 * @param Quantity
+	 *            to less
 	 */
-	public void updateProduct(int id, double qty) {
-		String query = "update products set QUANTITY=" + qty
+	public void updateProductLess(int id, double qtyToLess) {
+		String query = "update products set QUANTITY=QUANTITY-" + qtyToLess
+				+ " where PRODUCT_ID=" + id;
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param Product_id
+	 * @param Quantity
+	 *            to add
+	 */
+	public void updateProductAdd(int id, double qtyToAdd) {
+		String query = "update products set QUANTITY=QUANTITY+" + qtyToAdd
 				+ " where PRODUCT_ID=" + id;
 		try {
 			stmt.executeUpdate(query);

@@ -28,6 +28,7 @@ public class SaleOrderModel {
 
 	public SaleOrderModel() {
 		// TODO Auto-generated constructor stub
+		setDefault();
 	}
 
 	public void setDefault() {
