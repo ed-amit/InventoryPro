@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 import javax.swing.*;
@@ -1475,19 +1474,29 @@ public class MasterHome extends JFrame implements ActionListener {
 		// setLocationRelativeTo(getOwner());
 		setSize(WIDTH + 10, HEIGHT);
 	}
+	
+	
+private boolean dbConnected(){
+	try {
+		Statement stmt = connection.createStatement();
+		stmt.executeQuery("select rack_id from rack where rack_id=1");
+		return true;
+	} catch (CommunicationsException e) {
+		e.printStackTrace();
+		return false;
+	} catch (Exception e) {
+		e.printStackTrace();
+		return false;
+	}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
-		try {
-			Statement stmt = connection.createStatement();
-			stmt.executeQuery("select rack_id from rack where rack_id=1");
-		} catch (CommunicationsException e) {
+		if(!dbConnected()){
 			this.connection = db_connect.getConnection();
-			// e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
+		}
+		
 
 			if (event.getSource() == button1) {
 				new ManageCategory(connection);
@@ -1879,7 +1888,7 @@ public class MasterHome extends JFrame implements ActionListener {
 					break;
 
 			}
-		}
+		
 
 	}
 }

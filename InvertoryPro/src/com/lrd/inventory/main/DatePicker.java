@@ -3,7 +3,6 @@ package com.lrd.inventory.main;
 //import statements
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Calendar;
 
 import javax.swing.*;
 

@@ -13,12 +13,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import com.lrd.inventory.database.DatabaseDelete;
 import com.lrd.inventory.database.DatabaseInsert;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
@@ -34,11 +32,14 @@ import com.lrd.inventory.model.PaymentModel;
 /**
  * @author dharmendra singh
  */
-public class DueBillPayment extends JFrame implements ActionListener,ItemListener,KeyListener {
-
+public class DueBillPayment extends JFrame
+		implements
+			ActionListener,
+			ItemListener,
+			KeyListener {
 
 	private static final long serialVersionUID = 1L;
-	//  Variables declaration 
+	// Variables declaration
 	private JPanel panel1;
 	private JPanel panel2;
 	private JLabel label1;
@@ -77,11 +78,11 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 	private JButton button4;
 	private JButton button5;
 	private JLabel label13;
-	//  End of variables declaration 
-	
+	// End of variables declaration
+
 	int billId;
 
-	Connection connection =null;
+	Connection connection = null;
 	SpecificFieldValue fieldName = null;
 	SalesBillDetailModel billDetail = null;
 	DatabaseInsert dbinsert = null;
@@ -93,9 +94,8 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 	ArrayList<SalesBillDetailModel> billDetailList = null;
 	ArrayList<SalesBillModel> billTempList = null;
 
-
 	public DueBillPayment(Connection connection) {
-		this.connection= connection;
+		this.connection = connection;
 		this.fieldName = new SpecificFieldValue(this.connection);
 		dbinsert = new DatabaseInsert(connection);
 		dbvalue = new GetDBValue(connection);
@@ -103,16 +103,12 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 		valid = new Validate();
 		initComponents();
 		storeName();
-		billList = dbvalue.getDueBillDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+		billList = dbvalue.getDueBillDetail(tableid.getStoreId(comboBox1
+				.getSelectedItem().toString()));
 		System.out.println(billList.size());
 	}
 
-
-
-
-
 	private void initComponents() {
-
 
 		panel1 = new JPanel();
 		panel2 = new JPanel();
@@ -153,64 +149,66 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 		button5 = new JButton();
 		label13 = new JLabel();
 
-		//======== this ========
+		// ======== this ========
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
-		//======== panel1 ========
+		// ======== panel1 ========
 		{
 
 			panel1.setLayout(null);
 
-			//======== panel2 ========
+			// ======== panel2 ========
 			{
 				panel2.setBorder(UIManager.getBorder("TitledBorder.border"));
 				panel2.setLayout(null);
 
-				//---- label1 ----
+				// ---- label1 ----
 				label1.setText("Due Bill Payment");
-				label1.setFont(label1.getFont().deriveFont(label1.getFont().getSize() + 15f));
+				label1.setFont(label1.getFont().deriveFont(
+						label1.getFont().getSize() + 15f));
 				panel2.add(label1);
-				label1.setBounds(new Rectangle(new Point(395, 20), label1.getPreferredSize()));
-
+				label1.setBounds(new Rectangle(new Point(395, 20), label1
+						.getPreferredSize()));
 
 			}
 			panel1.add(panel2);
 			panel2.setBounds(0, 0, 1000, 80);
 
-			//======== panel3 ========
+			// ======== panel3 ========
 			{
 				panel3.setBorder(UIManager.getBorder("TitledBorder.border"));
 				panel3.setLayout(null);
 
-				//---- label2 ----
+				// ---- label2 ----
 				label2.setText("Bill / Challan No");
 				panel3.add(label2);
-				label2.setBounds(20,50,100,20);
+				label2.setBounds(20, 50, 100, 20);
 
 				panel3.add(textField1);
 				textField1.setBounds(125, 50, 100, 20);
 
-				//---- label3 ----
+				// ---- label3 ----
 				label3.setText("Customer Name");
 				panel3.add(label3);
-				label3.setBounds(235, 50 ,100 , 20);
+				label3.setBounds(235, 50, 100, 20);
 
 				panel3.add(textField2);
 				textField2.setBounds(355, 50, 150, 20);
 
-				//---- label4 ----
+				// ---- label4 ----
 				label4.setText("Date");
 				panel3.add(label4);
-				label4.setBounds(520, 50,50,20);
+				label4.setBounds(520, 50, 50, 20);
 
 				panel3.add(textField3);
 				textField3.setBounds(555, 50, 70, 20);
 
-				//---- label5 ----
+				// ---- label5 ----
 				label5.setText("Product Details");
 				panel3.add(label5);
-				label5.setBounds(new Rectangle(new Point(20, 100), label5.getPreferredSize()));
+				label5.setBounds(new Rectangle(new Point(20, 100), label5
+						.getPreferredSize()));
 
 				tableModel1.addColumn("Code");
 				tableModel1.addColumn("Name");
@@ -221,41 +219,43 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 				tableModel1.addColumn("Vat Amt");
 				tableModel1.addColumn("Discount");
 				tableModel1.addColumn("Sub Total");
-				//======== scrollPane1 ========
+				// ======== scrollPane1 ========
 				{
 					scrollPane1.setViewportView(table1);
 				}
 				panel3.add(scrollPane1);
 				scrollPane1.setBounds(20, 120, 590, 240);
 
-				//---- label6 ----
+				// ---- label6 ----
 				label6.setText("Total Products");
 				panel3.add(label6);
-				label6.setBounds(new Rectangle(new Point(20, 360), label6.getPreferredSize()));
+				label6.setBounds(new Rectangle(new Point(20, 360), label6
+						.getPreferredSize()));
 
-				//---- label7 ----
+				// ---- label7 ----
 				label7.setText("Count");
 				label7.setForeground(new Color(0, 0, 204));
 				panel3.add(label7);
-				label7.setBounds(new Rectangle(new Point(130, 360), label7.getPreferredSize()));
+				label7.setBounds(new Rectangle(new Point(130, 360), label7
+						.getPreferredSize()));
 
-				//---- label8 ----
+				// ---- label8 ----
 				label8.setText("Total Amount");
 				panel3.add(label8);
-				label8.setBounds(170, 390,100,20);
+				label8.setBounds(170, 390, 100, 20);
 
 				panel3.add(textField4);
 				textField4.setBounds(320, 390, 200, 20);
 
-				//---- label9 ----
+				// ---- label9 ----
 				label9.setText("Received Amount");
 				panel3.add(label9);
-				label9.setBounds(170,420,100,20);
+				label9.setBounds(170, 420, 100, 20);
 
 				panel3.add(textField5);
 				textField5.setBounds(320, 420, 200, 20);
 
-				//---- label10 ----
+				// ---- label10 ----
 				label10.setText("Remaining Amount");
 				panel3.add(label10);
 				label10.setBounds(170, 450, 110, 20);
@@ -263,63 +263,60 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 				panel3.add(textField6);
 				textField6.setBounds(320, 450, 200, 20);
 
-				//---- button1 ----
+				// ---- button1 ----
 				button1.setText("Pay Amount");
 				panel3.add(button1);
 				button1.setBounds(115, 480, 100, 30);
 				button1.addActionListener(this);
 
-				//---- button2 ----
+				// ---- button2 ----
 				button2.setText("Refresh");
 				panel3.add(button2);
 				button2.setBounds(265, 480, 100, 30);
 				button2.addActionListener(this);
 
-				//---- button3 ----
+				// ---- button3 ----
 				button3.setText("Close");
 				panel3.add(button3);
 				button3.setBounds(410, 480, 100, 30);
 				button3.addActionListener(this);
 
-
-
-
-
-				//---- label14 ----
+				// ---- label14 ----
 				label14.setText("Particular Bill / Challan Of Customer");
-				label14.setFont(label14.getFont().deriveFont(label14.getFont().getStyle() | Font.BOLD, label14.getFont().getSize() + 5f));
+				label14.setFont(label14.getFont().deriveFont(
+						label14.getFont().getStyle() | Font.BOLD,
+						label14.getFont().getSize() + 5f));
 				panel3.add(label14);
-				label14.setBounds(new Rectangle(new Point(10, 10), label14.getPreferredSize()));
-
-
+				label14.setBounds(new Rectangle(new Point(10, 10), label14
+						.getPreferredSize()));
 
 			}
 			panel1.add(panel3);
 			panel3.setBounds(360, 90, 630, 520);
 
-			//======== panel4 ========
+			// ======== panel4 ========
 			{
 				panel4.setBorder(UIManager.getBorder("TitledBorder.border"));
 				panel4.setLayout(null);
 
-				//---- label11 ----
+				// ---- label11 ----
 				label11.setText("Store Name");
 				panel4.add(label11);
-				label11.setBounds(20,50,100,20);
+				label11.setBounds(20, 50, 100, 20);
 
 				panel4.add(comboBox1);
 				comboBox1.setBounds(120, 50, 200, 20);
 
-				//---- label12 ----
+				// ---- label12 ----
 				label12.setText("Search By");
 				panel4.add(label12);
-				label12.setBounds(20,80,100,20);
+				label12.setBounds(20, 80, 100, 20);
 
-				//---- comboBox2 ----
+				// ---- comboBox2 ----
 				comboBox2.addItem("Name");
 				comboBox2.addItem("Bill Id");
 				comboBox2.addItem("Date");
-				//comboBox2.addItem("Batch No");
+				// comboBox2.addItem("Batch No");
 				panel4.add(comboBox2);
 				comboBox2.setBounds(120, 80, 200, 20);
 
@@ -331,37 +328,38 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 				tableModel2.addColumn("Bill No");
 				tableModel2.addColumn("Date");
 				table2.setRowSelectionAllowed(true);
-				//======== scrollPane2 ========
+				// ======== scrollPane2 ========
 				{
 					scrollPane2.setViewportView(table2);
 				}
 				panel4.add(scrollPane2);
 				scrollPane2.setBounds(20, 150, 300, 300);
 
-				//---- button4 ----
+				// ---- button4 ----
 				button4.setText("View");
 				panel4.add(button4);
 				button4.setBounds(45, 470, 100, 30);
 				button4.addActionListener(this);
 
-				//---- button5 ----
+				// ---- button5 ----
 				button5.setText("Delete");
 				panel4.add(button5);
 				button5.setBounds(195, 470, 100, 30);
 				button5.addActionListener(this);
 				button5.setEnabled(false);
 
-				//---- label13 ----
+				// ---- label13 ----
 				label13.setText("Total Bills / Challan Of Customer");
-				label13.setFont(label13.getFont().deriveFont(label13.getFont().getStyle() | Font.BOLD, label13.getFont().getSize() + 5f));
+				label13.setFont(label13.getFont().deriveFont(
+						label13.getFont().getStyle() | Font.BOLD,
+						label13.getFont().getSize() + 5f));
 				panel4.add(label13);
-				label13.setBounds(new Rectangle(new Point(10, 10), label13.getPreferredSize()));
-
+				label13.setBounds(new Rectangle(new Point(10, 10), label13
+						.getPreferredSize()));
 
 			}
 			panel1.add(panel4);
 			panel4.setBounds(10, 90, 340, 520);
-
 
 		}
 		contentPane.add(panel1);
@@ -373,98 +371,92 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 		setSize(1000, 660);
 	}
 
-	public static void main(String[] args){
-		//new DueBillPayment();
+	public static void main(String[] args) {
+		// new DueBillPayment();
 	}
 
-	private void storeName(){
-		ArrayList<String> storeNames = (ArrayList<String>) fieldName.getAllStoreName();
-		for (String name : storeNames){
+	private void storeName() {
+		ArrayList<String> storeNames = (ArrayList<String>) fieldName
+				.getAllStoreName();
+		for (String name : storeNames) {
 			comboBox1.addItem(name);
 		}
 	}
 
-
-	
-	
-	private void loadTable1Data(ArrayList<SalesBillDetailModel> billdetails){
+	private void loadTable1Data(ArrayList<SalesBillDetailModel> billdetails) {
 		// for removing all existing rows from table
-				while (tableModel1.getRowCount()>0) {
-					tableModel1.removeRow(0);
-				}
+		while (tableModel1.getRowCount() > 0) {
+			tableModel1.removeRow(0);
+		}
 
-				/// inserting new rows to the table
+		// / inserting new rows to the table
 
-				for(SalesBillDetailModel tempbilldetail : billdetails){
-					double subtotal=tempbilldetail.getProductQuantity()*tempbilldetail.getProductRate();
-					tableModel1.addRow(new Object[] {tempbilldetail.getProductCode(),tempbilldetail.getProductName(),
-							tempbilldetail.getProductQuantity(),tempbilldetail.getProductUnit(),
-							tempbilldetail.getProductRate(),tempbilldetail.getVatPercent(),
-							tempbilldetail.getVatAmt(),tempbilldetail.getDiscountAmt(),subtotal});
-				}
-				label7.setText(String.valueOf(billdetails.size()));
+		for (SalesBillDetailModel tempbilldetail : billdetails) {
+			double subtotal = tempbilldetail.getProductQuantity()
+					* tempbilldetail.getProductRate();
+			tableModel1.addRow(new Object[]{tempbilldetail.getProductCode(),
+					tempbilldetail.getProductName(),
+					tempbilldetail.getProductQuantity(),
+					tempbilldetail.getProductUnit(),
+					tempbilldetail.getProductRate(),
+					tempbilldetail.getVatPercent(), tempbilldetail.getVatAmt(),
+					tempbilldetail.getDiscountAmt(), subtotal});
+		}
+		label7.setText(String.valueOf(billdetails.size()));
 	}
-	
-	
-	
-	
-	//for loading table2 data
-	private void loadTable2Data(ArrayList<SalesBillModel> bills){
+
+	// for loading table2 data
+	private void loadTable2Data(ArrayList<SalesBillModel> bills) {
 		// for removing all existing rows from table
-		while (tableModel2.getRowCount()>0) {
+		while (tableModel2.getRowCount() > 0) {
 			tableModel2.removeRow(0);
 		}
 
-		/// inserting new rows to the table
+		// / inserting new rows to the table
 
-		for(SalesBillModel bill : bills){ 
-			tableModel2.addRow(new Object[] {bill.getCustomerName(),bill.getBillNo(),bill.getBillDate()});
+		for (SalesBillModel bill : bills) {
+			tableModel2.addRow(new Object[]{bill.getCustomerName(),
+					bill.getBillNo(), bill.getBillDate()});
 		}
 	}
 
-
-
-
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {	}
-
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {	}
-
-
+	public void keyTyped(KeyEvent arg0) {
+	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		if(!(event.getKeyChar()==27 || event.getKeyChar()==6)){
-			if(event.getSource()==textField7){
+		if (!(event.getKeyChar() == 27 || event.getKeyChar() == 6)) {
+			if (event.getSource() == textField7) {
 				searchMethod();
 			}
 		}
 	}
 
-
-	private void searchMethod(){
+	private void searchMethod() {
 		billTempList = new ArrayList<>();
 		String tempStr = textField7.getText();
-		if(!(valid.isEmpty(tempStr))){
-			if(comboBox2.getSelectedItem().toString()=="Name"){
-				for(SalesBillModel tempbill : billList){
-					if(tempbill.getCustomerName().contains(tempStr)){
+		if (!(valid.isEmpty(tempStr))) {
+			if (comboBox2.getSelectedItem().toString() == "Name") {
+				for (SalesBillModel tempbill : billList) {
+					if (tempbill.getCustomerName().contains(tempStr)) {
 						billTempList.add(tempbill);
 					}
 				}
-			}else if(comboBox2.getSelectedItem().toString()=="Bill Id"){
-				tempStr=tempStr.toUpperCase();
-				for(SalesBillModel tempbill : billList){
-					if(tempbill.getBillNo().contains(tempStr)){
+			} else if (comboBox2.getSelectedItem().toString() == "Bill Id") {
+				tempStr = tempStr.toUpperCase();
+				for (SalesBillModel tempbill : billList) {
+					if (tempbill.getBillNo().contains(tempStr)) {
 						billTempList.add(tempbill);
 					}
 				}
-			}else if(comboBox2.getSelectedItem().toString()=="Date"){
-				for(SalesBillModel tempbill : billList){
-					if(tempbill.getBillDate().contains(tempStr)){
+			} else if (comboBox2.getSelectedItem().toString() == "Date") {
+				for (SalesBillModel tempbill : billList) {
+					if (tempbill.getBillDate().contains(tempStr)) {
 						billTempList.add(tempbill);
 					}
 				}
@@ -472,111 +464,98 @@ public class DueBillPayment extends JFrame implements ActionListener,ItemListene
 		}
 		loadTable2Data(billTempList);
 	}
-	
-	
 
-	public void insertBillPaymentModel(){
+	public void insertBillPaymentModel() {
 		PaymentModel billPay = new PaymentModel();
 		billPay.setRefId(billId);
 		billPay.setPaidAmt(Double.parseDouble(textField6.getText()));
 		billPay.setPaymentDate(new DatePicker().getCurrentDate());
 		billPay.setPaymentMode("Cash");
-		
+
 		dbinsert.insertSalesBillPayment(billPay);
 	}
-
-
-
-
-
-
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 
-		if(event.getSource()==comboBox1){
-			billList=dbvalue.getDueBillDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+		if (event.getSource() == comboBox1) {
+			billList = dbvalue.getDueBillDetail(tableid.getStoreId(comboBox1
+					.getSelectedItem().toString()));
 		}
 	}
-
-
-
-
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		String temp = event.getActionCommand();
 
 		switch (temp) {
-		case "View":
-		{
-			int selectedBill = table2.getSelectedRow();
-			billId=billTempList.get(selectedBill).getBillId();
-			billDetailList  = dbvalue.getBillProductDetail(billId);
-			loadTable1Data(billDetailList);
-			
-			textField1.setText(billTempList.get(selectedBill).getBillNo());
-			textField2.setText(billTempList.get(selectedBill).getCustomerName());
-			textField3.setText(billTempList.get(selectedBill).getBillDate());
-			
-			double paidAmount = fieldName.getPaidAmount(billId);
-			double totalAmount = billTempList.get(selectedBill).getTotalAmt();
-			textField4.setText(String.valueOf(totalAmount));
-			textField5.setText(String.valueOf(paidAmount));
-			textField6.setText(String.valueOf(totalAmount-paidAmount));
-			
-			
-			break;
-		}
-		case "Pay Amount":
-			insertBillPaymentModel();
-			
-			double totalAmount = Double.parseDouble(textField4.getText());
-			double paidAmount = Double.parseDouble(textField5.getText());
-			double remAmount = Double.parseDouble(textField6.getText());
-			for(SalesBillModel billModel : billList){
-				if(billModel.getBillId()==billId && 
-						(totalAmount-paidAmount)==remAmount){
-					billList.remove(billModel);
-				}
-			}
-			resetLeftPanel();
-			searchMethod();
-			
-			break;
-		case "Refresh":
-			resetLeftPanel();
-			break;
-		case "Close":
-			this.dispose();
-			break;
-		case "Delete":
-			if(table1.getSelectedRowCount()!=1){
-				new ValidationMSG(this, "Please Select A Row from Table Then Click");
-			}else if(new PromptDailog().getUserResponse()){
-				///do some code to delete bill and bill details
-			}
-			break;
-		default:
-		}
+			case "View" : {
+				int selectedBill = table2.getSelectedRow();
+				billId = billTempList.get(selectedBill).getBillId();
+				billDetailList = dbvalue.getBillProductDetail(billId);
+				loadTable1Data(billDetailList);
 
+				textField1.setText(billTempList.get(selectedBill).getBillNo());
+				textField2.setText(billTempList.get(selectedBill)
+						.getCustomerName());
+				textField3
+						.setText(billTempList.get(selectedBill).getBillDate());
+
+				double paidAmount = fieldName.getPaidAmount(billId);
+				double totalAmount = billTempList.get(selectedBill)
+						.getTotalAmt();
+				textField4.setText(String.valueOf(totalAmount));
+				textField5.setText(String.valueOf(paidAmount));
+				textField6.setText(String.valueOf(totalAmount - paidAmount));
+
+				break;
+			}
+			case "Pay Amount" :
+				insertBillPaymentModel();
+
+				double totalAmount = Double.parseDouble(textField4.getText());
+				double paidAmount = Double.parseDouble(textField5.getText());
+				double remAmount = Double.parseDouble(textField6.getText());
+				for (SalesBillModel billModel : billList) {
+					if (billModel.getBillId() == billId
+							&& (totalAmount - paidAmount) == remAmount) {
+						billList.remove(billModel);
+					}
+				}
+				resetLeftPanel();
+				searchMethod();
+
+				break;
+			case "Refresh" :
+				resetLeftPanel();
+				break;
+			case "Close" :
+				this.dispose();
+				break;
+			case "Delete" :
+				if (table1.getSelectedRowCount() != 1) {
+					new ValidationMSG(this,
+							"Please Select A Row from Table Then Click");
+				} else if (new PromptDailog().getUserResponse()) {
+					// /do some code to delete bill and bill details
+				}
+				break;
+			default :
+		}
 
 	}
-	
-	
-	
-	private void resetLeftPanel(){
+
+	private void resetLeftPanel() {
 		billDetailList = new ArrayList<>();
 		loadTable1Data(billDetailList);
 		label7.setText("0");
-		
+
 		textField1.setText("");
 		textField2.setText("");
 		textField3.setText("");
 		textField4.setText("");
 		textField5.setText("");
 		textField6.setText("");
-		
-		
+
 	}
 }
