@@ -8,9 +8,9 @@ public class MenuItemName {
 	public final static String MenuItem64 = "Rack";
 	public final static String MenuItem65 = "Category";
 	public final static String MenuItem66 = "Brand";
-	public final static String MenuItem67 = "Vat Precent";
+	public final static String MenuItem67 = "Vat Percent";
 	public final static String MenuItem68 = "Product";
-	public final static String MenuItem69 = "Sales Man Commision";
+	public final static String MenuItem69 = "Sales Man Commission";
 	public final static String MenuItem70 = "Product Vat";
 	public final static String MenuItem71 = "Service Tax";
 	public final static String MenuItem72 = "Manage Warranty";

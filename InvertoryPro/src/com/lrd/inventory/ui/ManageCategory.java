@@ -1,5 +1,3 @@
-
-
 package com.lrd.inventory.ui;
 
 import java.awt.*;
@@ -19,19 +17,24 @@ import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.CategoryModel;
 
 /**
  * @author dharmendra singh
- * @see this is a ui class which is used to manage Categories of a rack for a perticular store .
+ * @see this is a ui class which is used to manage Categories of a rack for a
+ *      perticular store .
  */
-public class ManageCategory extends JFrame implements ActionListener ,ItemListener{
+public class ManageCategory extends JFrame
+		implements
+			ActionListener,
+			ItemListener {
 
 	private static final long serialVersionUID = 1L;
 
-	//UI Variables declaration -
+	// UI Variables declaration -
 	private JLabel label2;
 	private JPanel panel1;
 	private JLabel label1;
@@ -55,42 +58,35 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 	private JComboBox<Object> comboBox2;
 	// End of UI variables declaration
 
-
-
-	//Supported Objects
+	// Supported Objects
 	Connection connection = null;
 	SpecificFieldValue fieldName = null;
 	TableId tableid = null;
 	DatabaseInsert dbinsert = null;
 	CategoryModel category = null;
-	Validate valid= null;
+	Validate valid = null;
 	GetDBValue dbValue = null;
 	ArrayList<CategoryModel> categoryList = null;
 
-
-
-
 	/**
 	 * 
-	 * @param connection object of java.sql.Connection class
+	 * @param connection
+	 *            object of java.sql.Connection class
 	 */
 	public ManageCategory(Connection connection) {
 		this.connection = connection;
 		this.fieldName = new SpecificFieldValue(this.connection);
 		tableid = new TableId(this.connection);
-		dbinsert=new DatabaseInsert(this.connection);
+		dbinsert = new DatabaseInsert(this.connection);
 		category = new CategoryModel();
 		dbValue = new GetDBValue(connection);
 		valid = new Validate();
 		initComponents();
-		
+
 		storeName();
 		rackName();
 		loadTableData();
 	}
-
-
-
 
 	/**
 	 * this method is used to design Main UI of Category manager
@@ -114,7 +110,7 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 		button5 = new JButton();
 		button6 = new JButton();
 		scrollPane2 = new JScrollPane();
-		tableModel=new DefaultTableModel();
+		tableModel = new DefaultTableModel();
 		table1 = new JTable(tableModel);
 		label5 = new JLabel();
 		comboBox2 = new JComboBox<Object>();
@@ -225,7 +221,6 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 		contentPane.add(panel1);
 		panel1.setBounds(0, 0, 600, 700);
 
-
 		setTitle("Category Manager");
 		pack();
 		setVisible(true);
@@ -233,44 +228,39 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 		setSize(600, 700);
 	}
 
-
-
-	// this method every time load the rackList from database and then display it in table
-	public void loadTableData(){
-		int j = 0 ;
-		while(j<tableModel.getRowCount())
-		{
+	// this method every time load the rackList from database and then display
+	// it in table
+	public void loadTableData() {
+		int j = 0;
+		while (j < tableModel.getRowCount()) {
 			tableModel.removeRow(j);
 		}
-		categoryList = dbValue.getCategoryDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
-		for( int i=0; i<categoryList.size() ; i++){
+		categoryList = dbValue.getCategoryDetail(tableid.getStoreId(comboBox1
+				.getSelectedItem().toString()));
+		for (int i = 0; i < categoryList.size(); i++) {
 			CategoryModel category = categoryList.get(i);
-			tableModel.addRow(new Object[] {i+1,category.getCategoryName(),fieldName.getRackName(category.getRackId())});
+			tableModel.addRow(new Object[]{i + 1, category.getCategoryName(),
+					fieldName.getRackName(category.getRackId())});
 		}
 	}
 
-
-
 	// this method show all store name
-	private void storeName(){
-		ArrayList<String> storeNames = (ArrayList<String>) fieldName.getAllStoreName();
-		for (String name : storeNames){
+	private void storeName() {
+		ArrayList<String> storeNames = (ArrayList<String>) fieldName
+				.getAllStoreName();
+		for (String name : storeNames) {
 			comboBox1.addItem(name);
 		}
 	}
 
-
-
-
-
-
 	// this method show all Rack name
-	private void rackName(){
+	private void rackName() {
 		comboBox2.removeAllItems();
 		comboBox2.addItem("----Select Rack----");
 		ArrayList<String> rackNames = (ArrayList<String>) fieldName
-				.getAllRackName(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
-		for (String name : rackNames){
+				.getAllRackName(tableid.getStoreId(comboBox1.getSelectedItem()
+						.toString()));
+		for (String name : rackNames) {
 			comboBox2.addItem(name);
 		}
 	}
@@ -280,58 +270,53 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 		String temp = event.getActionCommand();
 
 		switch (temp) {
-			case "Save":
+			case "Save" :
 				save();
 				break;
-			case "Refresh":
+			case "Refresh" :
 				reFresh();
 				break;
-			case "Exit":
+			case "Exit" :
 				exit();
 				break;
-			case "View":
+			case "View" :
 				view();
 				break;
-			case "Update":
+			case "Update" :
 				update();
 				break;
-			case "Delete":
+			case "Delete" :
 				delete();
 				break;
-			default:
+			default :
 
 		}
 
 	}
 
-
-
-
-
-
-	private void save(){
-		//check validation for empty field
-		boolean status=true;
-		if( valid.isEmpty(textField1.getText())){
-			status=false;
+	private void save() {
+		// check validation for empty field
+		boolean status = true;
+		if (valid.isEmpty(textField1.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert category Name");
-		}else if( comboBox2.getSelectedIndex()<=0){
-			status=false;
+		} else if (comboBox2.getSelectedIndex() <= 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Rack Name");
 		}
 
-
-
-		if(status){
+		if (status) {
 			CategoryModel category = new CategoryModel();
-			//check validation for empty field
+			// check validation for empty field
 			category.setCategoryId(0);
 			category.setCategoryName(textField1.getText());
-			if(!valid.isEmpty(textArea1.getText()))
-			category.setCategoryDesc(textArea1.getText());
-			category.setRackId(tableid.getRackId(comboBox2.getSelectedItem().toString()));
+			if (!valid.isEmpty(textArea1.getText()))
+				category.setCategoryDesc(textArea1.getText());
+			category.setRackId(tableid.getRackId(comboBox2.getSelectedItem()
+					.toString()));
 			category.setFirmId(1);
-			category.setStoreId(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+			category.setStoreId(tableid.getStoreId(comboBox1.getSelectedItem()
+					.toString()));
 			dbinsert.insertCategory(category);
 			category.setDefault();
 			reset();
@@ -339,77 +324,80 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 
 	}
 
-	private void reFresh(){
+	private void reFresh() {
 		reset();
 		comboBox1.setSelectedIndex(0);
 	}
 
-	private void exit(){
+	private void exit() {
 		this.dispose();
 	}
 
-	private void view(){
-		boolean status=true;
+	private void view() {
+		boolean status = true;
 
-		if(table1.getSelectedRowCount()<1){
-			status=false;
+		if (table1.getSelectedRowCount() < 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
 
-		if(status){
-			category=categoryList.get(table1.getSelectedRow());
+		if (status) {
+			category = categoryList.get(table1.getSelectedRow());
 			textField1.setText(category.getCategoryName());
-			comboBox2.setSelectedItem(fieldName.getRackName(category.getRackId()));
+			comboBox2.setSelectedItem(fieldName.getRackName(category
+					.getRackId()));
 			textArea1.setText(category.getCategoryDesc());
 
 		}
 	}
 
-	private void update(){
-		boolean status=true;
-		if(category==null){
-			status=false;
-			new ValidationMSG(this, "Please Select A Row from Table Then Click on View to Update Rack Details");
-		}else if( valid.isEmpty(textField1.getText())){
-			status=false;
+	private void update() {
+		boolean status = true;
+		if (category == null) {
+			status = false;
+			new ValidationMSG(this,
+					"Please Select A Row from Table Then Click on View to Update Rack Details");
+		} else if (valid.isEmpty(textField1.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert category Name");
-		}else if( comboBox2.getSelectedIndex()<=0){
-			status=false;
+		} else if (comboBox2.getSelectedIndex() <= 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Rack Name");
 		}
 
-
-		if(status){
+		if (status) {
 			category.setCategoryName(textField1.getText());
-			if(!valid.isEmpty(textArea1.getText()))
-			category.setCategoryDesc(textArea1.getText());
-			category.setRackId(tableid.getRackId(comboBox2.getSelectedItem().toString()));
+			if (!valid.isEmpty(textArea1.getText()))
+				category.setCategoryDesc(textArea1.getText());
+			category.setRackId(tableid.getRackId(comboBox2.getSelectedItem()
+					.toString()));
 			new DatabaseUpdate(connection).updateCategory(category);
 			reset();
-			category=null;
+			category = null;
 
 		}
 	}
 
-	private void delete(){
-		boolean status=true;
-		if(table1.getSelectedRowCount()!=1){
-			status=false;
+	private void delete() {
+		boolean status = true;
+		if (table1.getSelectedRowCount() != 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
-		if(status){
-			int id = categoryList.get(table1.getSelectedRow()).getCategoryId();
-			new DatabaseDelete(connection).deleteCategory(id);
-			loadTableData();
+		if (status) {
+			if (new PromptDailog().getUserResponse()) {
+				int id = categoryList.get(table1.getSelectedRow())
+						.getCategoryId();
+				new DatabaseDelete(connection).deleteCategory(id);
+				loadTableData();
+			}
 		}
 	}
 
-
-
 	// for reset all field of UI
-	private void reset(){
-		//comboBox1.setSelectedIndex(0);
-		if(comboBox2.getItemCount()>0){
+	private void reset() {
+		// comboBox1.setSelectedIndex(0);
+		if (comboBox2.getItemCount() > 0) {
 			comboBox2.setSelectedIndex(0);
 		}
 		textField1.setText("");
@@ -417,14 +405,11 @@ public class ManageCategory extends JFrame implements ActionListener ,ItemListen
 		loadTableData();
 	}
 
-
-
-
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
-		if(event.getSource()==comboBox1){
-			//loadTableData();
+		if (event.getSource() == comboBox1) {
+			// loadTableData();
 			rackName();
 			reset();
 		}

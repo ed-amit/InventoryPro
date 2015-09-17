@@ -69,7 +69,7 @@ public class DatabaseUpdate {
 
 	public void updateProduct(ProductModel product) {
 		try {
-			stmt.executeUpdate("update brand set product_code='"
+			stmt.executeUpdate("update products set product_code='"
 					+ product.getProductCode() + "', product_name='"
 					+ product.getProductName() + "', product_desc='"
 					+ product.getProductDesc() + "', rack_id= "

@@ -21,6 +21,7 @@ import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.DistributorModel;
@@ -28,10 +29,13 @@ import com.lrd.inventory.model.DistributorModel;
 /**
  * @author dharmendra singh
  */
-public class ManageDistributor extends JFrame implements ActionListener , ItemListener{
+public class ManageDistributor extends JFrame
+		implements
+			ActionListener,
+			ItemListener {
 
 	private static final long serialVersionUID = 1L;
-	// Variables declaration 
+	// Variables declaration
 	private JLabel label1;
 	private JComboBox<Object> comboBox1;
 	private JButton button3;
@@ -84,9 +88,9 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 	private JTextArea textArea2;
 	private JScrollPane scrollPane6;
 	private JTextArea textArea3;
-	//  End of variables declaration
+	// End of variables declaration
 
-	Connection connection=null;
+	Connection connection = null;
 	SpecificFieldValue fieldName = null;
 	TableId tableid = null;
 	DatabaseInsert dbinsert = null;
@@ -96,7 +100,7 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 	ArrayList<DistributorModel> distributorList = null;
 
 	public ManageDistributor(Connection connection) {
-		this.connection=connection;
+		this.connection = connection;
 		this.fieldName = new SpecificFieldValue(this.connection);
 		tableid = new TableId(this.connection);
 		dbinsert = new DatabaseInsert(this.connection);
@@ -163,199 +167,230 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 		scrollPane6 = new JScrollPane();
 		textArea3 = new JTextArea();
 
-		//======== this ========
+		// ======== this ========
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
-		//---- label5 ----
+		// ---- label5 ----
 		label5.setText("Manage Distributor");
-		label5.setFont(label5.getFont().deriveFont(label5.getFont().getSize() + 15f));
+		label5.setFont(label5.getFont().deriveFont(
+				label5.getFont().getSize() + 15f));
 		contentPane.add(label5);
-		label5.setBounds(new Rectangle(new Point(265, 15), label5.getPreferredSize()));
+		label5.setBounds(new Rectangle(new Point(265, 15), label5
+				.getPreferredSize()));
 
 		contentPane.add(separator1);
 		separator1.setBounds(45, 60, 665, 7);
 
-		//---- label1 ----
+		// ---- label1 ----
 		label1.setText("Store Name");
 		contentPane.add(label1);
-		label1.setBounds(new Rectangle(new Point(30, 100), label1.getPreferredSize()));
+		label1.setBounds(new Rectangle(new Point(30, 100), label1
+				.getPreferredSize()));
 
 		contentPane.add(comboBox1);
 		comboBox1.setBounds(150, 100, 150, comboBox1.getPreferredSize().height);
 		comboBox1.addItemListener(this);
 
-
-		//======== scrollPane3 ========
+		// ======== scrollPane3 ========
 		{
-			scrollPane3.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollPane3.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollPane3
+					.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPane3
+					.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-			//======== panel1 ========
+			// ======== panel1 ========
 			{
 
 				panel1.setLayout(null);
 
-				//---- label2 ----
+				// ---- label2 ----
 				label2.setText("Status");
 				panel1.add(label2);
-				label2.setBounds(new Rectangle(new Point(15, 10), label2.getPreferredSize()));
+				label2.setBounds(new Rectangle(new Point(15, 10), label2
+						.getPreferredSize()));
 
 				panel1.add(comboBox2);
-				comboBox2.setBounds(120, 10, 150, comboBox2.getPreferredSize().height);
+				comboBox2.setBounds(120, 10, 150,
+						comboBox2.getPreferredSize().height);
 				comboBox2.addItem("Active");
 				comboBox2.addItem("Non Active");
 
-				//---- label3 ----
+				// ---- label3 ----
 				label3.setText("Contact Person");
 				panel1.add(label3);
-				label3.setBounds(new Rectangle(new Point(15, 50), label3.getPreferredSize()));
+				label3.setBounds(new Rectangle(new Point(15, 50), label3
+						.getPreferredSize()));
 
 				panel1.add(textField1);
-				textField1.setBounds(120, 50, 150, textField1.getPreferredSize().height);
+				textField1.setBounds(120, 50, 150,
+						textField1.getPreferredSize().height);
 
-				//---- label4 ----
+				// ---- label4 ----
 				label4.setText("<html>Agency Name <font color='red'><b>*</b></font></html>");
 				panel1.add(label4);
-				label4.setBounds(new Rectangle(new Point(15, 90), label4.getPreferredSize()));
+				label4.setBounds(new Rectangle(new Point(15, 90), label4
+						.getPreferredSize()));
 
 				panel1.add(textField2);
-				textField2.setBounds(120, 90, 150, textField2.getPreferredSize().height);
+				textField2.setBounds(120, 90, 150,
+						textField2.getPreferredSize().height);
 
-				//---- label6 ----
+				// ---- label6 ----
 				label6.setText("Pan No");
 				panel1.add(label6);
-				label6.setBounds(new Rectangle(new Point(15, 130), label6.getPreferredSize()));
+				label6.setBounds(new Rectangle(new Point(15, 130), label6
+						.getPreferredSize()));
 
 				panel1.add(textField3);
-				textField3.setBounds(120, 130, 150, textField3.getPreferredSize().height);
+				textField3.setBounds(120, 130, 150,
+						textField3.getPreferredSize().height);
 
-				//---- label7 ----
+				// ---- label7 ----
 				label7.setText("<html>Vat / Tin No <font color='red'><b>*</b></font></html>");
 				panel1.add(label7);
-				label7.setBounds(new Rectangle(new Point(15, 170), label7.getPreferredSize()));
+				label7.setBounds(new Rectangle(new Point(15, 170), label7
+						.getPreferredSize()));
 
 				panel1.add(textField4);
-				textField4.setBounds(120, 170, 150, textField4.getPreferredSize().height);
+				textField4.setBounds(120, 170, 150,
+						textField4.getPreferredSize().height);
 
-				//---- label8 ----
+				// ---- label8 ----
 				label8.setText("<html>Address <font color='red'><b>*</b></font></html>");
 				panel1.add(label8);
-				label8.setBounds(new Rectangle(new Point(15, 210), label8.getPreferredSize()));
+				label8.setBounds(new Rectangle(new Point(15, 210), label8
+						.getPreferredSize()));
 
-				//======== scrollPane4 ========
+				// ======== scrollPane4 ========
 				{
-					//textArea1.setText("area1");
+					// textArea1.setText("area1");
 					scrollPane4.setViewportView(textArea1);
 				}
 				panel1.add(scrollPane4);
 				scrollPane4.setBounds(120, 210, 150, 70);
 
-				//---- label9 ----
+				// ---- label9 ----
 				label9.setText("City ");
 				panel1.add(label9);
-				label9.setBounds(new Rectangle(new Point(15, 290), label9.getPreferredSize()));
+				label9.setBounds(new Rectangle(new Point(15, 290), label9
+						.getPreferredSize()));
 
 				panel1.add(textField5);
-				textField5.setBounds(120, 290, 150, textField5.getPreferredSize().height);
-				//				textField5.setText("field 5");
+				textField5.setBounds(120, 290, 150,
+						textField5.getPreferredSize().height);
+				// textField5.setText("field 5");
 
-				//---- label10 ----
+				// ---- label10 ----
 				label10.setText("Pin Code");
 				panel1.add(label10);
-				label10.setBounds(new Rectangle(new Point(15, 330), label10.getPreferredSize()));
+				label10.setBounds(new Rectangle(new Point(15, 330), label10
+						.getPreferredSize()));
 
 				panel1.add(textField6);
-				textField6.setBounds(120, 330, 150, textField6.getPreferredSize().height);
-				//				textField6.setText("field 6");
+				textField6.setBounds(120, 330, 150,
+						textField6.getPreferredSize().height);
+				// textField6.setText("field 6");
 
-				//---- label11 ----
+				// ---- label11 ----
 				label11.setText("Office No");
 				panel1.add(label11);
-				label11.setBounds(new Rectangle(new Point(15, 370), label11.getPreferredSize()));
+				label11.setBounds(new Rectangle(new Point(15, 370), label11
+						.getPreferredSize()));
 
 				panel1.add(textField7);
-				textField7.setBounds(120, 370, 150, textField7.getPreferredSize().height);
-				//				textField7.setText("field 7");
+				textField7.setBounds(120, 370, 150,
+						textField7.getPreferredSize().height);
+				// textField7.setText("field 7");
 
-
-				//---- label12 ----
+				// ---- label12 ----
 				label12.setText("Fax No");
 				panel1.add(label12);
-				label12.setBounds(new Rectangle(new Point(15, 410), label12.getPreferredSize()));
+				label12.setBounds(new Rectangle(new Point(15, 410), label12
+						.getPreferredSize()));
 
 				panel1.add(textField8);
-				textField8.setBounds(120, 410, 150, textField8.getPreferredSize().height);
-				//				textField8.setText("field 8");
+				textField8.setBounds(120, 410, 150,
+						textField8.getPreferredSize().height);
+				// textField8.setText("field 8");
 
-				//---- label13 ----
+				// ---- label13 ----
 				label13.setText("<html>Mobile No <font color='red'><b>*</b></font></html>");
 				panel1.add(label13);
-				label13.setBounds(new Rectangle(new Point(15, 450), label13.getPreferredSize()));
+				label13.setBounds(new Rectangle(new Point(15, 450), label13
+						.getPreferredSize()));
 
 				panel1.add(textField9);
-				textField9.setBounds(120, 450, 150, textField9.getPreferredSize().height);
-				//				textField9.setText("field 9");
+				textField9.setBounds(120, 450, 150,
+						textField9.getPreferredSize().height);
+				// textField9.setText("field 9");
 
-				//---- label14 ----
+				// ---- label14 ----
 				label14.setText("Buying Type");
 				panel1.add(label14);
-				label14.setBounds(new Rectangle(new Point(15, 490), label14.getPreferredSize()));
+				label14.setBounds(new Rectangle(new Point(15, 490), label14
+						.getPreferredSize()));
 
 				panel1.add(comboBox3);
-				comboBox3.setBounds(120, 490, 150, comboBox3.getPreferredSize().height);
+				comboBox3.setBounds(120, 490, 150,
+						comboBox3.getPreferredSize().height);
 				comboBox3.addItem("select");
 				comboBox3.setEnabled(false);
 
-
-				//---- label15 ----
+				// ---- label15 ----
 				label15.setText("Location Type");
 				panel1.add(label15);
-				label15.setBounds(new Rectangle(new Point(15, 530), label15.getPreferredSize()));
+				label15.setBounds(new Rectangle(new Point(15, 530), label15
+						.getPreferredSize()));
 
 				panel1.add(comboBox4);
-				comboBox4.setBounds(120, 530, 150, comboBox4.getPreferredSize().height);
+				comboBox4.setBounds(120, 530, 150,
+						comboBox4.getPreferredSize().height);
 				comboBox4.addItem("select");
 				comboBox4.setEnabled(false);
 
-
-				//---- label16 ----
+				// ---- label16 ----
 				label16.setText("Purchase Type");
 				panel1.add(label16);
-				label16.setBounds(new Rectangle(new Point(15, 570), label16.getPreferredSize()));
+				label16.setBounds(new Rectangle(new Point(15, 570), label16
+						.getPreferredSize()));
 
 				panel1.add(comboBox5);
-				comboBox5.setBounds(120, 570, 150, comboBox5.getPreferredSize().height);
+				comboBox5.setBounds(120, 570, 150,
+						comboBox5.getPreferredSize().height);
 				comboBox5.addItem("select");
 				comboBox5.setEnabled(false);
 
-				//---- label17 ----
+				// ---- label17 ----
 				label17.setText("Drug Lic No");
 				panel1.add(label17);
-				label17.setBounds(new Rectangle(new Point(15, 610), label17.getPreferredSize()));
+				label17.setBounds(new Rectangle(new Point(15, 610), label17
+						.getPreferredSize()));
 
 				panel1.add(textField10);
-				textField10.setBounds(120, 610, 150, textField10.getPreferredSize().height);
+				textField10.setBounds(120, 610, 150,
+						textField10.getPreferredSize().height);
 
-				//---- label18 ----
+				// ---- label18 ----
 				label18.setText("Terms & Cond.");
 				panel1.add(label18);
-				label18.setBounds(new Rectangle(new Point(15, 650), label18.getPreferredSize()));
+				label18.setBounds(new Rectangle(new Point(15, 650), label18
+						.getPreferredSize()));
 
-				//======== scrollPane5 ========
+				// ======== scrollPane5 ========
 				{
 					scrollPane5.setViewportView(textArea2);
 				}
 				panel1.add(scrollPane5);
 				scrollPane5.setBounds(120, 650, 150, 70);
 
-				//---- label19 ----
+				// ---- label19 ----
 				label19.setText("Remark");
 				panel1.add(label19);
-				label19.setBounds(new Rectangle(new Point(15, 730), label19.getPreferredSize()));
+				label19.setBounds(new Rectangle(new Point(15, 730), label19
+						.getPreferredSize()));
 
-
-				//======== scrollPane6 ========
+				// ======== scrollPane6 ========
 				{
 					scrollPane6.setViewportView(textArea3);
 				}
@@ -364,10 +399,12 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
-					for(int i = 0; i < panel1.getComponentCount(); i++) {
+					for (int i = 0; i < panel1.getComponentCount(); i++) {
 						Rectangle bounds = panel1.getComponent(i).getBounds();
-						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+						preferredSize.width = Math.max(bounds.x + bounds.width,
+								preferredSize.width);
+						preferredSize.height = Math.max(bounds.y
+								+ bounds.height, preferredSize.height);
 					}
 					Insets insets = panel1.getInsets();
 					preferredSize.width += insets.right;
@@ -379,60 +416,55 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 			scrollPane3.setViewportView(panel1);
 		}
 
-
-
-
 		tableModel.addColumn("Sr. No.");
 		tableModel.addColumn("Contact Person");
 		tableModel.addColumn("Agency Name");
 		tableModel.addColumn("Status");
-		//======== scrollPane1 ========
+		// ======== scrollPane1 ========
 		{
 			scrollPane1.setViewportView(table1);
 		}
 		contentPane.add(scrollPane1);
 		scrollPane1.setBounds(335, 100, 395, 365);
 
-		//---- button1 ----
+		// ---- button1 ----
 		button1.setText("Update");
 		contentPane.add(button1);
 		button1.setBounds(25, 480, 100, 40);
 		button1.addActionListener(this);
 
-		//---- button2 ----
+		// ---- button2 ----
 		button2.setText("Save");
 		contentPane.add(button2);
 		button2.setBounds(145, 480, 100, 40);
 		button2.addActionListener(this);
 
-		//---- button3 ----
+		// ---- button3 ----
 		button3.setText("Refresh");
 		contentPane.add(button3);
 		button3.setBounds(270, 480, 100, 40);
 		button3.addActionListener(this);
 
-		//---- button4 ----
+		// ---- button4 ----
 		button4.setText("View");
 		contentPane.add(button4);
 		button4.setBounds(390, 480, 100, 40);
 		button4.addActionListener(this);
 
-		//---- button5 ----
+		// ---- button5 ----
 		button5.setText("Delete");
 		contentPane.add(button5);
 		button5.setBounds(510, 480, 100, 40);
 		button5.addActionListener(this);
 
-		//---- button6 ----
+		// ---- button6 ----
 		button6.setText("Exit");
 		contentPane.add(button6);
 		button6.setBounds(630, 480, 100, 40);
 		button6.addActionListener(this);
 
-
 		contentPane.add(scrollPane3);
 		scrollPane3.setBounds(25, 130, 295, 335);
-
 
 		pack();
 		setVisible(true);
@@ -440,8 +472,7 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 		setSize(800, 600);
 	}
 
-
-	private void storeName(){
+	private void storeName() {
 		ArrayList<String> storeNames = (ArrayList<String>) fieldName
 				.getAllStoreName();
 		for (String name : storeNames) {
@@ -449,18 +480,17 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 		}
 	}
 
-
-	private void loadTableData(){
+	private void loadTableData() {
 		int j = 0;
 		while (j < tableModel.getRowCount()) {
 			tableModel.removeRow(j);
 		}
-		distributorList = dbValue.getDistributorDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+		distributorList = dbValue.getDistributorDetail(tableid
+				.getStoreId(comboBox1.getSelectedItem().toString()));
 		for (int i = 0; i < distributorList.size(); i++) {
 			distributor = distributorList.get(i);
-			tableModel.addRow(new Object[] { (i+1), distributor.getName(),
-					distributor.getAgencyName(),
-					distributor.getStatus() });
+			tableModel.addRow(new Object[]{(i + 1), distributor.getName(),
+					distributor.getAgencyName(), distributor.getStatus()});
 		}
 	}
 
@@ -470,81 +500,78 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 		String temp = event.getActionCommand();
 
 		switch (temp) {
-			case "Save":
+			case "Save" :
 				save();
 				break;
-			case "Refresh":
+			case "Refresh" :
 				reFresh();
 				break;
-			case "Exit":
+			case "Exit" :
 				exit();
 				break;
-			case "View":
+			case "View" :
 				view();
 				break;
-			case "Update":
+			case "Update" :
 				update();
 				break;
-			case "Delete":
+			case "Delete" :
 				delete();
 				break;
-			default:
+			default :
 
 		}
-
 
 	}
 
-
-	private void save(){
-		boolean status=true;
-		if( valid.isEmpty(textField2.getText())){
-			status=false;
+	private void save() {
+		boolean status = true;
+		if (valid.isEmpty(textField2.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Agency Name");
-		}else if( valid.isEmpty(textField4.getText())){
-			status=false;
+		} else if (valid.isEmpty(textField4.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Tin No");
-		}else if( valid.isEmpty(textField4.getText())){
-			status=false;
+		} else if (valid.isEmpty(textField4.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Address");
-		}else if( valid.isEmpty(textField9.getText())){
-			status=false;
+		} else if (valid.isEmpty(textField9.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Contact No");
 		}
 
-
-
-		if(status){
-			distributor=null;
+		if (status) {
+			distributor = null;
 			DistributorModel distributor = new DistributorModel();
 			distributor.setDistributorId(0);
-			distributor.setStoreId(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+			distributor.setStoreId(tableid.getStoreId(comboBox1
+					.getSelectedItem().toString()));
 			distributor.setStatus(comboBox2.getSelectedItem().toString());
-			if(!valid.isEmpty(textField1.getText()))
+			if (!valid.isEmpty(textField1.getText()))
 				distributor.setName(textField1.getText());
 			distributor.setAgencyName(textField2.getText());
-			if(!valid.isEmpty(textField3.getText()))
+			if (!valid.isEmpty(textField3.getText()))
 				distributor.setPanNo(textField3.getText());
 			distributor.setTinNo(textField4.getText());
 			distributor.setAddress(textArea1.getText());
-			if(!valid.isEmpty(textField5.getText()))
+			if (!valid.isEmpty(textField5.getText()))
 				distributor.setCity(textField5.getText());
-			if(!valid.isEmpty(textField6.getText()))
+			if (!valid.isEmpty(textField6.getText()))
 				distributor.setPinCode(textField6.getText());
-			if(!valid.isEmpty(textField7.getText()))
+			if (!valid.isEmpty(textField7.getText()))
 				distributor.setOfficeNo(textField7.getText());
-			if(!valid.isEmpty(textField8.getText()))
+			if (!valid.isEmpty(textField8.getText()))
 				distributor.setFaxNo(textField8.getText());
 			distributor.setMobileNo(textField9.getText());
 			distributor.setBuyingType(comboBox3.getSelectedItem().toString());
 			distributor.setLocationType(comboBox4.getSelectedItem().toString());
 			distributor.setPurchaseType(comboBox5.getSelectedItem().toString());
-			if(!valid.isEmpty(textField10.getText()))
-			distributor.setDrugLicenceNo(textField10.getText());
-			if(!valid.isEmpty(textArea2.getText()))
-			distributor.setTerms(textArea2.getText());
-			if(!valid.isEmpty(textArea3.getText()))
-			distributor.setRemark(textArea3.getText());
+			if (!valid.isEmpty(textField10.getText()))
+				distributor.setDrugLicenceNo(textField10.getText());
+			if (!valid.isEmpty(textArea2.getText()))
+				distributor.setTerms(textArea2.getText());
+			if (!valid.isEmpty(textArea3.getText()))
+				distributor.setRemark(textArea3.getText());
 
 			new DatabaseInsert(connection).insertDistributor(distributor);
 			reset();
@@ -552,27 +579,24 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 
 	}
 
-
-	private void reFresh(){
+	private void reFresh() {
 		reset();
 	}
 
-
-	private void exit(){
+	private void exit() {
 		this.dispose();
 	}
 
+	private void view() {
+		boolean status = true;
 
-	private void view(){
-		boolean status=true;
-
-		if(table1.getSelectedRowCount()<1){
-			status=false;
+		if (table1.getSelectedRowCount() < 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
 
-		if(status){
-			
+		if (status) {
+
 			distributor = distributorList.get(table1.getSelectedRow());
 			comboBox2.setSelectedItem(distributor.getStatus());
 			textField1.setText(distributor.getName());
@@ -585,91 +609,87 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 			textField8.setText(distributor.getFaxNo());
 			textField9.setText(distributor.getMobileNo());
 			textField10.setText(distributor.getDrugLicenceNo());
-			
+
 			textArea1.setText(distributor.getAddress());
 			textArea2.setText(distributor.getTerms());
 			textArea3.setText(distributor.getRemark());
 		}
 	}
 
-
-	private void update(){
-		boolean status=true;
-		if(distributor==null){
-			status=false;
-			new ValidationMSG(this, "Please Select A Row from Table Then Click on View to Update Rack Details");
-		}else if( valid.isEmpty(textField2.getText())){
-			status=false;
+	private void update() {
+		boolean status = true;
+		if (distributor == null) {
+			status = false;
+			new ValidationMSG(this,
+					"Please Select A Row from Table Then Click on View to Update Rack Details");
+		} else if (valid.isEmpty(textField2.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Agency Name");
-		}else if( valid.isEmpty(textField4.getText())){
-			status=false;
+		} else if (valid.isEmpty(textField4.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Tin No");
-		}else if( valid.isEmpty(textArea1.getText())){
-			status=false;
+		} else if (valid.isEmpty(textArea1.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Address");
-		}else if( valid.isEmpty(textField9.getText())){
-			status=false;
+		} else if (valid.isEmpty(textField9.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Contact No");
 		}
-		
-		
-		if(status){
-			
-			
+
+		if (status) {
+
 			distributor.setStatus(comboBox2.getSelectedItem().toString());
-			if(!valid.isEmpty(textField1.getText()))
+			if (!valid.isEmpty(textField1.getText()))
 				distributor.setName(textField1.getText());
 			distributor.setAgencyName(textField2.getText());
-			if(!valid.isEmpty(textField3.getText()))
+			if (!valid.isEmpty(textField3.getText()))
 				distributor.setPanNo(textField3.getText());
 			distributor.setTinNo(textField4.getText());
 			distributor.setAddress(textArea1.getText());
-			if(!valid.isEmpty(textField5.getText()))
+			if (!valid.isEmpty(textField5.getText()))
 				distributor.setCity(textField5.getText());
-			if(!valid.isEmpty(textField6.getText()))
+			if (!valid.isEmpty(textField6.getText()))
 				distributor.setPinCode(textField6.getText());
-			if(!valid.isEmpty(textField7.getText()))
+			if (!valid.isEmpty(textField7.getText()))
 				distributor.setOfficeNo(textField7.getText());
-			if(!valid.isEmpty(textField8.getText()))
+			if (!valid.isEmpty(textField8.getText()))
 				distributor.setFaxNo(textField8.getText());
 			distributor.setMobileNo(textField9.getText());
 			distributor.setBuyingType(comboBox3.getSelectedItem().toString());
 			distributor.setLocationType(comboBox4.getSelectedItem().toString());
 			distributor.setPurchaseType(comboBox5.getSelectedItem().toString());
-			if(!valid.isEmpty(textField10.getText()))
-			distributor.setDrugLicenceNo(textField10.getText());
-			if(!valid.isEmpty(textArea2.getText()))
-			distributor.setTerms(textArea2.getText());
-			if(!valid.isEmpty(textArea3.getText()))
-			distributor.setRemark(textArea3.getText());
-			
+			if (!valid.isEmpty(textField10.getText()))
+				distributor.setDrugLicenceNo(textField10.getText());
+			if (!valid.isEmpty(textArea2.getText()))
+				distributor.setTerms(textArea2.getText());
+			if (!valid.isEmpty(textArea3.getText()))
+				distributor.setRemark(textArea3.getText());
+
 			new DatabaseUpdate(connection).updateDistributor(distributor);
-			distributor=null;
+			distributor = null;
 			reset();
 		}
 	}
 
+	private void delete() {
+		boolean status = true;
 
-
-
-	private void delete(){
-		boolean status=true;
-
-		if(table1.getSelectedRowCount()<1){
-			status=false;
+		if (table1.getSelectedRowCount() < 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
 
-		if(status){
-			int id = distributorList.get(table1.getSelectedRow()).getDistributorId();
-			new DatabaseDelete(connection).deleteDistributor(id);
-			reset();
+		if (status) {
+			if (new PromptDailog().getUserResponse()) {
+				int id = distributorList.get(table1.getSelectedRow())
+						.getDistributorId();
+				new DatabaseDelete(connection).deleteDistributor(id);
+				reset();
+			}
 		}
 	}
-	
-	
-	
-	private void reset(){
+
+	private void reset() {
 		comboBox2.setSelectedIndex(0);
 		textField1.setText("");
 		textField2.setText("");
@@ -681,7 +701,7 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 		textField8.setText("");
 		textField9.setText("");
 		textField10.setText("");
-		
+
 		textArea1.setText("");
 		textArea2.setText("");
 		textArea3.setText("");
@@ -691,7 +711,7 @@ public class ManageDistributor extends JFrame implements ActionListener , ItemLi
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
-		if(event.getSource()==comboBox1){
+		if (event.getSource() == comboBox1) {
 			loadTableData();
 			reset();
 		}

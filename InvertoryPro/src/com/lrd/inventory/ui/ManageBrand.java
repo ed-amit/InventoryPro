@@ -21,6 +21,7 @@ import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.BrandModel;
@@ -77,7 +78,7 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 		valid = new Validate();
 		initComponents();
 		storeName();
-		//rackName();
+		// rackName();
 
 		loadTableData();
 	}
@@ -230,16 +231,17 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 	}
 
 	public void loadTableData() {
-		
+
 		while (tableModel.getRowCount() > 0) {
 			tableModel.removeRow(0);
 		}
-		brandList = dbValue.getBrandDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+		brandList = dbValue.getBrandDetail(tableid.getStoreId(comboBox1
+				.getSelectedItem().toString()));
 		for (int i = 0; i < brandList.size(); i++) {
 			BrandModel brand = brandList.get(i);
-			tableModel.addRow(new Object[] { i, brand.getBrandName(),
+			tableModel.addRow(new Object[]{i, brand.getBrandName(),
 					fieldName.getCategoryNameByID(brand.getCategoryId()),
-					fieldName.getRackName(brand.getRackId()) });
+					fieldName.getRackName(brand.getRackId())});
 		}
 	}
 
@@ -253,78 +255,78 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 
 	private void rackName() {
 		comboBox2.removeAllItems();
-		//System.out.println(comboBox1.getSelectedItem().toString()==null);
-		//comboBox2.addItem("----Select Rack---");
+		// System.out.println(comboBox1.getSelectedItem().toString()==null);
+		// comboBox2.addItem("----Select Rack---");
 		ArrayList<String> rackNames = (ArrayList<String>) fieldName
-				.getAllRackName(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
+				.getAllRackName(tableid.getStoreId(comboBox1.getSelectedItem()
+						.toString()));
 		for (String name : rackNames) {
 			comboBox2.addItem(name);
 		}
-		//categoryName();
+		// categoryName();
 	}
 
 	private void categoryName() {
 		comboBox3.removeAllItems();
-		//System.out.println(comboBox2.getSelectedItem()==null);
-		//comboBox3.addItem("---Select Category---");
-		if(comboBox2.getSelectedItem()!=null){
+		// System.out.println(comboBox2.getSelectedItem()==null);
+		// comboBox3.addItem("---Select Category---");
+		if (comboBox2.getSelectedItem() != null) {
 			ArrayList<String> categoryNames = (ArrayList<String>) fieldName
-					.getCategoryName(tableid.getRackId(comboBox2.getSelectedItem().toString()));
+					.getCategoryName(tableid.getRackId(comboBox2
+							.getSelectedItem().toString()));
 			for (String name : categoryNames) {
 				comboBox3.addItem(name);
 			}
 		}
 	}
 
-
-
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		String temp = event.getActionCommand();
 
 		switch (temp) {
-			case "Save":
+			case "Save" :
 				save();
 				break;
-			case "Refresh":
+			case "Refresh" :
 				reFresh();
 				break;
-			case "Exit":
+			case "Exit" :
 				exit();
 				break;
-			case "View":
+			case "View" :
 				view();
 				break;
-			case "Update":
+			case "Update" :
 				update();
 				break;
-			case "Delete":
+			case "Delete" :
 				delete();
 				break;
-			default:
+			default :
 
 		}
 
 	}
 
 	private void save() {
-		//check validation for empty field
-		boolean status=true;
-		if( valid.isEmpty(textField1.getText())){
-			status=false;
+		// check validation for empty field
+		boolean status = true;
+		if (valid.isEmpty(textField1.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Brand Name");
-		}else if( comboBox2.getSelectedIndex()<0){
-			status=false;
+		} else if (comboBox2.getSelectedIndex() < 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Rack Name");
-		}else if( comboBox3.getSelectedIndex()<0){
-			status=false;
+		} else if (comboBox3.getSelectedIndex() < 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Category Name");
 		}
-		if(status){
-			BrandModel brand=new BrandModel();
+		if (status) {
+			BrandModel brand = new BrandModel();
 			brand.setBrandId(0);
 			brand.setBrandName(textField1.getText());
-			if(!valid.isEmpty(textArea1.getText()))
+			if (!valid.isEmpty(textArea1.getText()))
 				brand.setBrandDesc(textArea1.getText());
 			brand.setCategoryId(tableid.getCategoryId(comboBox3
 					.getSelectedItem().toString()));
@@ -350,73 +352,79 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 	}
 
 	private void view() {
-		boolean status=true;
+		boolean status = true;
 
-		if(table1.getSelectedRowCount()<1){
-			status=false;
+		if (table1.getSelectedRowCount() < 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
 
-		if(status){
-			/*int row=table1.getSelectedRow();
-			System.out.println("row = "+row);
-			int id = brandList.get(row).getBrandId();
-			System.out.println("id = "+id);*/
+		if (status) {
+			/*
+			 * int row=table1.getSelectedRow();
+			 * System.out.println("row = "+row); int id =
+			 * brandList.get(row).getBrandId(); System.out.println("id = "+id);
+			 */
 			brand = brandList.get(table1.getSelectedRow());
 			textField1.setText(brand.getBrandName());
 			comboBox2.setSelectedItem(fieldName.getRackName(brand.getRackId()));
-			comboBox3.setSelectedItem(fieldName.getCategoryNameByID(brand.getCategoryId()));
+			comboBox3.setSelectedItem(fieldName.getCategoryNameByID(brand
+					.getCategoryId()));
 			textArea1.setText(brand.getBrandDesc());
 		}
 	}
 
 	private void update() {
-		boolean status=true;
-		if(brand==null){
-			status=false;
-			new ValidationMSG(this, "Please Select A Row from Table Then Click on View to Update Rack Details");
-		}else if( valid.isEmpty(textField1.getText())){
-			status=false;
+		boolean status = true;
+		if (brand == null) {
+			status = false;
+			new ValidationMSG(this,
+					"Please Select A Row from Table Then Click on View to Update Rack Details");
+		} else if (valid.isEmpty(textField1.getText())) {
+			status = false;
 			new ValidationMSG(this, "Please Insert Brand Name");
-		}else if( comboBox2.getSelectedIndex()<0){
-			status=false;
+		} else if (comboBox2.getSelectedIndex() < 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Rack Name");
-		}else if( comboBox3.getSelectedIndex()<0){
-			status=false;
+		} else if (comboBox3.getSelectedIndex() < 0) {
+			status = false;
 			new ValidationMSG(this, "Please Select Category Name");
 		}
 
-
-		if(status){
+		if (status) {
 			brand.setBrandName(textField1.getText());
-			if(!valid.isEmpty(textArea1.getText()))
+			if (!valid.isEmpty(textArea1.getText()))
 				brand.setBrandDesc(textArea1.getText());
-			brand.setRackId(tableid.getRackId(comboBox2.getSelectedItem().toString()));
-			brand.setCategoryId(tableid.getCategoryId(comboBox3.getSelectedItem().toString()));
+			brand.setRackId(tableid.getRackId(comboBox2.getSelectedItem()
+					.toString()));
+			brand.setCategoryId(tableid.getCategoryId(comboBox3
+					.getSelectedItem().toString()));
 			new DatabaseUpdate(connection).updateBrand(brand);
 			reset();
-			brand=null;
+			brand = null;
 		}
 	}
 
 	private void delete() {
-		boolean status=true;
-		if(table1.getSelectedRowCount()!=1){
-			status=false;
+		boolean status = true;
+		if (table1.getSelectedRowCount() != 1) {
+			status = false;
 			new ValidationMSG(this, "Please Select A Row from Table Then Click");
 		}
-		if(status){
-			int id = brandList.get(table1.getSelectedRow()).getBrandId();
-			new DatabaseDelete(connection).deleteBrand(id);
-			loadTableData();
-			reset();
+		if (status) {
+			if (new PromptDailog().getUserResponse()) {
+				int id = brandList.get(table1.getSelectedRow()).getBrandId();
+				new DatabaseDelete(connection).deleteBrand(id);
+				loadTableData();
+				reset();
+			}
 		}
 	}
 
 	private void reset() {
-		//comboBox1.setSelectedIndex(0);
-		//comboBox2.setSelectedIndex(0);
-		//comboBox3.setSelectedIndex(0);
+		// comboBox1.setSelectedIndex(0);
+		// comboBox2.setSelectedIndex(0);
+		// comboBox3.setSelectedIndex(0);
 
 		textField1.setText("");
 		textArea1.setText("");
@@ -426,12 +434,12 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
-		if(event.getSource()==comboBox1){
+		if (event.getSource() == comboBox1) {
 			rackName();
 			reset();
 		}
 
-		if (event.getSource()==comboBox2){
+		if (event.getSource() == comboBox2) {
 			categoryName();
 			loadTableData();
 		}

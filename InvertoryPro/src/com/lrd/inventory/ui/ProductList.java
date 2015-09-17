@@ -28,7 +28,11 @@ import com.lrd.inventory.model.ProductModel;
 /**
  * @author dharmendra singh
  */
-public class ProductList extends JFrame implements ActionListener, KeyListener, ItemListener{
+public class ProductList extends JFrame
+		implements
+			ActionListener,
+			KeyListener,
+			ItemListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,32 +52,31 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 	// End of variables declaration
 
 	Connection connection = null;
-	//ProductModel product = null;
+	// ProductModel product = null;
 	ArrayList<ProductModel> productList = null;
 	ArrayList<ProductModel> productDisplayList = null;
 	TableId tableid = null;
 	GetDBValue dbvalue = null;
 	SpecificFieldValue fieldName = null;
-	Validate valid =null;
-	
-	
+	Validate valid = null;
 
 	public ProductList(Connection connection) {
 		this.connection = connection;
-		//productList = new ArrayList<>();
+		// productList = new ArrayList<>();
 		tableid = new TableId(connection);
 		dbvalue = new GetDBValue(connection);
 		fieldName = new SpecificFieldValue(connection);
 		valid = new Validate();
 		initComponents();
 		storeName();
-		productList = dbvalue.getProductDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
-		//productDisplayList = productList;
-		loadTableData(productList);
+		productList = dbvalue.getProductDetail(tableid.getStoreId(comboBox1
+				.getSelectedItem().toString()));
+		productDisplayList = productList;
+		loadTableData(productDisplayList);
 	}
 
 	private void initComponents() {
-		
+
 		label1 = new JLabel();
 		label2 = new JLabel();
 		comboBox1 = new JComboBox<Object>();
@@ -82,7 +85,7 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 		button4 = new JButton();
 		label5 = new JLabel();
 		scrollPane1 = new JScrollPane();
-		tableModel= new DefaultTableModel();
+		tableModel = new DefaultTableModel();
 		table1 = new JTable(tableModel);
 		separator1 = new JSeparator();
 		label3 = new JLabel();
@@ -96,18 +99,17 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 		contentPane.add(label1);
 		label1.setBounds(new Rectangle(new Point(50, 100), label1
 				.getPreferredSize()));
-		
+
 		contentPane.add(comboBox1);
 		comboBox1.setBounds(150, 100, 200, comboBox1.getPreferredSize().height);
 		comboBox1.addItemListener(this);
-		
 
 		// ---- label2 ----
 		label2.setText("Product Name");
 		contentPane.add(label2);
 		label2.setBounds(new Rectangle(new Point(50, 150), label2
 				.getPreferredSize()));
-		
+
 		contentPane.add(textField1);
 		textField1.setBounds(150, 150, 200,
 				textField1.getPreferredSize().height);
@@ -130,7 +132,6 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 		contentPane.add(label5);
 		label5.setBounds(new Rectangle(new Point(250, 15), label5
 				.getPreferredSize()));
-		
 
 		tableModel.addColumn("Product Code");
 		tableModel.addColumn("Product Name");
@@ -141,6 +142,7 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 		// ======== scrollPane1 ========
 		{
 			scrollPane1.setViewportView(table1);
+			table1.addKeyListener(this);
 		}
 		contentPane.add(scrollPane1);
 		scrollPane1.setBounds(35, 200, 580, 420);
@@ -153,105 +155,116 @@ public class ProductList extends JFrame implements ActionListener, KeyListener, 
 		label3.setBounds(new Rectangle(new Point(40, 630), label3
 				.getPreferredSize()));
 
-		
 		pack();
 		setVisible(true);
 		setLocation(200, 10);
 		setSize(650, 700);
-		
+
 	}
-	
-	
-	
-	private void storeName(){
-		ArrayList<String> storeNames = (ArrayList<String>) fieldName.getAllStoreName();
-		for (String name : storeNames){
+
+	private void storeName() {
+		ArrayList<String> storeNames = (ArrayList<String>) fieldName
+				.getAllStoreName();
+		for (String name : storeNames) {
 			comboBox1.addItem(name);
 		}
 	}
-	
-	
-	private void loadTableData(ArrayList<ProductModel> tempProList){
-		
-		while ( tableModel.getRowCount()>0) {
+
+	private void loadTableData(ArrayList<ProductModel> tempProList) {
+
+		while (tableModel.getRowCount() > 0) {
 			tableModel.removeRow(0);
 		}
-		
-		
-		for(ProductModel tempProduct : tempProList){ 
-			tableModel.addRow(new Object[]{tempProduct.getProductCode(),tempProduct.getProductName(),tempProduct.getUnit(),
-					tempProduct.getQuantity(),tempProduct.getSaleRate(),tempProduct.getVatPercent()});
+
+		for (ProductModel tempProduct : tempProList) {
+			tableModel.addRow(new Object[]{tempProduct.getProductCode(),
+					tempProduct.getProductName(), tempProduct.getUnit(),
+					tempProduct.getQuantity(), tempProduct.getSaleRate(),
+					tempProduct.getVatPercent()});
 		}
 	}
 
-	
-
 	@Override
-	public void keyPressed(KeyEvent arg0) {	}
+	public void keyPressed(KeyEvent arg0) {
+	}
 	@Override
-	public void keyTyped(KeyEvent arg0) {	}
+	public void keyTyped(KeyEvent arg0) {
+	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		
-		if(!(event.getKeyChar()==27 || event.getKeyChar()==6)){
-			productDisplayList = new ArrayList<>();
-			if(!(valid.isEmpty(textField1.getText()))){
-				for(ProductModel tempProduct : productList){
-					if(tempProduct.getProductName().contains(textField1.getText())){
-						productDisplayList.add(tempProduct);
+		if (event.getSource() == textField1) {
+			if (!(event.getKeyChar() == 27 || event.getKeyChar() == 6)) {
+				productDisplayList = new ArrayList<>();
+				if (!(valid.isEmpty(textField1.getText()))) {
+					for (ProductModel tempProduct : productList) {
+						if (tempProduct.getProductName().contains(
+								textField1.getText())) {
+							productDisplayList.add(tempProduct);
+						}
 					}
+					loadTableData(productDisplayList);
+				} else {
+					productDisplayList = productList;
+					loadTableData(productDisplayList);
 				}
-				loadTableData(productDisplayList);
-			}else{
-				loadTableData(productList);
 			}
-			
-			
 		}
-		
+
+		if (event.getSource() == table1) {
+			if (event.getKeyChar() == 10) {
+				if (table1.getSelectedRowCount() == 1) {
+					int id = productDisplayList.get(table1.getSelectedRow())
+							.getProductId();
+					table1.setRowSelectionInterval(table1.getSelectedRow()-1, table1.getSelectedRow()-1);
+					new ProductDetails(id, this.connection);
+					
+				}
+			}
+		}
+
 	}
 
-	
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		if(event.getStateChange()== ItemEvent.SELECTED){
-			if(event.getSource()==comboBox1){
+		if (event.getStateChange() == ItemEvent.SELECTED) {
+			if (event.getSource() == comboBox1) {
 				productDisplayList = new ArrayList<>();
-				productList = dbvalue.getProductDetail(tableid.getStoreId(comboBox1.getSelectedItem().toString()));
-				productDisplayList=productList;
+				productList = dbvalue.getProductDetail(tableid
+						.getStoreId(comboBox1.getSelectedItem().toString()));
+				productDisplayList = productList;
 				loadTableData(productDisplayList);
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		
-		if(event.getSource()==button3){
+
+		if (event.getSource() == button3) {
 			productDisplayList = productList;
 			loadTableData(productList);
 			textField1.setText("");
 		}
-		
-		
-		if(event.getSource()==button4){
-			boolean status=true;
-			if(table1.getSelectedRowCount()!=1){
-				status=false;
-				new ValidationMSG(this, "Please Select A Row from Table Then Click");
+
+		if (event.getSource() == button4) {
+			boolean status = true;
+			if (table1.getSelectedRowCount() != 1) {
+				status = false;
+				new ValidationMSG(this,
+						"Please Select A Row from Table Then Click");
 			}
-			if(status){
-				int id = productDisplayList.get(table1.getSelectedRow()).getProductId();
+			if (status) {
+				int id = productDisplayList.get(table1.getSelectedRow())
+						.getProductId();
 				new DatabaseDelete(connection).deleteProductVat(id);
 				new DatabaseDelete(connection).deleteProduct(id);
 				productDisplayList.remove(table1.getSelectedRow());
 				loadTableData(productDisplayList);
 			}
 		}
-			
+
 	}
-	
-	
+
 }

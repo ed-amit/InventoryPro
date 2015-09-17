@@ -106,7 +106,10 @@ public class TableId {
 		}catch(SQLException e){ 
 			
 			try {
-				yearId=stmt.executeUpdate("insert into financial_year values (null,"+startYear+", 0 ,"+endYear+");",Statement.RETURN_GENERATED_KEYS);
+				stmt.executeUpdate("insert into financial_year values (null,"+startYear+", 0 ,"+endYear+");");
+				result=stmt.executeQuery("select max(year_id) from financial_year");
+				result.first();
+				yearId=result.getInt(1);
 			} catch (SQLException e1){ e1.printStackTrace(); }
 			
 		}

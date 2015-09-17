@@ -169,7 +169,7 @@ public class GetDBValue {
 			ResultSet result = stmt
 					.executeQuery("select * from products where STORE_ID="
 							+ storeId);
-			
+
 			while (result.next()) {
 				ProductModel product = new ProductModel();
 				product.setProductId(result.getInt("PRODUCT_ID"));
@@ -196,6 +196,44 @@ public class GetDBValue {
 			}
 
 			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ProductModel getProductDetailById(int productId) {
+		// TODO Auto-generated method stub
+		try {
+
+			ResultSet result = stmt
+					.executeQuery("select * from products where product_ID="
+							+ productId);
+			result.first();
+
+			ProductModel product = new ProductModel();
+
+			product.setProductId(result.getInt("PRODUCT_ID"));
+			product.setProductCode(result.getString("PRODUCT_CODE"));
+			product.setProductName(result.getString("PRODUCT_NAME"));
+			product.setProductDesc(result.getString("PRODUCT_DESC"));
+			product.setRackId(result.getInt("RACK_ID"));
+			product.setCategoryId(result.getInt("CATEGORY_ID"));
+			product.setBrandId(result.getInt("BRAND_ID"));
+			product.setUnit(result.getString("UNIT"));
+			product.setQuantity(result.getDouble("QUANTITY"));
+			product.setPurchaseRate(result.getDouble("PURCHASE_RATE"));
+			product.setMRP(result.getDouble("MRP"));
+			product.setSaleRate(result.getDouble("SALE_RATE"));
+			product.setWholesaleRate(result.getDouble("WHOLESALE_RATE"));
+			product.setOnlineRate(result.getDouble("ONLINE_SALE_RATE"));
+			product.setVatPercent(result.getDouble("VAT_PER"));
+			product.setLowQuantity(result.getDouble("LOW_LEVEL_QUANTITY"));
+			product.setFirmId(result.getInt("FIRM_ID"));
+			product.setStoreId(result.getInt("STORE_ID"));
+			product.setYearId(result.getInt("YEAR_ID"));
+
+			return product;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

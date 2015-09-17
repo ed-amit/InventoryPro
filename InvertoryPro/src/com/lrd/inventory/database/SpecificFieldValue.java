@@ -289,6 +289,36 @@ public class SpecificFieldValue {
 	}
 	
 	
+	
+	public String getNewSaleOrderNo(int storeId) {
+		// TODO Auto-generated method stub
+		String query="select max(order_ID) from sale_order;";
+		try{
+			result=stmt.executeQuery(query);
+			result.first();
+			return (result.getInt(1)+1)+"";
+
+		}catch(SQLException e){ e.printStackTrace(); }
+		
+		return null;
+	}
+
+
+
+	public String getNewSaleQuotationNo(int storeId) {
+		// TODO Auto-generated method stub
+		String query="select max(quotation_ID) from sale_quotation;";
+		try{
+			result=stmt.executeQuery(query);
+			result.first();
+			return (result.getInt(1)+1)+"";
+
+		}catch(SQLException e){ e.printStackTrace(); }
+		
+		return null;
+	}
+	
+	
 	public double getPaidAmount(int billId){
 		String query="SELECT SUM(PAID_AMOUNT) from bill_payment_details where bill_id="+billId+" GROUP BY BILL_ID";
 		try {
@@ -301,5 +331,9 @@ public class SpecificFieldValue {
 		}
 		return -1;
 	}
+
+
+
+	
 
 }

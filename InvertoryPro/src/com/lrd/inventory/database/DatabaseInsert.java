@@ -104,14 +104,16 @@ public class DatabaseInsert {
 	 * 
 	 *            insert VatModel data into db
 	 */
-	public void insertVat(VatModel vat) {
+	public boolean insertVat(VatModel vat) {
 		String query = "insert into vats values (null , " + vat.getVatPercent()
 				+ " , " + vat.getYearId() + " , " + vat.getFermId() + " ,"
 				+ vat.getVatUpdated() + ");";
 		try {
 			stmt.executeUpdate(query);
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
+			//e.printStackTrace();
 		}
 	}
 
@@ -120,7 +122,7 @@ public class DatabaseInsert {
 	 * 
 	 *            this function is used to insert ProductModel into db
 	 */
-	public void insertProduct(ProductModel product) {
+	public boolean insertProduct(ProductModel product) {
 		// System.out.println(product.getBrandId());
 		String query = "insert into products values (null , '"
 				+ product.getProductCode() + "', '" + product.getProductName()
@@ -135,8 +137,10 @@ public class DatabaseInsert {
 				+ product.getStoreId() + " ," + product.getYearId() + " );";
 		try {
 			stmt.executeUpdate(query);
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -507,17 +511,19 @@ public class DatabaseInsert {
 		}
 	}
 
-	public void insertCreditor(CreditorModel creditor) {
+	public boolean insertCreditor(CreditorModel creditor) {
 		String query = "insert into credit_customers values (null, '"
 				+ creditor.getName() + "', '" + creditor.getAddress() + "', '"
 				+ creditor.getContactNo() + "', " + creditor.getCreditLimit()
 				+ " , " + creditor.getCreditAmt() + " , "
-				+ creditor.getDebitAmt() + " , " + creditor.getFirmId() + " , "
-				+ creditor.getStoreId() + " );";
+				+ creditor.getDebitAmt() + " , " + creditor.getStoreId() + " , "
+				+ creditor.getFirmId() + " );";
 		try {
 			stmt.executeUpdate(query);
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			return false;
 		}
 	}
 

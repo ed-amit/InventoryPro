@@ -172,6 +172,7 @@ public class SalesBill extends JFrame
 
 	private int WIDTH;
 	private int HEIGHT;
+	private String userName;
 
 	Connection connection = null;
 
@@ -193,8 +194,9 @@ public class SalesBill extends JFrame
 	double totalAmount = 0;
 
 	// constructor for class
-	public SalesBill(Connection connection) {
+	public SalesBill(Connection connection, String userName, int billType) {
 		this.connection = connection;
+		this.userName = userName;
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = kit.getScreenSize();
 		WIDTH = screenSize.width;
@@ -215,6 +217,7 @@ public class SalesBill extends JFrame
 		creditors = dbValue.getCreditorDetail(tableid.getStoreId(comboBox2
 				.getSelectedItem().toString()));
 		creditCustomerName();
+		comboBox3.setSelectedIndex(billType);
 		textField10.requestFocus();
 
 	}
@@ -382,14 +385,7 @@ public class SalesBill extends JFrame
 
 				panel2.add(textField8);
 				textField8.setBounds(WIDTH - 120, 40, 100, 20);
-				textField8.setText(String.valueOf(Calendar.getInstance().get(
-						Calendar.YEAR))
-						+ "-"
-						+ (String.valueOf(Calendar.getInstance().get(
-								Calendar.MONTH) + 1))
-						+ "-"
-						+ String.valueOf(Calendar.getInstance().get(
-								Calendar.DATE)));
+				textField8.setText(new DatePicker().getCurrentDate());
 				// textField8.setEnabled(false);
 				textField8.setFocusable(false);
 
@@ -826,7 +822,7 @@ public class SalesBill extends JFrame
 				button3.addActionListener(this);
 
 				// ---- button4 ----
-				button4.setText("Save");
+				button4.setText("Add");
 				panel8.add(button4);
 				button4.setBounds(90, 60, 70, 60);
 				button4.addActionListener(this);
@@ -928,7 +924,7 @@ public class SalesBill extends JFrame
 		ArrayList<Float> vatPercents = (ArrayList<Float>) fieldName
 				.getVatByStartYear(year);
 		for (float vat : vatPercents) {
-			comboBox1.addItem(vat);
+			comboBox1.addItem(String.valueOf(vat));
 		}
 	}
 
@@ -964,9 +960,13 @@ public class SalesBill extends JFrame
 			}
 			if (event.getItem() == "Sale Order") {
 				label19.setText("Order No.");
+				textField9.setText(fieldName.getNewSaleOrderNo(tableid
+						.getStoreId(comboBox2.getSelectedItem().toString())));
 			}
 			if (event.getItem() == "Sale Quotation") {
 				label19.setText("Quotation No");
+				textField9.setText(fieldName.getNewSaleQuotationNo(tableid
+						.getStoreId(comboBox2.getSelectedItem().toString())));
 			}
 			if (event.getItem() == "Cash") {
 				textField14.setEnabled(false);
@@ -978,16 +978,13 @@ public class SalesBill extends JFrame
 			}
 
 			if (event.getSource() == comboBox2) {
-				if (comboBox3.getSelectedItem().toString() == "Sale Bill")
-					textField9
-							.setText(fieldName.getNewBillNo(tableid
-									.getStoreId(comboBox2.getSelectedItem()
-											.toString())));
-				if (comboBox3.getSelectedItem().toString() == "Challan")
-					textField9
-							.setText(fieldName.getNewChallanNo(tableid
-									.getStoreId(comboBox2.getSelectedItem()
-											.toString())));
+				productList = dbValue.getProductDetail(tableid
+						.getStoreId(comboBox2.getSelectedItem().toString()));
+				creditors = dbValue.getCreditorDetail(tableid
+						.getStoreId(comboBox2.getSelectedItem().toString()));
+				creditCustomerName();
+				billDetailList = new ArrayList<>();
+				resetAll();
 			}
 
 			// this condition used to calculate bill vat and add it to net
@@ -1056,14 +1053,23 @@ public class SalesBill extends JFrame
 				break;
 
 			case "Print" :
-				if (saleType.equals("Sale Bill")) {
-					saveAndPrintSalesBill();
-				} else if (saleType.equals("Challan")) {
-					saveAndPrintChallan();
-				} else if (saleType.equals("Sale Order")) {
-					saveAndPrintSaleOrder();
-				} else if (saleType.equals("Sale Quotation")) {
-					saveAndPrintSaleQuotation();
+				if (table1.getRowCount() <= 0) {
+					new ValidationMSG(this,
+							"Please add some product to the list for print");
+				} else if (valid.isEmpty(textField10.getText())) {
+					new ValidationMSG(this, "Please insert customer name");
+				} else if (valid.isEmpty(textField11.getText())) {
+					new ValidationMSG(this, "Please insert customer mobile no");
+				} else {
+					if (saleType.equals("Sale Bill")) {
+						saveAndPrintSalesBill();
+					} else if (saleType.equals("Challan")) {
+						saveAndPrintChallan();
+					} else if (saleType.equals("Sale Order")) {
+						saveAndPrintSaleOrder();
+					} else if (saleType.equals("Sale Quotation")) {
+						saveAndPrintSaleQuotation();
+					}
 				}
 				break;
 
@@ -1094,43 +1100,64 @@ public class SalesBill extends JFrame
 
 	// / this method is used for add product to the bill
 	private void addToBill() {
+		boolean status = true;
+		if (valid.isEmpty(textField16.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please insert product code");
+		} else if (valid.isEmpty(textField21.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please insert product Name");
+		} else if (valid.isEmpty(textField18.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please insert product Quantity");
+		} else if (valid.isEmpty(textField23.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please select product from List");
+		}
 
-		BillDetailModel billDetail = new BillDetailModel();
+		if (status) {
+			BillDetailModel billDetail = new BillDetailModel();
 
-		double mrp, vatPercent, vatAmt, discountPer, discountAmt, rate;
+			double mrp = 0, vatPercent = 0, vatAmt = 0, discountPer = 0, discountAmt = 0, rate = 0;
 
-		mrp = Double.parseDouble(textField23.getText());
-		vatPercent = Double.parseDouble(comboBox9.getSelectedItem().toString());
-		vatAmt = mrp * (vatPercent / 100);
-		discountPer = Double.parseDouble(textField20.getText());
-		discountAmt = Double.parseDouble(textField19.getText());
-		rate = mrp - discountAmt + vatAmt;
+			if (!valid.isEmpty(textField23.getText()))
+				mrp = Double.parseDouble(textField23.getText());
+			vatPercent = Double.parseDouble(comboBox9.getSelectedItem()
+					.toString());
+			vatAmt = mrp * (vatPercent / 100);
+			if (!valid.isEmpty(textField20.getText()))
+				discountPer = Double.parseDouble(textField20.getText());
+			if (!valid.isEmpty(textField19.getText()))
+				discountAmt = Double.parseDouble(textField19.getText());
+			rate = mrp - discountAmt + vatAmt;
 
-		double qty = Double.parseDouble(textField18.getText());
-		calculateNetAmount(rate * qty, "add");
-		System.out.println("Rate =  " + rate + "  qty = " + qty);
+			double qty = Double.parseDouble(textField18.getText());
+			calculateNetAmount(rate * qty, "add");
+			// System.out.println("Rate =  " + rate + "  qty = " + qty);
 
-		billDetail.setProductQuantity(qty);
-		billDetail.setProductRate(rate);
-		billDetail.setMrp(mrp);
-		billDetail.setVatPercent(vatPercent);
-		billDetail.setVatAmt(vatAmt);
-		billDetail.setDiscountPercent(discountPer);
-		billDetail.setDiscountAmt(discountAmt);
-		billDetail.setBatchNo(textField17.getText());
-		billDetail.setCategoryName(fieldName.getCategoryName(textField21
-				.getText()));
-		billDetail.setProductCode(textField16.getText());
-		billDetail.setProductName(textField21.getText());
-		billDetail.setProductType("");
-		billDetail.setProductUnit(comboBox7.getSelectedItem().toString());
-		billDetail.setWarrantyStartDate(new DatePicker().getCurrentDate());
-		billDetail.setWarrantyEndDate(new DatePicker().getCurrentDate());
-		billDetailList.add(billDetail);
-		loadTableData();
-		itemCount++;
-		label2.setText(String.valueOf(itemCount));
-		productPanelReset();
+			billDetail.setProductQuantity(qty);
+			billDetail.setProductRate(rate);
+			billDetail.setMrp(mrp);
+			billDetail.setVatPercent(vatPercent);
+			billDetail.setVatAmt(vatAmt);
+			billDetail.setDiscountPercent(discountPer);
+			billDetail.setDiscountAmt(discountAmt);
+			if (!valid.isEmpty(textField17.getText()))
+				billDetail.setBatchNo(textField17.getText());
+			billDetail.setCategoryName(fieldName.getCategoryName(textField21
+					.getText()));
+			billDetail.setProductCode(textField16.getText());
+			billDetail.setProductName(textField21.getText());
+			billDetail.setProductType("");
+			billDetail.setProductUnit(comboBox7.getSelectedItem().toString());
+			billDetail.setWarrantyStartDate(new DatePicker().getCurrentDate());
+			billDetail.setWarrantyEndDate(new DatePicker().getCurrentDate());
+			billDetailList.add(billDetail);
+			loadTableData();
+			itemCount++;
+			label2.setText(String.valueOf(itemCount));
+			productPanelReset();
+		}
 
 	}
 
@@ -1149,6 +1176,12 @@ public class SalesBill extends JFrame
 		comboBox7.addItem(billDetail.getProductUnit());
 		comboBox7.setSelectedItem(billDetail.getProductUnit());
 		billDetailList.remove(table1.getSelectedRow());
+		calculateNetAmount(
+				billDetail.getProductRate() * billDetail.getProductQuantity(),
+				"less");
+		loadTableData();
+		itemCount--;
+		label2.setText(String.valueOf(itemCount));
 	}
 
 	private void deleteFromBill() {
@@ -1167,23 +1200,26 @@ public class SalesBill extends JFrame
 	private void calculateNetAmount(double rate, String operation) {
 		if (operation.equals("add")) {
 			netAmount += rate;
-			// ////System.out.println("netamt = "+netAmount);
-			textField1.setText(String.format("%.2f", netAmount));
-
-			double vatper = Double.parseDouble(comboBox1.getSelectedItem()
-					.toString());
-			double totalVatAmt = netAmount * (vatper / 100);
-			textField5.setText(String.format("%.2f", totalVatAmt));
-
-			if (!valid.isEmpty(textField6.getText())) {
-				double discountAmt = Double.parseDouble(textField6.getText());
-				totalAmount = netAmount - discountAmt + totalVatAmt;
-			} else {
-				totalAmount = netAmount + totalVatAmt;
-			}
-			textField3.setText(String.format("%.2f", totalAmount));
-			textField2.setText(String.format("%.2f", totalAmount));
+		} else if (operation.equals("less")) {
+			netAmount -= rate;
 		}
+		// ////System.out.println("netamt = "+netAmount);
+		textField1.setText(String.format("%.2f", netAmount));
+
+		double vatper = Double.parseDouble(comboBox1.getSelectedItem()
+				.toString());
+		double totalVatAmt = netAmount * (vatper / 100);
+		textField5.setText(String.format("%.2f", totalVatAmt));
+
+		if (!valid.isEmpty(textField6.getText())) {
+			double discountAmt = Double.parseDouble(textField6.getText());
+			totalAmount = netAmount - discountAmt + totalVatAmt;
+		} else {
+			totalAmount = netAmount + totalVatAmt;
+		}
+		textField3.setText(String.format("%.2f", totalAmount));
+		textField2.setText(String.format("%.2f", totalAmount));
+
 	}
 
 	// Method for reset product Panel
@@ -1196,8 +1232,10 @@ public class SalesBill extends JFrame
 		textField21.setText("");
 		textField18.setText("");
 		textField23.setText("");
-		comboBox7.setSelectedIndex(0);
-		comboBox9.setSelectedIndex(0);
+		if (comboBox7.getItemCount() > 0)
+			comboBox7.setSelectedIndex(0);
+		if (comboBox9.getItemCount() > 0)
+			comboBox9.setSelectedIndex(0);
 		listModel.removeAllElements();
 	}
 
@@ -1215,11 +1253,17 @@ public class SalesBill extends JFrame
 		textField5.setText("");
 		textField6.setText("");
 		textField7.setText("");
-		if (comboBox2.getSelectedIndex() == 0) {
+		if (comboBox3.getSelectedIndex() == 0) {
 			textField9.setText(fieldName.getNewBillNo(tableid
 					.getStoreId(comboBox2.getSelectedItem().toString())));
-		} else if (comboBox2.getSelectedIndex() == 1) {
+		} else if (comboBox3.getSelectedIndex() == 1) {
 			textField9.setText(fieldName.getNewChallanNo(tableid
+					.getStoreId(comboBox2.getSelectedItem().toString())));
+		} else if (comboBox3.getSelectedIndex() == 2) {
+			textField9.setText(fieldName.getNewSaleOrderNo(tableid
+					.getStoreId(comboBox2.getSelectedItem().toString())));
+		} else if (comboBox3.getSelectedIndex() == 3) {
+			textField9.setText(fieldName.getNewSaleQuotationNo(tableid
 					.getStoreId(comboBox2.getSelectedItem().toString())));
 		}
 		radioButton1.setSelected(true);
@@ -1241,8 +1285,11 @@ public class SalesBill extends JFrame
 			comboBox8.setSelectedIndex(0);
 		}
 
-		billDetailList.removeAll(billDetailList);
-		productDisplayList.removeAll(productDisplayList);
+		netAmount = 0;
+		totalAmount = 0;
+		itemCount = 0;
+		billDetailList = new ArrayList<>();
+		productDisplayList = new ArrayList<>();
 
 	}
 
@@ -1426,7 +1473,9 @@ public class SalesBill extends JFrame
 		salesBillPayment.setBankName(textField14.getText());
 		salesBillPayment.setCode(textField15.getText());
 		salesBillPayment.setDescription("");
-		salesBillPayment.setPaidAmt(Double.parseDouble(textField4.getText()));
+		if (!valid.isEmpty(textField4.getText()))
+			salesBillPayment
+					.setPaidAmt(Double.parseDouble(textField4.getText()));
 		salesBillPayment.setPaymentDate(textField8.getText());
 		salesBillPayment.setPaymentMode(comboBox6.getSelectedItem().toString());
 		salesBillPayment.setRefId(bill_id);
@@ -1439,6 +1488,7 @@ public class SalesBill extends JFrame
 	 * bill.
 	 */
 	private void saveAndPrintSalesBill() {
+
 		// 1. for saving general bill info
 		int bill_id = dbinsert.insertSalesBill(setSalesBillModel());
 
@@ -1614,15 +1664,18 @@ public class SalesBill extends JFrame
 		if (checkBox1.isSelected()) {
 			salesBill.setHomeDelivery(1);
 		}
-		salesBill.setDiscount(Double.parseDouble(textField6.getText()));
+		if (!valid.isEmpty(textField6.getText()))
+			salesBill.setDiscount(Double.parseDouble(textField6.getText()));
 		salesBill.setTotalAmt(totalAmount);
 		salesBill.setBillVatPercent(Double.parseDouble(comboBox1
 				.getSelectedItem().toString()));
-		salesBill.setBillVatAmt(Double.parseDouble(textField5.getText()));
+		if (!valid.isEmpty(textField5.getText()))
+			salesBill.setBillVatAmt(Double.parseDouble(textField5.getText()));
 		salesBill.setBillNo(textField9.getText());
 		salesBill.setBillDate(textField8.getText());
 		salesBill.setCustomerName(textField10.getText());
-		salesBill.setCustomerAddress(textArea1.getText());
+		if (!valid.isEmpty(textArea1.getText()))
+			salesBill.setCustomerAddress(textArea1.getText());
 		if (radioButton1.isSelected()) {
 			salesBill.setCustomerType("General Customer");
 		} else {
@@ -1630,7 +1683,7 @@ public class SalesBill extends JFrame
 		}
 		salesBill.setMobileNo(textField11.getText());
 		salesBill.setNarration("");
-		salesBill.setUserName("");
+		salesBill.setUserName(this.userName);
 		salesBill.setPrefix(fieldName.getBillPrefix(tableid
 				.getStoreId(comboBox2.getSelectedItem().toString())));
 
@@ -1652,15 +1705,18 @@ public class SalesBill extends JFrame
 		if (checkBox1.isSelected()) {
 			challan.setHomeDelivery(1);
 		}
-		challan.setDiscount(Double.parseDouble(textField6.getText()));
+		if (!valid.isEmpty(textField6.getText()))
+			challan.setDiscount(Double.parseDouble(textField6.getText()));
 		challan.setTotalAmt(totalAmount);
 		challan.setChallanVatPercent(Double.parseDouble(comboBox1
 				.getSelectedItem().toString()));
-		challan.setChallanVatAmt(Double.parseDouble(textField5.getText()));
+		if (!valid.isEmpty(textField5.getText()))
+			challan.setChallanVatAmt(Double.parseDouble(textField5.getText()));
 		challan.setChallanNo(textField9.getText());
 		challan.setChallanDate(textField8.getText());
 		challan.setCustomerName(textField10.getText());
-		challan.setCustomerAddress(textArea1.getText());
+		if (!valid.isEmpty(textArea1.getText()))
+			challan.setCustomerAddress(textArea1.getText());
 		if (radioButton1.isSelected()) {
 			challan.setCustomerType("General Customer");
 		} else {
@@ -1668,9 +1724,9 @@ public class SalesBill extends JFrame
 		}
 		challan.setMobileNo(textField11.getText());
 		challan.setNarration("");
-		challan.setUserName("");
-		challan.setPrefix(fieldName.getBillPrefix(tableid.getStoreId(comboBox2
-				.getSelectedItem().toString())));
+		challan.setUserName(this.userName);
+		challan.setPrefix(fieldName.getChallanPrefix(tableid
+				.getStoreId(comboBox2.getSelectedItem().toString())));
 
 		return challan;
 	}
@@ -1691,15 +1747,18 @@ public class SalesBill extends JFrame
 		if (checkBox1.isSelected()) {
 			saleOrder.setHomeDelivery(1);
 		}
-		saleOrder.setDiscount(Double.parseDouble(textField6.getText()));
+		if (!valid.isEmpty(textField6.getText()))
+			saleOrder.setDiscount(Double.parseDouble(textField6.getText()));
 		saleOrder.setTotalAmt(totalAmount);
 		saleOrder.setOrderVatPercent(Double.parseDouble(comboBox1
 				.getSelectedItem().toString()));
-		saleOrder.setOrderVatAmt(Double.parseDouble(textField5.getText()));
+		if (!valid.isEmpty(textField5.getText()))
+			saleOrder.setOrderVatAmt(Double.parseDouble(textField5.getText()));
 		saleOrder.setOrderNo(textField9.getText());
 		saleOrder.setOrderDate(textField8.getText());
 		saleOrder.setCustomerName(textField10.getText());
-		saleOrder.setCustomerAddress(textArea1.getText());
+		if (!valid.isEmpty(textArea1.getText()))
+			saleOrder.setCustomerAddress(textArea1.getText());
 		if (radioButton1.isSelected()) {
 			saleOrder.setCustomerType("General Customer");
 		} else {
@@ -1707,9 +1766,7 @@ public class SalesBill extends JFrame
 		}
 		saleOrder.setMobileNo(textField11.getText());
 		saleOrder.setNarration("");
-		saleOrder.setUserName("");
-		saleOrder.setPrefix(fieldName.getBillPrefix(tableid
-				.getStoreId(comboBox2.getSelectedItem().toString())));
+		saleOrder.setUserName(this.userName);
 		saleOrder.setStatus("Pending");
 
 		return saleOrder;
@@ -1730,16 +1787,19 @@ public class SalesBill extends JFrame
 		if (checkBox1.isSelected()) {
 			saleQuotation.setHomeDelivery(1);
 		}
-		saleQuotation.setDiscount(Double.parseDouble(textField6.getText()));
+		if (!valid.isEmpty(textField6.getText()))
+			saleQuotation.setDiscount(Double.parseDouble(textField6.getText()));
 		saleQuotation.setTotalAmt(totalAmount);
 		saleQuotation.setQuotationVatPercent(Double.parseDouble(comboBox1
 				.getSelectedItem().toString()));
-		saleQuotation.setQuotationVatAmt(Double.parseDouble(textField5
-				.getText()));
+		if (!valid.isEmpty(textField5.getText()))
+			saleQuotation.setQuotationVatAmt(Double.parseDouble(textField5
+					.getText()));
 		// saleQuotation.setBillNo(textField9.getText());
 		saleQuotation.setQuotationDate(textField8.getText());
 		saleQuotation.setCustomerName(textField10.getText());
-		saleQuotation.setCustomerAddress(textArea1.getText());
+		if (!valid.isEmpty(textArea1.getText()))
+			saleQuotation.setCustomerAddress(textArea1.getText());
 		if (radioButton1.isSelected()) {
 			saleQuotation.setCustomerType("General Customer");
 		} else {
@@ -1747,9 +1807,7 @@ public class SalesBill extends JFrame
 		}
 		saleQuotation.setMobileNo(textField11.getText());
 		saleQuotation.setNarration("");
-		saleQuotation.setUserName("");
-		saleQuotation.setPrefix(fieldName.getBillPrefix(tableid
-				.getStoreId(comboBox2.getSelectedItem().toString())));
+		saleQuotation.setUserName(this.userName);
 
 		return saleQuotation;
 	}

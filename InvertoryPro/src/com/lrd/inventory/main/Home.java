@@ -5,7 +5,7 @@ import com.lrd.inventory.ui.MasterHome;
 public class Home {
 
 	public Home() {
-		new MasterHome();
+		new MasterHome("Dharm");
 	}
 
 	public static void main(String[] args) {
