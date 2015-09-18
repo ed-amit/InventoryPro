@@ -338,6 +338,7 @@ public class PurchaseBill extends JFrame
 			label1.setBounds(25, 20, 90, 20);
 			panel1.add(comboBox1);
 			comboBox1.setBounds(125, 20, 150, 20);
+			comboBox1.addItemListener(this);
 
 			// ---- label2 ----
 			label2.setText("<html>Agency Name  <font color='red'><b>*</b></font></html>");
@@ -655,6 +656,7 @@ public class PurchaseBill extends JFrame
 			label31.setBounds(240, 500, 100, 20);
 			panel1.add(textField23);
 			textField23.setBounds(340, 500, 100, 20);
+			textField23.addKeyListener(this);
 
 			// ---- label32 ----
 			label32.setText("Excise (%)");
@@ -683,6 +685,7 @@ public class PurchaseBill extends JFrame
 			label35.setBounds(460, 500, 100, 20);
 			panel1.add(textField27);
 			textField27.setBounds(560, 500, 100, 20);
+			textField27.addKeyListener(this);
 
 			// ---- label36 ----
 			label36.setText("Entry Tax(%)");
@@ -850,22 +853,23 @@ public class PurchaseBill extends JFrame
 			}
 			loadList2Data(productDisplayList);
 		}
-		if(event.getSource() == textField23){
-			if(!valid.isEmpty(textField23.getText())){
-				double total=Double.parseDouble(label40.getText());
-				double paidAmount=Double.parseDouble(textField23.getText());
-				textField27.setText(String.valueOf(total-paidAmount));
-			}else{
+		if (event.getSource() == textField23) {
+			if (!valid.isEmpty(textField23.getText())) {
+				double total = Double.parseDouble(label40.getText());
+				double paidAmount = Double.parseDouble(textField23.getText());
+				textField27.setText(String.valueOf(total - paidAmount));
+			} else {
 				textField27.setText(label40.getText());
 			}
 		}
-		
-		if(event.getSource() == textField27){
-			if(!valid.isEmpty(textField27.getText())){
-				double total=Double.parseDouble(label40.getText());
-				double remaningAmount=Double.parseDouble(textField27.getText());
-				textField23.setText(String.valueOf(total-remaningAmount));
-			}else{
+
+		if (event.getSource() == textField27) {
+			if (!valid.isEmpty(textField27.getText())) {
+				double total = Double.parseDouble(label40.getText());
+				double remaningAmount = Double.parseDouble(textField27
+						.getText());
+				textField23.setText(String.valueOf(total - remaningAmount));
+			} else {
 				textField23.setText(label40.getText());
 			}
 		}
@@ -972,7 +976,7 @@ public class PurchaseBill extends JFrame
 						.getStoreId(comboBox1.getSelectedItem().toString()));
 
 				// reset the topmost panel part
-				// resetAllWindow();
+				 resetAllWindow();
 			}
 
 		}
@@ -1050,7 +1054,7 @@ public class PurchaseBill extends JFrame
 				new ValidationMSG(this, "Please Insert Sale Rate");
 			} else {
 				addProductToBill();
-				resetProductPanel();
+				
 			}
 		}
 		if (event.getSource() == button3) {
@@ -1077,7 +1081,8 @@ public class PurchaseBill extends JFrame
 
 		}
 		if (event.getSource() == button8) {
-			if (valid.isEmpty(textField1.getText())) {
+			if (list1.getSelectedIndex() < 0
+					&& list1.getSelectedValuesList().size() != 1) {
 				new ValidationMSG(this, "Please Insert Agency Name");
 			} else if (valid.isEmpty(textField23.getText())) {
 				new ValidationMSG(this, "Please Insert Payment Amount");
@@ -1112,8 +1117,14 @@ public class PurchaseBill extends JFrame
 		textField7.setText(detail.getProductName());
 		comboBox6.addItem(detail.getUnit());
 		purchaseBillDetailList.remove(table1.getSelectedRow());
-		label40.setText(String.valueOf(Double.parseDouble(label40.getText())
-				- detail.getTotalCost()));
+		double grandTotal =Double.parseDouble(label40.getText())
+				- detail.getTotalCost();
+		label40.setText(String.valueOf(grandTotal));
+		double paidAmt = 0;
+		if(!valid.isEmpty(textField23.getText()))
+			paidAmt = Double.parseDouble(textField23.getText());
+		textField27.setText(String.valueOf(grandTotal-paidAmt));
+		
 	}
 
 	private void saveBill() {
@@ -1154,7 +1165,7 @@ public class PurchaseBill extends JFrame
 		purchaseBill.setBillId(0);
 		if (!valid.isEmpty(textArea1.getText()))
 			purchaseBill.setAddress(textArea1.getText());
-		purchaseBill.setAgencyName(textField1.getText());
+		purchaseBill.setAgencyName(list1.getSelectedValue());
 		if (!valid.isEmpty(textField5.getText()))
 			purchaseBill.setContactNo(textField5.getText());
 		purchaseBill.setBillNo(textField2.getText());
@@ -1209,8 +1220,17 @@ public class PurchaseBill extends JFrame
 		// TODO Auto-generated method stub
 		if (table1.getSelectedRow() >= 0) {
 			int row = table1.getSelectedRow();
-			label40.setText(String.valueOf(Double.parseDouble(label40.getText())
-					- purchaseBillDetailList.get(row).getTotalCost()));
+			
+			double grandTotal =Double.parseDouble(label40.getText())
+					- purchaseBillDetailList.get(row).getTotalCost();
+			label40.setText(String.valueOf(grandTotal));
+			
+			double paidAmt = 0;
+			if(!valid.isEmpty(textField23.getText()))
+				paidAmt = Double.parseDouble(textField23.getText());
+			
+			
+			textField27.setText(String.valueOf(grandTotal-paidAmt));
 			purchaseBillDetailList.remove(row);
 			loadTableData();
 		}
@@ -1231,35 +1251,50 @@ public class PurchaseBill extends JFrame
 		double qty = Double.parseDouble(textField8.getText());
 		if (!valid.isEmpty(textField11.getText()))
 			discount = Double.parseDouble(textField11.getText());
-		double totalAmount = ((purchasePrice * qty) - discount) + vatAmount;
+		double totalAmount = ((purchasePrice * qty) - discount)
+				+ (vatAmount * qty);
 
-		detail.setPurchaseDetailId(0);
-		detail.setDiscount(discount);
-		if (!valid.isEmpty(textField14.getText()))
-			detail.setFreeProduct(Double.parseDouble(textField14.getText()));
-		detail.setMRP(mrp);
-		if (!valid.isEmpty(textField17.getText()))
-			detail.setOnlineSaleRate(Double.parseDouble(textField17.getText()));
-		detail.setProductCode(textField6.getText());
-		detail.setProductImange("");
-		detail.setProductName(textField7.getText());
-		detail.setPurchasePrice(purchasePrice);
-		detail.setQuantity(qty);
-		detail.setSaleRate(Double.parseDouble(textField15.getText()));
-		detail.setTotalCost(totalAmount);
-		detail.setUnit(comboBox6.getSelectedItem().toString());
-		detail.setVatAmount(vatAmount);
-		detail.setVatPercent(vatPercent);
-		if (!valid.isEmpty(textField16.getText()))
-			detail.setWholeSalePrice(Double.parseDouble(textField16.getText()));
-		detail.setPurchaseBillId(Integer.parseInt(textField2.getText()));
-		label40.setText(String.valueOf(Double.parseDouble(label40.getText())
-				+ detail.getTotalCost()));
-
-		purchaseBillDetailList.add(detail);
-		loadTableData();
+		if (purchasePrice > mrp) {
+			new ValidationMSG(this, "Purchase Price should be less then MRP.");
+		} else {
+			detail.setPurchaseDetailId(0);
+			detail.setDiscount(discount);
+			if (!valid.isEmpty(textField14.getText()))
+				detail.setFreeProduct(Double.parseDouble(textField14.getText()));
+			detail.setMRP(mrp);
+			if (!valid.isEmpty(textField17.getText()))
+				detail.setOnlineSaleRate(Double.parseDouble(textField17
+						.getText()));
+			detail.setProductCode(textField6.getText());
+			detail.setProductImange("");
+			detail.setProductName(textField7.getText());
+			detail.setPurchasePrice(purchasePrice);
+			detail.setQuantity(qty);
+			detail.setSaleRate(Double.parseDouble(textField15.getText()));
+			detail.setTotalCost(totalAmount);
+			detail.setUnit(comboBox6.getSelectedItem().toString());
+			detail.setVatAmount(vatAmount);
+			detail.setVatPercent(vatPercent);
+			if (!valid.isEmpty(textField16.getText()))
+				detail.setWholeSalePrice(Double.parseDouble(textField16
+						.getText()));
+			detail.setPurchaseBillId(Integer.parseInt(textField2.getText()));
+			
+			
+			double grandTotal =Double.parseDouble(label40.getText())
+					+ detail.getTotalCost();
+			label40.setText(String.valueOf(grandTotal));
+			double paidAmt = 0;
+			if(!valid.isEmpty(textField23.getText()))
+				paidAmt = Double.parseDouble(textField23.getText());
+			
+			
+			textField27.setText(String.valueOf(grandTotal-paidAmt));
+			purchaseBillDetailList.add(detail);
+			loadTableData();
+			resetProductPanel();
+		}
 	}
-
 	@Override
 	public void focusGained(FocusEvent event) {
 
@@ -1318,7 +1353,7 @@ public class PurchaseBill extends JFrame
 	}
 
 	private void resetAllWindow() {
-		comboBox1.setSelectedIndex(0);
+		//comboBox1.setSelectedIndex(0);
 		textField1.setText("");
 		distributorDisplayList = new ArrayList<>();
 		loadList1data();

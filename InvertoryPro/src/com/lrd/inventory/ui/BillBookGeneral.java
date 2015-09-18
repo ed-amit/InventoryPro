@@ -622,6 +622,9 @@ public class BillBookGeneral extends JFrame
 		if (event.getSource() == comboBox1) {
 			billList = dbvalue.getGeneralCustomerBill(tableid
 					.getStoreId(comboBox1.getSelectedItem().toString()));
+			textField15.setText("");
+			tempBillList = new ArrayList<>();
+			loadTable1Data(tempBillList);
 		}
 
 		if (event.getSource() == comboBox2) {
@@ -733,7 +736,7 @@ public class BillBookGeneral extends JFrame
 		}
 
 		if (status) {
-			SalesBillModel bill = billList.get(table1.getSelectedRow());
+			SalesBillModel bill = tempBillList.get(table1.getSelectedRow());
 			SalesBillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
 			double subtotal = (billDetail.getProductQuantity() * billDetail
 					.getProductRate())
@@ -771,24 +774,46 @@ public class BillBookGeneral extends JFrame
 		}
 		
 		if (status) {
+			double previousSubTotal = billDetail.getProductRate()*billDetail.getProductQuantity();
+			double preDiscountAmt = billDetail.getDiscountAmt();
+			double preVatAmt = billDetail.getVatAmt();
+			
 			billDetail.setProductQuantity(Double.parseDouble(textField7.getText()));
 			billDetail.setVatPercent(Double.parseDouble(comboBox4.getSelectedItem().toString()));
 			billDetail.setProductUnit(comboBox3.getSelectedItem().toString());
 			billDetail.setDiscountAmt(Double.parseDouble(textField9.getText()));
-			double mrp,vatPercent,vatAmt,discountPer,discountAmt,rate;
+			double mrp=0,vatPercent=0,vatAmt=0,discountPer=0,discountAmt=0;
+			
 			mrp=billDetail.getMrp();
 			vatPercent=billDetail.getVatPercent();
 			vatAmt=mrp*(vatPercent/100);
+			
 			discountAmt=billDetail.getDiscountAmt();
-			discountPer=(discountAmt*100)/mrp;
-			rate=mrp-discountAmt+vatAmt;
+			if(mrp>0)
+				discountPer=(discountAmt*100)/mrp;
 			billDetail.setVatAmt(vatAmt);
 			billDetail.setDiscountPercent(discountPer);
-			billDetail.setProductRate(rate);
-			
+			System.out.println((billDetail.getProductRate()*billDetail.getProductQuantity())-preDiscountAmt+discountAmt-preVatAmt+vatAmt);
+			//billDetail.setProductRate(billDetail.getProductRate());
+			billDetail.setSubTotal((billDetail.getProductRate()*billDetail.getProductQuantity())-preDiscountAmt+discountAmt-preVatAmt+vatAmt);
 			new DatabaseUpdate(connection).updateSalesBillProduct(billDetail);
+			
+			
+			double newSubTotal = billDetail.getSubTotal();
+			SalesBillModel bill = tempBillList.get(table1.getSelectedRow());
+			bill.setTotalAmt(bill.getTotalAmt()+newSubTotal-previousSubTotal);
+			new DatabaseUpdate(connection).updateSalesBillAmount(bill);
 			reset();
 			billDetail=null;
+			
+			
+			
+			textField15.setText("");
+			tempBillList = new ArrayList<>();
+			loadTable1Data(tempBillList);
+			
+			
+			
 		}
 	}
 
@@ -870,6 +895,7 @@ public class BillBookGeneral extends JFrame
 		textArea2.setText("");
 		textField13.setText("");
 		textField14.setText("");
+		resetProductPanel();
 	}
 	
 	private void resetProductPanel(){

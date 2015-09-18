@@ -159,7 +159,7 @@ public class BillDetailModel {
 	}
 
 	public double getSubTotal() {
-		return this.purchseRate;
+		return this.subTotal;
 	}
 
 	public String getBatchNo() {

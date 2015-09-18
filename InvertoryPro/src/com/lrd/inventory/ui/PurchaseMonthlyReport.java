@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 
 import javax.swing.JButton;
@@ -25,6 +23,10 @@ ItemListener,
 ActionListener
  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel panel1;
 	private JPanel panel2;
 	private JPanel panel3;
@@ -83,7 +85,7 @@ ActionListener
 					panel1.setLayout(null);
 					// ======== panel2 ========
 					{
-						JLabel label4 = new JLabel("Monthly Report");
+						label4 = new JLabel("Monthly Report");
 						panel2.add(label4);
 						label4.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 20));
 						label4.setBounds(200, 10, 300, 30);

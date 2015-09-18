@@ -562,10 +562,10 @@ public class DatabaseInsert {
 	 * @param productCode
 	 * @param qty
 	 */
-	public void updateProduct(String productName, String productCode, double qty) {
+	public void updateProduct(int storeId, String productName, String productCode, double qty) {
 		String query = "update products set QUANTITY=QUANTITY-" + qty
 				+ " where PRODUCT_CODE='" + productCode
-				+ "' and product_name='" + productName + "'";
+				+ "' and product_name='" + productName + "' and store_id="+storeId;
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {

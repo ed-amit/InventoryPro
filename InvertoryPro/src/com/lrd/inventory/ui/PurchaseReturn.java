@@ -27,6 +27,7 @@ import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
 import com.lrd.inventory.main.Validate;
+import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.PurchaseBillDetailModel;
 import com.lrd.inventory.model.PurchaseBillModel;
 import com.lrd.inventory.model.PurchaseReturnModel;
@@ -376,42 +377,39 @@ public class PurchaseReturn extends JFrame
 	public void keyReleased(KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == textField1) {
-			if (valid.isEmpty(textField1.getText())) {
-				purchaseBillDisplayList = new ArrayList<>();
-			} else {
+			purchaseBillDisplayList = new ArrayList<>();
+			if (!valid.isEmpty(textField1.getText())) {
 				String str = textField1.getText();
 				for (PurchaseBillModel purchaseBill : purchaseBillList) {
 					if (purchaseBill.getAgencyName().contains(str)) {
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			}
+			} 
 			loadTable1Data();
 		}
 		if (event.getSource() == textField2) {
-			if (valid.isEmpty(textField2.getText())) {
-				purchaseBillDisplayList = new ArrayList<>();
-			} else {
+			purchaseBillDisplayList = new ArrayList<>();
+			if (!valid.isEmpty(textField2.getText())) {
 				String str = textField2.getText();
 				for (PurchaseBillModel purchaseBill : purchaseBillList) {
 					if (purchaseBill.getBillNo().contains(str)) {
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			}
+			} 
 			loadTable1Data();
 		}
 		if (event.getSource() == textField3) {
-			if (valid.isEmpty(textField3.getText())) {
-				purchaseBillDisplayList = new ArrayList<>();
-			} else {
+			purchaseBillDisplayList = new ArrayList<>();
+			if (!valid.isEmpty(textField3.getText())) {
 				String str = textField3.getText();
 				for (PurchaseBillModel purchaseBill : purchaseBillList) {
 					if (purchaseBill.getPurchaseDate().contains(str)) {
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			}
+			} 
 			loadTable1Data();
 		}
 
@@ -429,6 +427,9 @@ public class PurchaseReturn extends JFrame
 		if (event.getSource() == comboBox1) {
 			purchaseBillList = dbValue.getPurchaseBill("store_id", tableid
 					.getStoreId(comboBox1.getSelectedItem().toString()));
+			purchaseBillDisplayList = new ArrayList<>();
+			
+			loadTable1Data();
 		}
 	}
 
@@ -457,8 +458,11 @@ public class PurchaseReturn extends JFrame
 	}
 
 	private void saveReturnModel() {
-		if (!valid.isEmpty(textField5.getText())
-				&& !valid.isEmpty(textField4.getText())) {
+		if (valid.isEmpty(textField5.getText())){
+			new ValidationMSG(this, "Please insert quantity to return");
+		}else if(valid.isEmpty(textField4.getText())) {
+			new ValidationMSG(this, "Please Select a product from table to Return");
+		}else{
 			PurchaseReturnModel purchaseReturn = new PurchaseReturnModel();
 
 			String currentDate = String.valueOf(Calendar.getInstance().get(
@@ -500,17 +504,16 @@ public class PurchaseReturn extends JFrame
 					.getYearId(startYear, startYear + 1));
 
 			dbinsert.insertPurchaseReturn(purchaseReturn);
-		} else {
-			// /show dialog for requird field
 		}
 	}
 
 	private void UpdateProductStock() {
+		int storeId = tableid.getStoreId(comboBox1.getSelectedItem().toString());
 		String productName = PurchaseBillDetailList
 				.get(table2.getSelectedRow()).getProductName();
 		String productCode = PurchaseBillDetailList
 				.get(table2.getSelectedRow()).getProductCode();
-		dbinsert.updateProduct(productName, productCode,
+		dbinsert.updateProduct(storeId, productName, productCode,
 				Double.parseDouble(textField5.getText()));
 	}
 
@@ -561,23 +564,28 @@ public class PurchaseReturn extends JFrame
 	public void focusGained(FocusEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == textField1) {
+			
 			textField2.setText("");
 			textField3.setText("");
 			purchaseBillDisplayList = new ArrayList<>();
+			table1.getSelectionModel().setSelectionInterval(-1, -1);
 			loadTable1Data();
 		}
 		if (event.getSource() == textField2) {
 			textField1.setText("");
 			textField3.setText("");
 			purchaseBillDisplayList = new ArrayList<>();
+			table1.getSelectionModel().setSelectionInterval(-1, -1);
 			loadTable1Data();
 		}
 		if (event.getSource() == textField3) {
 			textField2.setText("");
 			textField1.setText("");
 			purchaseBillDisplayList = new ArrayList<>();
+			table1.getSelectionModel().setSelectionInterval(-1, -1);
 			loadTable1Data();
 		}
+		
 	}
 
 	@Override

@@ -147,7 +147,7 @@ public class DatabaseUpdate {
 	public void updateSalesBillProduct(SalesBillDetailModel billDetail) {
 
 		try {
-			stmt.executeUpdate("update distributors set product_quantity="
+			stmt.executeUpdate("update bill_details set product_quantity="
 					+ billDetail.getProductQuantity() + " ,vat_amount="
 					+ billDetail.getVatAmt() + " ,vat_percentage="
 					+ billDetail.getVatPercent() + " ,discount_per="
@@ -161,7 +161,8 @@ public class DatabaseUpdate {
 	
 	
 	
-	public void updatePurchaseBill(int PurchaseBillId, double paymentAmount) {
+	
+	public void updatePurchaseBillPayment(int PurchaseBillId, double paymentAmount) {
 
 		try {
 			stmt.executeUpdate("update purchase_bill set paid_amount=paid_amount+"+paymentAmount+" where bill_id="+PurchaseBillId);

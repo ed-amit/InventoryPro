@@ -260,7 +260,9 @@ public class ProductList extends JFrame
 						.getProductId();
 				new DatabaseDelete(connection).deleteProductVat(id);
 				new DatabaseDelete(connection).deleteProduct(id);
-				productDisplayList.remove(table1.getSelectedRow());
+				productList = dbvalue.getProductDetail(tableid.getStoreId(comboBox1
+						.getSelectedItem().toString()));
+				productDisplayList = productList;
 				loadTableData(productDisplayList);
 			}
 		}

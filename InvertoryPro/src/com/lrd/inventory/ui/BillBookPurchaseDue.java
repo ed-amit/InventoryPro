@@ -630,7 +630,7 @@ public class BillBookPurchaseDue extends JFrame
 
 				int id = purchaseBillList.get(table2.getSelectedRow())
 						.getBillId();
-				new DatabaseUpdate(connection).updatePurchaseBill(id,
+				new DatabaseUpdate(connection).updatePurchaseBillPayment(id,
 						paymentAmt);
 				int table2selectedRow = table2.getSelectedRow();
 				loadTable2data();

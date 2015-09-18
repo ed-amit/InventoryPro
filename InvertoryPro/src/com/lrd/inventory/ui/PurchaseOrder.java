@@ -142,6 +142,7 @@ public class PurchaseOrder extends JFrame
 		storeName();
 		supplierName();
 		orderId();
+		textField3.setText(new DatePicker().getCurrentDate());
 		productList = dbValue.getProductDetail(tableid.getStoreId(comboBox3
 				.getSelectedItem().toString()));
 		purchaseOrderDetailList = new ArrayList<>();
@@ -242,6 +243,7 @@ public class PurchaseOrder extends JFrame
 				panel2.add(comboBox3);
 				comboBox3.setBounds(720, 45, 200,
 						comboBox3.getPreferredSize().height);
+				comboBox3.addItemListener(this);
 
 			}
 			panel1.add(panel2);
@@ -290,6 +292,7 @@ public class PurchaseOrder extends JFrame
 						panel5.add(textField3);
 						textField3.setBounds(700, 10, 150,
 								textField3.getPreferredSize().height);
+						textField3.setEnabled(false);
 
 						// ---- label7 ----
 						label7.setText("Expected Date");
@@ -300,6 +303,7 @@ public class PurchaseOrder extends JFrame
 						panel5.add(textField4);
 						textField4.setBounds(700, 60, 150,
 								textField4.getPreferredSize().height);
+						textField4.setEnabled(false);
 
 						// ---- button6 ----
 						button6.setText("text");
@@ -618,6 +622,12 @@ public class PurchaseOrder extends JFrame
 			if (event.getSource() == comboBox3) {
 				productList = dbValue.getProductDetail(tableid
 						.getStoreId(comboBox3.getSelectedItem().toString()));
+				
+				resetProductField();
+				resetAll();
+				loadTableData();
+				textField5.requestFocus();
+				
 			}
 			if (event.getSource() == comboBox4) {
 				switch (comboBox4.getSelectedIndex()) {
@@ -657,7 +667,6 @@ public class PurchaseOrder extends JFrame
 		while (tableModel1.getRowCount() > 0) {
 			tableModel1.removeRow(0);
 		}
-
 		// / inserting new rows to the table
 		int i = 1;
 		for (PurchaseOrderDetailModel purchaseOrderDetail : purchaseOrderDetailList) {
@@ -665,9 +674,9 @@ public class PurchaseOrder extends JFrame
 					purchaseOrderDetail.getProductName(),
 					purchaseOrderDetail.getUnit(),
 					purchaseOrderDetail.getQuantity()});
-			label12.setText(String.valueOf(i));
 			i++;
 		}
+		label12.setText(String.valueOf(itemCount));
 
 	}
 
@@ -730,16 +739,11 @@ public class PurchaseOrder extends JFrame
 		// ///button for add a product to purchase order
 		if (event.getSource() == button8) {
 			addProduct();
-			itemCount++;
-			loadTableData();
-			tempProductCode = null;
-			resetProductField();
-			textField5.requestFocus();
+
 		}
 		if (event.getSource() == button9) {
 			DeleteProduct();
-			itemCount--;
-			loadTableData();
+
 		}
 		if (event.getSource() == button10) {
 			resetProductField();
@@ -799,7 +803,7 @@ public class PurchaseOrder extends JFrame
 		}
 		if (event.getSource() == button5) {
 			resetAll();
-			
+
 		}
 
 		// /button of tabbed pane second
@@ -828,13 +832,15 @@ public class PurchaseOrder extends JFrame
 	}
 	private void resetAll() {
 		// TODO Auto-generated method stub
-		textField3.setText("");
+		textField3.setText(new DatePicker().getCurrentDate());
 		textField4.setText("");
-		comboBox5.setSelectedIndex(0);
-		comboBox3.setSelectedIndex(0);
-		itemCount=0;
-		tempProductCode=null;
+		if (comboBox5.getItemCount() > 0)
+			comboBox5.setSelectedIndex(0);
+		// comboBox3.setSelectedIndex(0);
+		itemCount = 0;
+		tempProductCode = "";
 		purchaseOrderDetailList = new ArrayList<>();
+		orderId();
 	}
 
 	private void setPurchaseOrderModel() {
@@ -858,12 +864,14 @@ public class PurchaseOrder extends JFrame
 
 		setPurchaseOrderModel();
 		int orderId = dbinsert.insertPurchaseOrder(purchaseOrderModel);
-		System.out.println(orderId);
+		//System.out.println(orderId);
 		for (PurchaseOrderDetailModel purchaseOrderDetailModel : purchaseOrderDetailList) {
 			purchaseOrderDetailModel.setOrderId(orderId);
 			dbinsert.insertPurchaseOrderDetail(purchaseOrderDetailModel);
 		}
 		purchaseOrderDetailList = new ArrayList<>();
+		resetProductField();
+		resetAll();
 		loadTableData();
 		textField5.requestFocus();
 
@@ -897,8 +905,13 @@ public class PurchaseOrder extends JFrame
 			purchaseOrderDetail.setUnit(comboBox2.getSelectedItem().toString());
 			purchaseOrderDetail.setQuantity(Double.parseDouble(textField6
 					.getText()));
-			tempProductCode = null;
+			tempProductCode = "";
 			purchaseOrderDetailList.add(purchaseOrderDetail);
+
+			itemCount++;
+			loadTableData();
+			resetProductField();
+			textField5.requestFocus();
 		}
 
 	}
@@ -906,6 +919,8 @@ public class PurchaseOrder extends JFrame
 		if (table1.getSelectedRow() >= 0) {
 			if (new PromptDailog().getUserResponse()) {
 				purchaseOrderDetailList.remove(table1.getSelectedRow());
+				itemCount--;
+				loadTableData();
 			}
 		} else {
 			new ValidationMSG(this, "please select a row from table");
@@ -918,6 +933,7 @@ public class PurchaseOrder extends JFrame
 		textField5.setText("");
 		textField6.setText("");
 		comboBox2.removeAllItems();
+		textField5.requestFocus();
 	}
 
 	private void searchPurchaseOrder() {
@@ -972,7 +988,7 @@ public class PurchaseOrder extends JFrame
 					.getOrderId();
 			new DatabaseUpdate(connection).updatePurchaseOrderStatus(id,
 					"Completed");
-
+			button11.doClick();
 		}
 	}
 
