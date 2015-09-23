@@ -3,6 +3,8 @@ package com.lrd.inventory.ui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.lrd.inventory.database.DatabaseInsert;
@@ -46,7 +50,8 @@ public class SalesBill extends JFrame
 			ItemListener,
 			KeyListener,
 			ActionListener,
-			MouseListener {
+			ListSelectionListener,
+			FocusListener {
 
 	private static final long serialVersionUID = 1L;
 	// Variables declaration -
@@ -767,7 +772,10 @@ public class SalesBill extends JFrame
 				}
 				panel6.add(scrollPane3);
 				scrollPane3.setBounds(510, 5, 275, 120);
-				list1.addMouseListener(this);
+				// list1.addMouseListener(this);
+				list1.addListSelectionListener(this);
+				list1.addKeyListener(this);
+				list1.addKeyListener(this);
 
 			}
 			panel1.add(panel6);
@@ -1118,26 +1126,29 @@ public class SalesBill extends JFrame
 		if (status) {
 			BillDetailModel billDetail = new BillDetailModel();
 
-			double mrp = 0, vatPercent = 0, vatAmt = 0, discountPer = 0, discountAmt = 0, rate = 0;
+			double vatPercent = 0, vatAmt = 0, discountPer = 0, discountAmt = 0, rate = 0;
 
 			if (!valid.isEmpty(textField23.getText()))
-				mrp = Double.parseDouble(textField23.getText());
+				rate = Double.parseDouble(textField23.getText());
 			vatPercent = Double.parseDouble(comboBox9.getSelectedItem()
 					.toString());
-			vatAmt = mrp * (vatPercent / 100);
+			vatAmt = rate * (vatPercent / 100);
 			if (!valid.isEmpty(textField20.getText()))
 				discountPer = Double.parseDouble(textField20.getText());
 			if (!valid.isEmpty(textField19.getText()))
 				discountAmt = Double.parseDouble(textField19.getText());
-			rate = mrp - discountAmt + vatAmt;
 
 			double qty = Double.parseDouble(textField18.getText());
-			calculateNetAmount(rate * qty, "add");
+			calculateNetAmount((rate - discountAmt) * qty, "add");
 			// System.out.println("Rate =  " + rate + "  qty = " + qty);
 
 			billDetail.setProductQuantity(qty);
 			billDetail.setProductRate(rate);
-			billDetail.setMrp(mrp);
+			billDetail.setMrp(productDisplayList.get(list1.getSelectedIndex())
+					.getMRP());
+			billDetail.setPurchaseRate(productDisplayList.get(
+					list1.getSelectedIndex()).getPurchaseRate());
+			billDetail.setSubTotal((rate - discountAmt) * qty);
 			billDetail.setVatPercent(vatPercent);
 			billDetail.setVatAmt(vatAmt);
 			billDetail.setDiscountPercent(discountPer);
@@ -1152,6 +1163,7 @@ public class SalesBill extends JFrame
 			billDetail.setProductUnit(comboBox7.getSelectedItem().toString());
 			billDetail.setWarrantyStartDate(new DatePicker().getCurrentDate());
 			billDetail.setWarrantyEndDate(new DatePicker().getCurrentDate());
+
 			billDetailList.add(billDetail);
 			loadTableData();
 			itemCount++;
@@ -1177,14 +1189,19 @@ public class SalesBill extends JFrame
 		comboBox7.setSelectedItem(billDetail.getProductUnit());
 		billDetailList.remove(table1.getSelectedRow());
 		calculateNetAmount(
-				billDetail.getProductRate() * billDetail.getProductQuantity(),
-				"less");
+				(billDetail.getProductRate() - billDetail.getDiscountAmt())
+						* billDetail.getProductQuantity(), "less");
 		loadTableData();
 		itemCount--;
 		label2.setText(String.valueOf(itemCount));
 	}
 
 	private void deleteFromBill() {
+		BillDetailModel billDetail = billDetailList
+				.get(table1.getSelectedRow());
+		calculateNetAmount(
+				(billDetail.getProductRate()-billDetail.getDiscountAmt()) * billDetail.getProductQuantity(),
+				"less");
 		billDetailList.remove(table1.getSelectedRow());
 		loadTableData();
 		itemCount--;
@@ -1310,7 +1327,8 @@ public class SalesBill extends JFrame
 				productDisplayList = new ArrayList<>();
 				String tempStr = textField16.getText();
 				for (ProductModel tempProduct1 : productList) {
-					if (tempProduct1.getProductCode().contains(tempStr)) {
+					if ((tempProduct1.getProductCode().toLowerCase())
+							.contains(tempStr.toLowerCase())) {
 						productDisplayList.add(tempProduct1);
 					}
 				}
@@ -1321,7 +1339,8 @@ public class SalesBill extends JFrame
 				productDisplayList = new ArrayList<>();
 				String tempStr = textField21.getText();
 				for (ProductModel tempProduct1 : productList) {
-					if (tempProduct1.getProductName().contains(tempStr)) {
+					if ((tempProduct1.getProductName().toLowerCase())
+							.contains(tempStr.toLowerCase())) {
 						productDisplayList.add(tempProduct1);
 					}
 				}
@@ -1401,6 +1420,10 @@ public class SalesBill extends JFrame
 			}
 		}// End of editing section
 
+		if (event.getSource() == list1 && event.getKeyCode() == 10) {
+			textField18.requestFocus();
+		}
+
 	} // end of key release Method
 
 	/**
@@ -1414,9 +1437,9 @@ public class SalesBill extends JFrame
 		for (ProductModel tempProduct : productTempList) {
 			listModel.addElement(tempProduct.getProductName());
 		}
-		if (list1.getVisibleRowCount() > 0) {
-			list1.setSelectedIndex(0);
-		}
+		/*
+		 * if (list1.getVisibleRowCount() > 0) { list1.setSelectedIndex(0); }
+		 */
 	}
 
 	private void loadTableData() {
@@ -1437,31 +1460,24 @@ public class SalesBill extends JFrame
 
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		for (ProductModel prod : productList) {
-			System.out.println("aa gaya");
-			if (prod.getProductName().equals(list1.getSelectedValue())) {
-				textField16.setText(prod.getProductCode());
-				textField21.setText(prod.getProductName());
-				textField23.setText(String.format("%.2f", prod.getMRP()));
-				textField23.setEnabled(false);
-			}
-		}
-	}
+	/*
+	 * @Override public void mouseClicked(MouseEvent arg0) { }
+	 * 
+	 * @Override public void mouseEntered(MouseEvent arg0) { }
+	 * 
+	 * @Override public void mouseExited(MouseEvent arg0) { }
+	 * 
+	 * @Override public void mousePressed(MouseEvent arg0) { }
+	 * 
+	 * @Override public void mouseReleased(MouseEvent arg0) { for (ProductModel
+	 * prod : productList) { if
+	 * (prod.getProductName().equals(list1.getSelectedValue())) {
+	 * textField16.setText(prod.getProductCode());
+	 * textField21.setText(prod.getProductName());
+	 * comboBox7.setSelectedItem(prod.getUnit());
+	 * textField23.setText(String.format("%.2f", prod.getSaleRate()));
+	 * textField23.setEnabled(false); } } }
+	 */
 
 	/**
 	 * 
@@ -1476,6 +1492,8 @@ public class SalesBill extends JFrame
 		if (!valid.isEmpty(textField4.getText()))
 			salesBillPayment
 					.setPaidAmt(Double.parseDouble(textField4.getText()));
+		salesBillPayment.setStoreId(tableid.getStoreId(comboBox2
+				.getSelectedItem().toString()));
 		salesBillPayment.setPaymentDate(textField8.getText());
 		salesBillPayment.setPaymentMode(comboBox6.getSelectedItem().toString());
 		salesBillPayment.setRefId(bill_id);
@@ -1810,5 +1828,37 @@ public class SalesBill extends JFrame
 		saleQuotation.setUserName(this.userName);
 
 		return saleQuotation;
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getSource() == list1) {
+			for (ProductModel prod : productList) {
+				if (prod.getProductName().equals(list1.getSelectedValue())) {
+					textField16.setText(prod.getProductCode());
+					textField21.setText(prod.getProductName());
+					comboBox7.setSelectedItem(prod.getUnit());
+					comboBox9.removeAllItems();
+					comboBox9.addItem(String.valueOf(prod.getVatPercent()));
+					textField23.setText(String.format("%.2f",
+							prod.getSaleRate()));
+					textField23.setEnabled(false);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == list1)
+			list1.setSelectedIndex(0);
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

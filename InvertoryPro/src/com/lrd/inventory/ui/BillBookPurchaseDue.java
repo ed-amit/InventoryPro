@@ -13,13 +13,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.lrd.inventory.database.DatabaseDelete;
 import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.PromptDailog;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.DistributorModel;
+import com.lrd.inventory.model.PaymentModel;
 import com.lrd.inventory.model.PurchaseBillDetailModel;
 import com.lrd.inventory.model.PurchaseBillModel;
 
@@ -440,6 +443,7 @@ public class BillBookPurchaseDue extends JFrame
 				panel5.add(button4);
 				button4.setBounds(25, 480, 100, 30);
 				button4.addActionListener(this);
+				button4.setEnabled(false);
 
 				// ---- button5 ----
 				button5.setText("Pay Amt");
@@ -592,7 +596,19 @@ public class BillBookPurchaseDue extends JFrame
 		}
 
 		if (event.getSource() == button2) {
+			if (table2.getSelectedRowCount() == 1) {
+				if (new PromptDailog().getUserResponse()) {
+					int purchaseBillId = purchaseBillList.get(
+							table2.getSelectedRow()).getBillId();
+					new DatabaseDelete(connection)
+							.deletePurchasePaymentDetails(purchaseBillId);
+					new DatabaseDelete(connection)
+							.deletePurchaseBillDetails(purchaseBillId);
+					new DatabaseDelete(connection)
+							.deletePurchaseBill(purchaseBillId);
 
+				}
+			}
 		}
 
 		if (event.getSource() == button3) {
@@ -613,7 +629,14 @@ public class BillBookPurchaseDue extends JFrame
 		}
 
 		if (event.getSource() == button7) {
-
+			if (table2.getSelectedRowCount() == 1) {
+				int billId = purchaseBillList.get(table2.getSelectedRow())
+						.getBillId();
+				ArrayList<PaymentModel> paymentList = new GetDBValue(connection).getPurchasePaymentDetail(billId);
+				new ViewPaymentDetail(paymentList);
+			}else{
+				new ValidationMSG(this, "Please Select a row from Bill Table");
+			}
 		}
 
 	}
@@ -634,8 +657,9 @@ public class BillBookPurchaseDue extends JFrame
 						paymentAmt);
 				int table2selectedRow = table2.getSelectedRow();
 				loadTable2data();
-				table2.getSelectionModel().setLeadSelectionIndex(table2selectedRow);
-				
+				table2.getSelectionModel().setLeadSelectionIndex(
+						table2selectedRow);
+
 			} else {
 				new ValidationMSG(
 						this,

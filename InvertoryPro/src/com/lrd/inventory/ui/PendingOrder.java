@@ -384,9 +384,10 @@ public class PendingOrder extends JFrame
 					tableModel2.addColumn("Sr. no");
 					tableModel2.addColumn("Order No");
 					tableModel2.addColumn("Dist. Name");
+					tableModel2.addColumn("Order. Date");
 					tableModel2.addColumn("Est. Date");
 					tableModel2.addColumn("Rem. Days");
-					tableModel2.addColumn("Total amt");
+					tableModel2.addColumn("Total Product");
 					// ======== scrollPane2 ========
 					{
 						scrollPane2.setViewportView(table2);

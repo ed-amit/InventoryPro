@@ -5,6 +5,7 @@ public class PaymentModel {
 	
 	private int payment_id;
 	private int ref_id;
+	private int store_id;
 	private double paid_amount;
 	
 	private String bank_name;
@@ -20,7 +21,7 @@ public class PaymentModel {
 	}
 	
 	public void setDefault(){
-		payment_id=ref_id=0;
+		payment_id=ref_id=store_id=0;
 		paid_amount=0;
 		bank_name=code=Description=payment_date=payment_mode="";
 	}
@@ -34,6 +35,10 @@ public class PaymentModel {
 	
 	public void setRefId (int refId){
 		this.ref_id = refId;
+	}
+	
+	public void setStoreId (int storeId){
+		this.store_id = storeId;
 	}
 	
 	public void setPaidAmt (double amt){
@@ -69,6 +74,10 @@ public class PaymentModel {
 	
 	public int getRefId (){
 		return this.ref_id ;
+	}
+	
+	public int getStoreId (){
+		return this.store_id ;
 	}
 	
 	public double getPaidAmt (){

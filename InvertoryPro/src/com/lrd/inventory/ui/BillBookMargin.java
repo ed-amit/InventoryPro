@@ -150,6 +150,7 @@ public class BillBookMargin extends JFrame
 				panel3.add(comboBox1);
 				comboBox1.setBounds(300, 30, 200,
 						comboBox1.getPreferredSize().height);
+				comboBox1.addItemListener(this);
 
 				// ---- label3 ----
 				label3.setText("Search Criteria");
@@ -285,6 +286,10 @@ public class BillBookMargin extends JFrame
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
+		
+		if(event.getSource() == comboBox1){
+			comboBox2.setSelectedIndex(0);
+		}
 		
 		if (event.getSource() == comboBox2) {
 			// System.out.println("sjdhgldfhgldfh");

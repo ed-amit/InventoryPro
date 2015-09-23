@@ -169,6 +169,7 @@ public class BillBookCredit extends JFrame
 				// -------comboBox1---------
 				panel3.add(comboBox1);
 				comboBox1.setBounds(100, 15, 150, 20);
+				comboBox1.addItemListener(this);
 
 				// ---- label2 ----
 				label2.setText("All Credit Customer");
@@ -457,8 +458,42 @@ public class BillBookCredit extends JFrame
 		if (event.getSource() == button1) {
 			viewCreditorBill();
 		}
+		if (event.getSource() == button2) {
+
+		}
+		if (event.getSource() == button3) {
+
+		}
 		if (event.getSource() == button4) {
 			viewBillDetail();
+		}
+		if (event.getSource() == button5) {
+
+		}
+		if (event.getSource() == button6) {
+			
+		}
+		if (event.getSource() == button7) {
+			billList = new ArrayList<>();
+			billDetailList = new ArrayList<>();
+			loadTable2Data();
+			loadTable3Data();
+		}
+		if (event.getSource() == button8) {
+
+		}
+		if (event.getSource() == button9) {
+
+		}
+		if (event.getSource() == button10) {
+
+		}
+		if (event.getSource() == button11) {
+			billDetailList = new ArrayList<>();
+			loadTable3Data();
+		}
+		if (event.getSource() == button12) {
+
 		}
 	}
 

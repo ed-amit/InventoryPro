@@ -1499,6 +1499,12 @@ public class MasterHome extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
+		if (event.getSource() == menuItem151) {
+			new SettingSingleUser();
+			this.dispose();
+
+		}
+
 		if (!dbConnected()) {
 			this.connection = db_connect.getConnection();
 		}
@@ -1771,9 +1777,9 @@ public class MasterHome extends JFrame implements ActionListener {
 			case MenuItemName.MenuItem125 :
 				break;
 			case MenuItemName.MenuItem126 :
-				
+
 				new PurchaseMonthlyReport(this.connection);
-				
+
 				break;
 			case MenuItemName.MenuItem127 :
 				break;
@@ -1822,6 +1828,7 @@ public class MasterHome extends JFrame implements ActionListener {
 			case MenuItemName.MenuItem44 :
 				break;
 			case MenuItemName.MenuItem151 :
+
 				break;
 			case MenuItemName.MenuItem152 :
 				break;

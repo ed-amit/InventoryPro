@@ -113,7 +113,7 @@ public class DatabaseInsert {
 			return true;
 		} catch (SQLException e) {
 			return false;
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -224,7 +224,9 @@ public class DatabaseInsert {
 				+ billDetail.getWarrantyEndDate() + "', '"
 				+ billDetail.getWarrantyStartDate() + "', "
 				+ billDetail.getDiscountPercent() + " , "
-				+ billDetail.getDiscountAmt() + ",0,0)";
+				+ billDetail.getDiscountAmt() + ","
+				+ billDetail.getPurchaseRate() + " , " + billDetail.getSubTotal()
+				+ ")";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -250,7 +252,8 @@ public class DatabaseInsert {
 				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
 				+ payment.getDescription() + "', " + payment.getPaidAmt()
 				+ " , '" + payment.getPaymentDate() + "', '"
-				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+				+ payment.getPaymentMode() + "', " + payment.getStoreId()
+				+ ", " + payment.getRefId() + ");";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -516,13 +519,13 @@ public class DatabaseInsert {
 				+ creditor.getName() + "', '" + creditor.getAddress() + "', '"
 				+ creditor.getContactNo() + "', " + creditor.getCreditLimit()
 				+ " , " + creditor.getCreditAmt() + " , "
-				+ creditor.getDebitAmt() + " , " + creditor.getStoreId() + " , "
-				+ creditor.getFirmId() + " );";
+				+ creditor.getDebitAmt() + " , " + creditor.getStoreId()
+				+ " , " + creditor.getFirmId() + " );";
 		try {
 			stmt.executeUpdate(query);
 			return true;
 		} catch (SQLException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return false;
 		}
 	}
@@ -562,10 +565,12 @@ public class DatabaseInsert {
 	 * @param productCode
 	 * @param qty
 	 */
-	public void updateProduct(int storeId, String productName, String productCode, double qty) {
+	public void updateProduct(int storeId, String productName,
+			String productCode, double qty) {
 		String query = "update products set QUANTITY=QUANTITY-" + qty
 				+ " where PRODUCT_CODE='" + productCode
-				+ "' and product_name='" + productName + "' and store_id="+storeId;
+				+ "' and product_name='" + productName + "' and store_id="
+				+ storeId;
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -594,7 +599,7 @@ public class DatabaseInsert {
 				+ billReturn.getDiscountPercent() + " , "
 				+ billReturn.getDiscountAmt() + " , " + billReturn.getFirmId()
 				+ " , " + billReturn.getStoreId() + " , "
-				+ billReturn.getYearId() + " );";
+				+ billReturn.getYearId() + ",0 );";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {

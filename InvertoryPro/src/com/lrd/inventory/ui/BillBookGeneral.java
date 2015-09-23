@@ -127,11 +127,12 @@ public class BillBookGeneral extends JFrame
 		tableid = new TableId(connection);
 		valid = new Validate();
 		initComponents();
+		vatPercent();
+		unitName();
 		storeName();
 		billList = dbvalue.getGeneralCustomerBill(tableid.getStoreId(comboBox1
 				.getSelectedItem().toString()));
-		vatPercent();
-		unitName();
+		
 	}
 
 	private void initComponents() {
@@ -302,6 +303,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField2);
 				textField2.setBounds(80, 10, 150,
 						textField2.getPreferredSize().height);
+				textField2.setEnabled(false);
 
 				// ---- label6 ----
 				label6.setText("Customer Name");
@@ -312,6 +314,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField1);
 				textField1.setBounds(350, 10, 150,
 						textField1.getPreferredSize().height);
+				textField1.setEnabled(false);
 
 				// ---- label7 ----
 				label7.setText("Address");
@@ -322,6 +325,7 @@ public class BillBookGeneral extends JFrame
 				// ======== scrollPane2 ========
 				{
 					scrollPane2.setViewportView(textArea1);
+					textArea1.setEnabled(false);
 				}
 				panel4.add(scrollPane2);
 				scrollPane2.setBounds(80, 40, 150, 70);
@@ -335,6 +339,7 @@ public class BillBookGeneral extends JFrame
 				// ======== scrollPane4 ========
 				{
 					scrollPane4.setViewportView(textArea2);
+					textArea2.setEnabled(false);
 				}
 				panel4.add(scrollPane4);
 				scrollPane4.setBounds(350, 40, 150, 70);
@@ -347,6 +352,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField11);
 				textField11.setBounds(600, 10, 100,
 						textField11.getPreferredSize().height);
+				textField11.setEnabled(false);
 
 				// ---- label24 ----
 				label24.setText("Phone No");
@@ -357,6 +363,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField12);
 				textField12.setBounds(600, 40, 100,
 						textField12.getPreferredSize().height);
+				textField12.setEnabled(false);
 
 				panel4.add(separator1);
 				separator1.setBounds(15, 120, 725, 7);
@@ -370,6 +377,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField3);
 				textField3.setBounds(100, 130, 200,
 						textField3.getPreferredSize().height);
+				textField3.setEnabled(false);
 
 				// ---- label22 ----
 				label22.setText("Cheque / Credit No");
@@ -379,6 +387,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField10);
 				textField10.setBounds(505, 130, 200,
 						textField10.getPreferredSize().height);
+				textField10.setEnabled(false);
 
 				panel4.add(separator2);
 				separator2.setBounds(15, 160, 725, 7);
@@ -391,6 +400,7 @@ public class BillBookGeneral extends JFrame
 
 				panel4.add(textField4);
 				textField4.setBounds(100, 170, 100, 20);
+				textField4.setEnabled(false);
 
 				// ---- label10 ----
 				label10.setText("Unit");
@@ -425,6 +435,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField6);
 				textField6.setBounds(350, 170, 100,
 						textField6.getPreferredSize().height);
+				textField6.setEnabled(false);
 
 				// ---- label18 ----
 				label18.setText("Quantity");
@@ -445,6 +456,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField8);
 				textField8.setBounds(350, 230, 100,
 						textField8.getPreferredSize().height);
+				textField8.setEnabled(false);
 
 				// ---- label20 ----
 				label20.setText("Discount");
@@ -493,6 +505,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField13);
 				textField13.setBounds(425, 500, 105,
 						textField13.getPreferredSize().height);
+				textField13.setEnabled(false);
 
 				// ---- label16 ----
 				label16.setText("Vat (%)");
@@ -503,6 +516,7 @@ public class BillBookGeneral extends JFrame
 				panel4.add(textField14);
 				textField14.setBounds(635, 500, 70,
 						textField14.getPreferredSize().height);
+				textField14.setEnabled(false);
 
 				// ---- button4 ----
 				button4.setText("Edit");
@@ -565,6 +579,7 @@ public class BillBookGeneral extends JFrame
 	private void vatPercent(){
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 		ArrayList<Float> vatList = (ArrayList<Float>) fieldName.getVatByStartYear(currentYear);
+		comboBox4.addItem("0.0");
 		for (Float vat : vatList) {
 			comboBox4.addItem(String.valueOf(vat));
 		}
@@ -573,6 +588,7 @@ public class BillBookGeneral extends JFrame
 	private void unitName(){
 		ArrayList<String> unitNames = (ArrayList<String>) fieldName
 				.getUnitName();
+		
 		for (String unitname : unitNames) {
 			comboBox3.addItem(unitname);
 		}
@@ -602,10 +618,7 @@ public class BillBookGeneral extends JFrame
 		// / inserting new rows to the table
 
 		for (SalesBillDetailModel tempbilldetail : billdetails) {
-			double subtotal = (tempbilldetail.getProductQuantity() * tempbilldetail
-					.getProductRate())
-					+ tempbilldetail.getVatAmt()
-					- tempbilldetail.getDiscountAmt();
+			double subtotal = tempbilldetail.getSubTotal();
 			tableModel2.addRow(new Object[]{tempbilldetail.getProductCode(),
 					tempbilldetail.getProductName(),
 					tempbilldetail.getProductQuantity(),
@@ -624,6 +637,7 @@ public class BillBookGeneral extends JFrame
 					.getStoreId(comboBox1.getSelectedItem().toString()));
 			textField15.setText("");
 			tempBillList = new ArrayList<>();
+			resetAll();
 			loadTable1Data(tempBillList);
 		}
 
@@ -658,15 +672,15 @@ public class BillBookGeneral extends JFrame
 		if (!(valid.isEmpty(tempStr))) {
 			if (comboBox2.getSelectedItem().toString() == "Name") {
 				for (SalesBillModel tempbill : billList) {
-					if (tempbill.getCustomerName().contains(tempStr)) {
+					if ((tempbill.getCustomerName().toLowerCase()).contains(tempStr.toLowerCase())) {
 
 						tempBillList.add(tempbill);
 					}
 				}
 			} else if (comboBox2.getSelectedItem().toString() == "Bill No") {
-				tempStr = tempStr.toUpperCase();
+				
 				for (SalesBillModel tempbill : billList) {
-					if (tempbill.getBillNo().contains(tempStr)) {
+					if ((tempbill.getBillNo().toLowerCase()).contains(tempStr.toLowerCase())) {
 						tempBillList.add(tempbill);
 					}
 				}
@@ -723,7 +737,7 @@ public class BillBookGeneral extends JFrame
 
 	private void refresh() {
 		// TODO Auto-generated method stub
-		reset();
+		resetAll();
 	}
 
 	private void deleteProductFromBill() {
@@ -738,10 +752,7 @@ public class BillBookGeneral extends JFrame
 		if (status) {
 			SalesBillModel bill = tempBillList.get(table1.getSelectedRow());
 			SalesBillDetailModel billDetail = billDetailList.get(table2.getSelectedRow());
-			double subtotal = (billDetail.getProductQuantity() * billDetail
-					.getProductRate())
-					+ billDetail.getVatAmt()
-					- billDetail.getDiscountAmt();
+			double subtotal = billDetail.getSubTotal();
 			
 			bill.setTotalAmt(bill.getTotalAmt()-subtotal);
 			new DatabaseUpdate(connection).updateSalesBillAmount(bill);
@@ -776,26 +787,25 @@ public class BillBookGeneral extends JFrame
 		if (status) {
 			double previousSubTotal = billDetail.getProductRate()*billDetail.getProductQuantity();
 			double preDiscountAmt = billDetail.getDiscountAmt();
-			double preVatAmt = billDetail.getVatAmt();
 			
-			billDetail.setProductQuantity(Double.parseDouble(textField7.getText()));
+			
 			billDetail.setVatPercent(Double.parseDouble(comboBox4.getSelectedItem().toString()));
 			billDetail.setProductUnit(comboBox3.getSelectedItem().toString());
 			billDetail.setDiscountAmt(Double.parseDouble(textField9.getText()));
-			double mrp=0,vatPercent=0,vatAmt=0,discountPer=0,discountAmt=0;
+			double productRate=0,vatPercent=0,vatAmt=0,discountPer=0,discountAmt=0,qty=0;
 			
-			mrp=billDetail.getMrp();
+			qty=Double.parseDouble(textField7.getText());
+			productRate=billDetail.getProductRate();
 			vatPercent=billDetail.getVatPercent();
-			vatAmt=mrp*(vatPercent/100);
+			vatAmt=qty*productRate*(vatPercent/100);
 			
 			discountAmt=billDetail.getDiscountAmt();
-			if(mrp>0)
-				discountPer=(discountAmt*100)/mrp;
+			if(productRate>0)
+				discountPer=(discountAmt*100)/(productRate*qty);
 			billDetail.setVatAmt(vatAmt);
 			billDetail.setDiscountPercent(discountPer);
-			System.out.println((billDetail.getProductRate()*billDetail.getProductQuantity())-preDiscountAmt+discountAmt-preVatAmt+vatAmt);
-			//billDetail.setProductRate(billDetail.getProductRate());
-			billDetail.setSubTotal((billDetail.getProductRate()*billDetail.getProductQuantity())-preDiscountAmt+discountAmt-preVatAmt+vatAmt);
+			billDetail.setProductQuantity(qty);
+			billDetail.setSubTotal((productRate*qty)+preDiscountAmt-discountAmt);
 			new DatabaseUpdate(connection).updateSalesBillProduct(billDetail);
 			
 			
@@ -803,7 +813,7 @@ public class BillBookGeneral extends JFrame
 			SalesBillModel bill = tempBillList.get(table1.getSelectedRow());
 			bill.setTotalAmt(bill.getTotalAmt()+newSubTotal-previousSubTotal);
 			new DatabaseUpdate(connection).updateSalesBillAmount(bill);
-			reset();
+			resetAll();
 			billDetail=null;
 			
 			
@@ -836,7 +846,7 @@ public class BillBookGeneral extends JFrame
 			billDetail = billDetailList.get(table2.getSelectedRow());
 			textField4.setText(billDetail.getProductCode());
 			//comboBox3.removeAllItems();
-			comboBox3.addItem(billDetail.getProductUnit());
+			comboBox3.setSelectedItem(String.valueOf(billDetail.getProductUnit()));
 			//comboBox4.addItem("0.0");
 			comboBox4.setSelectedItem(String.valueOf(billDetail.getVatPercent()));
 			textField6.setText(billDetail.getProductName());
@@ -884,7 +894,7 @@ public class BillBookGeneral extends JFrame
 		/************************************************************************/
 	}
 
-	private void reset() {
+	private void resetAll() {
 		billDetailList = new ArrayList<>();
 		loadTable2Data(billDetailList);
 		textField2.setText("");
@@ -895,6 +905,8 @@ public class BillBookGeneral extends JFrame
 		textArea2.setText("");
 		textField13.setText("");
 		textField14.setText("");
+		textField3.setText("");
+		textField10.setText("");
 		resetProductPanel();
 	}
 	

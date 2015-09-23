@@ -1,8 +1,8 @@
 package com.lrd.inventory.database;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,9 +21,10 @@ public class DatabaseConnection {
 			try {
 
 				Properties db_properties = new Properties();
-				InputStream inputStream = DatabaseConnection.class
+				/*InputStream inputStream = DatabaseConnection.class
 						.getClassLoader().getResourceAsStream(
-								"DB_Variables.properties");
+								"DB_Variables.properties");*/
+				FileInputStream inputStream = new FileInputStream(System.getProperty("user.home")+"/DB_Variables.properties");
 				db_properties.load(inputStream);
 				String driver = db_properties.getProperty("driver");
 

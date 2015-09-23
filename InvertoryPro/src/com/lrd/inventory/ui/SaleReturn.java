@@ -811,6 +811,7 @@ public class SaleReturn extends JFrame implements ActionListener , ItemListener,
 			billReturn.setCategoryName(fieldName.getCategoryName(productDisplayList2.get(list1.getSelectedIndex()).getProductName()));
 			billReturn.setProductCode(productDisplayList2.get(list1.getSelectedIndex()).getProductCode());
 			billReturn.setProductName(productDisplayList2.get(list1.getSelectedIndex()).getProductName());
+			if(!valid.isEmpty(textField9.getText()))
 			billReturn.setProductQuantity(Double.parseDouble(textField9.getText()));
 			billReturn.setProductRate(Double.parseDouble(textField10.getText()));
 			billReturn.setProductUnit(comboBox4.getSelectedItem().toString());

@@ -26,6 +26,7 @@ import com.lrd.inventory.database.DatabaseInsert;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
+import com.lrd.inventory.main.DatePicker;
 import com.lrd.inventory.main.Validate;
 import com.lrd.inventory.main.ValidationMSG;
 import com.lrd.inventory.model.PurchaseBillDetailModel;
@@ -98,8 +99,8 @@ public class PurchaseReturn extends JFrame
 		dbValue = new GetDBValue(connection);
 		initComponents();
 		storeName();
-		purchaseBillList = dbValue.getPurchaseBill("store_id", tableid.getStoreId(comboBox1
-				.getSelectedItem().toString()));
+		purchaseBillList = dbValue.getPurchaseBill("store_id",
+				tableid.getStoreId(comboBox1.getSelectedItem().toString()));
 		purchaseBillDisplayList = new ArrayList<>();
 	}
 
@@ -385,7 +386,7 @@ public class PurchaseReturn extends JFrame
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			} 
+			}
 			loadTable1Data();
 		}
 		if (event.getSource() == textField2) {
@@ -397,7 +398,7 @@ public class PurchaseReturn extends JFrame
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			} 
+			}
 			loadTable1Data();
 		}
 		if (event.getSource() == textField3) {
@@ -409,7 +410,7 @@ public class PurchaseReturn extends JFrame
 						purchaseBillDisplayList.add(purchaseBill);
 					}
 				}
-			} 
+			}
 			loadTable1Data();
 		}
 
@@ -425,10 +426,12 @@ public class PurchaseReturn extends JFrame
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == comboBox1) {
-			purchaseBillList = dbValue.getPurchaseBill("store_id", tableid
-					.getStoreId(comboBox1.getSelectedItem().toString()));
+			purchaseBillList = dbValue.getPurchaseBill("store_id",
+					tableid.getStoreId(comboBox1.getSelectedItem().toString()));
 			purchaseBillDisplayList = new ArrayList<>();
-			
+			PurchaseBillDetailList = new ArrayList<>();
+			table1.clearSelection();
+			resetAllField();
 			loadTable1Data();
 		}
 	}
@@ -436,15 +439,38 @@ public class PurchaseReturn extends JFrame
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
+		double newQty = Double.parseDouble(textField5.getText());
+		double oldQty = PurchaseBillDetailList.get(table2.getSelectedRow())
+				.getQuantity();
 		switch (event.getActionCommand().toUpperCase()) {
 			case "RETURN" :
-				saveReturnModel();
-				UpdateProductStock();
-				resetAllField();
+				if (valid.isEmpty(textField5.getText())) {
+					new ValidationMSG(this, "Please insert quantity to return");
+				} else if (valid.isEmpty(textField4.getText())) {
+					new ValidationMSG(this,
+							"Please Select a product from table to Return");
+				} else if (oldQty < newQty) {
+					new ValidationMSG(this,
+							"New Quantity must be less then old quantity");
+				} else {
+					saveReturnModel();
+					UpdateProductStock();
+					resetAllField();
+				}
 				break;
 			case "REPLACE" :
-				saveReturnModel();
-				resetAllField();
+				if (valid.isEmpty(textField5.getText())) {
+					new ValidationMSG(this, "Please insert quantity to return");
+				} else if (valid.isEmpty(textField4.getText())) {
+					new ValidationMSG(this,
+							"Please Select a product from table to Return");
+				} else if (oldQty < newQty) {
+					new ValidationMSG(this,
+							"New Quantity must be less then old quantity");
+				} else {
+					saveReturnModel();
+					resetAllField();
+				}
 				break;
 			case "REFRESH" :
 				resetAllField();
@@ -456,59 +482,49 @@ public class PurchaseReturn extends JFrame
 				this.dispose();
 		}
 	}
-
 	private void saveReturnModel() {
-		if (valid.isEmpty(textField5.getText())){
-			new ValidationMSG(this, "Please insert quantity to return");
-		}else if(valid.isEmpty(textField4.getText())) {
-			new ValidationMSG(this, "Please Select a product from table to Return");
-		}else{
-			PurchaseReturnModel purchaseReturn = new PurchaseReturnModel();
 
-			String currentDate = String.valueOf(Calendar.getInstance().get(
-					Calendar.YEAR))
-					+ "-"
-					+ String.valueOf(Calendar.getInstance().get(Calendar.MONTH) + 1)
-					+ "-"
-					+ String.valueOf(Calendar.getInstance().get(Calendar.DATE));
-			double qty = Double.parseDouble(textField5.getText());
-			double purchasePrice = PurchaseBillDetailList.get(
-					table2.getSelectedRow()).getPurchasePrice();
-			double vatPercent = PurchaseBillDetailList.get(
-					table2.getSelectedRow()).getVatPercent();
-			double vatAmount = ((purchasePrice * qty) * vatPercent) / 100;
+		PurchaseReturnModel purchaseReturn = new PurchaseReturnModel();
 
-			purchaseReturn.setReturnId(0);
-			purchaseReturn.setBillNumber(purchaseBillDisplayList.get(
-					table1.getSelectedRow()).getBillNo());
-			purchaseReturn.setBillDetailId(PurchaseBillDetailList.get(
-					table2.getSelectedRow()).getPurchaseDetailId());
-			purchaseReturn.setBillId(purchaseBillDisplayList.get(
-					table1.getSelectedRow()).getBillId());
-			purchaseReturn.setProductName(PurchaseBillDetailList.get(
-					table2.getSelectedRow()).getProductName());
-			purchaseReturn.setProductCode(PurchaseBillDetailList.get(
-					table2.getSelectedRow()).getProductCode());
-			purchaseReturn.setPurchasePrice(purchasePrice);
-			purchaseReturn.setQuantity(qty);
+		String currentDate = new DatePicker().getCurrentDate();
+		double qty = Double.parseDouble(textField5.getText());
+		double purchasePrice = PurchaseBillDetailList.get(
+				table2.getSelectedRow()).getPurchasePrice();
+		double vatPercent = PurchaseBillDetailList.get(table2.getSelectedRow())
+				.getVatPercent();
+		double vatAmount = ((purchasePrice * qty) * vatPercent) / 100;
 
-			purchaseReturn.setReturnDate(currentDate);
-			purchaseReturn.setTotalCost((purchasePrice * qty) + vatAmount);
-			purchaseReturn.setUnit(comboBox2.getSelectedItem().toString());
-			purchaseReturn.setVatAmount(vatAmount);
-			purchaseReturn.setVatPercent(vatPercent);
-			purchaseReturn.setStoreId(tableid.getStoreId(comboBox1
-					.getSelectedItem().toString()));
-			int startYear = Calendar.getInstance().get(Calendar.YEAR);
-			purchaseReturn.setYearId(tableid
-					.getYearId(startYear, startYear + 1));
+		purchaseReturn.setReturnId(0);
+		purchaseReturn.setBillNumber(purchaseBillDisplayList.get(
+				table1.getSelectedRow()).getBillNo());
+		purchaseReturn.setBillDetailId(PurchaseBillDetailList.get(
+				table2.getSelectedRow()).getPurchaseDetailId());
+		purchaseReturn.setBillId(purchaseBillDisplayList.get(
+				table1.getSelectedRow()).getBillId());
+		purchaseReturn.setProductName(PurchaseBillDetailList.get(
+				table2.getSelectedRow()).getProductName());
+		purchaseReturn.setProductCode(PurchaseBillDetailList.get(
+				table2.getSelectedRow()).getProductCode());
+		purchaseReturn.setPurchasePrice(purchasePrice);
+		purchaseReturn.setQuantity(qty);
 
-			dbinsert.insertPurchaseReturn(purchaseReturn);
-		}
+		purchaseReturn.setReturnDate(currentDate);
+		purchaseReturn.setTotalCost((purchasePrice * qty) + vatAmount);
+		purchaseReturn.setUnit(comboBox2.getSelectedItem().toString());
+		purchaseReturn.setVatAmount(vatAmount);
+		purchaseReturn.setVatPercent(vatPercent);
+		purchaseReturn.setStoreId(tableid.getStoreId(comboBox1
+				.getSelectedItem().toString()));
+		int startYear = Calendar.getInstance().get(Calendar.YEAR);
+		purchaseReturn.setYearId(tableid.getYearId(startYear, startYear + 1));
+
+		dbinsert.insertPurchaseReturn(purchaseReturn);
+
 	}
 
 	private void UpdateProductStock() {
-		int storeId = tableid.getStoreId(comboBox1.getSelectedItem().toString());
+		int storeId = tableid
+				.getStoreId(comboBox1.getSelectedItem().toString());
 		String productName = PurchaseBillDetailList
 				.get(table2.getSelectedRow()).getProductName();
 		String productCode = PurchaseBillDetailList
@@ -519,15 +535,19 @@ public class PurchaseReturn extends JFrame
 
 	private void resetAllField() {
 		textField1.setText("");
-		textField1.requestFocus();
-		purchaseBillList = dbValue.getPurchaseBill("store_id", tableid.getStoreId(comboBox1
-				.getSelectedItem().toString()));
+		purchaseBillDisplayList = new ArrayList<>();
+		purchaseBillList = dbValue.getPurchaseBill("store_id",
+				tableid.getStoreId(comboBox1.getSelectedItem().toString()));
 		loadTable1Data();
+		textField1.requestFocus();
 	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
 		// TODO Auto-generated method stub
+		if(purchaseBillDisplayList.size()==0){
+			table1.clearSelection();
+		}
 		if (event.getSource() == table1.getSelectionModel()) {
 			if (table1.getRowCount() > 0 && table1.getSelectedRow() >= 0) {
 				int billId = purchaseBillDisplayList.get(
@@ -564,7 +584,7 @@ public class PurchaseReturn extends JFrame
 	public void focusGained(FocusEvent event) {
 		// TODO Auto-generated method stub
 		if (event.getSource() == textField1) {
-			
+
 			textField2.setText("");
 			textField3.setText("");
 			purchaseBillDisplayList = new ArrayList<>();
@@ -585,7 +605,7 @@ public class PurchaseReturn extends JFrame
 			table1.getSelectionModel().setSelectionInterval(-1, -1);
 			loadTable1Data();
 		}
-		
+
 	}
 
 	@Override

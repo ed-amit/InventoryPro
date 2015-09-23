@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import com.lrd.inventory.model.PaymentModel;
 import com.lrd.inventory.model.SalesBillDetailModel;
 import com.lrd.inventory.model.SalesBillModel;
 import com.lrd.inventory.model.BrandModel;
@@ -361,17 +362,6 @@ public class GetDBValue {
 				billDetailModel.setBillDetailId(result
 						.getInt("bill_details_id"));
 				billDetailModel.setBillId(result.getInt("bill_id"));
-				billDetailModel.setProductQuantity(result
-						.getDouble("product_quantity"));
-				billDetailModel
-						.setProductRate(result.getDouble("Product_rate"));
-				billDetailModel.setMrp(result.getDouble("mrp"));
-				billDetailModel.setVatPercent(result
-						.getDouble("vat_percentage"));
-				billDetailModel.setVatAmt(result.getDouble("vat_amount"));
-				billDetailModel.setDiscountPercent(result
-						.getDouble("discount_per"));
-				billDetailModel.setDiscountAmt(result.getDouble("discount_rs"));
 				billDetailModel.setBatchNo(result.getString("batch_no"));
 				billDetailModel.setCategoryName(result
 						.getString("category_name"));
@@ -379,14 +369,27 @@ public class GetDBValue {
 						.setProductCode(result.getString("product_code"));
 				billDetailModel
 						.setProductName(result.getString("product_name"));
+				billDetailModel.setProductQuantity(result
+						.getDouble("product_quantity"));
+				billDetailModel
+						.setProductRate(result.getDouble("Product_rate"));
 				billDetailModel
 						.setProductType(result.getString("product_type"));
 				billDetailModel
 						.setProductUnit(result.getString("product_unit"));
+				billDetailModel.setMrp(result.getDouble("mrp"));
+				billDetailModel.setVatPercent(result
+						.getDouble("vat_percentage"));
+				billDetailModel.setVatAmt(result.getDouble("vat_amount"));
+				billDetailModel.setDiscountPercent(result
+						.getDouble("discount_per"));
+				billDetailModel.setDiscountAmt(result.getDouble("discount_rs"));
 				billDetailModel.setWarrantyStartDate(result
 						.getString("warranty_start_date"));
 				billDetailModel.setWarrantyEndDate(result
 						.getString("warranty_end_date"));
+				billDetailModel.setPurchaseRate(result.getDouble("purchase_rate"));
+				billDetailModel.setSubTotal(result.getDouble("sub_total"));
 
 				billDetailList.add(billDetailModel);
 			}
@@ -852,7 +855,7 @@ public class GetDBValue {
 	public ArrayList<PurchaseBillDetailModel> getPurchaseBillDetail(
 			int purchaseBillId) {
 		ArrayList<PurchaseBillDetailModel> purchaseBillDetailList = new ArrayList<>();
-		String query = "select * from purchase_bill_details where bill_Details_id="
+		String query = "select * from purchase_bill_details where bill_id="
 				+ purchaseBillId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
@@ -983,7 +986,7 @@ public class GetDBValue {
 					+ "FROM `bill_details` LEFT JOIN `bill` on bill_details.bill_id=bill.bill_id "
 					+ "where bill.store_id="
 					+ storeId
-					+ " and bill_no LIKE '"
+					+ " and bill_no LIKE '%"
 					+ arg0 + "%' group by bill_details.bill_id;";
 		else if (argType.equals("customerName"))
 			query = "SELECT bill.bill_id, bill.bill_no, bill.bill_date, bill.customer_name,"
@@ -1023,6 +1026,43 @@ public class GetDBValue {
 			e.printStackTrace();
 		}
 		return billList;
+	}
+
+	public ArrayList<PaymentModel> getPurchasePaymentDetail(int billId) {
+		// TODO Auto-generated method stub
+		try {
+
+			ArrayList<PaymentModel> list = new ArrayList<>();
+			ResultSet result = stmt
+					.executeQuery("select * from purchase_bill_payment where bill_id="
+							+ billId);
+			
+			while (result.next()) {
+
+				PaymentModel payment = new PaymentModel();
+				
+				payment.setPaymentId(result.getInt("payment_id"));
+				payment.setBankName(result.getString("bank_name"));
+				payment.setCode(result.getString("cheque_no"));
+				payment.setDescription(result.getString("description"));
+				payment.setPaidAmt(result.getDouble("paid_amount"));
+				payment.setPaymentDate(result.getString("payment_date"));
+				payment.setPaymentMode(result.getString("Payment_mode"));
+				payment.setRefId(result.getInt("bill_id"));
+				
+				list.add(payment);
+			}
+
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void checkLogin(String userName, String password) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

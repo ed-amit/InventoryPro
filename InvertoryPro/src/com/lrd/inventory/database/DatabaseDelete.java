@@ -150,4 +150,43 @@ public class DatabaseDelete {
 		
 	}
 
+
+
+	public boolean deletePurchaseBill(int purchaseBillId) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("delete from purchase_bill where bill_id="+purchaseBillId);
+			return true;	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+
+	public boolean deletePurchaseBillDetails(int purchaseBillId) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("delete from purchase_bill_details where bill_id="+purchaseBillId);
+			return true;	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+
+	public boolean deletePurchasePaymentDetails(int purchaseBillId) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("delete from purchase_bill_payment where bill_id="+purchaseBillId);
+			return true;	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }
