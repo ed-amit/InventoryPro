@@ -24,8 +24,8 @@ public class MenuName {
 	public final static String menu17 = "Financial Accounting";
 	public final static String menu18 = "Bank Recounsilation";
 	public final static String menu19 = "Excel Report";
-	public final static String menu20 = "Purchase Graph";
-	public final static String menu21 = "Sales Graph";
+	public final static String menu20 = "Purchase Report";
+	public final static String menu21 = "Sales Report";
 	public final static String menu22 = "Sales Purchase Graph";
 	public final static String menu23 = "Employer Report";
 	public final static String menu24 = "Connection Type";

@@ -9,6 +9,7 @@ import java.sql.Statement;
 import javax.swing.*;
 
 import com.lrd.inventory.database.DatabaseConnection;
+import com.lrd.inventory.reportui.PurchaseMonthlyReport;
 import com.lrd.inventory.utility.Calculator;
 import com.lrd.inventory.utility.MediaPlayer;
 import com.lrd.inventory.utility.NotePad;
@@ -1777,11 +1778,10 @@ public class MasterHome extends JFrame implements ActionListener {
 			case MenuItemName.MenuItem125 :
 				break;
 			case MenuItemName.MenuItem126 :
-
-				new PurchaseMonthlyReport(this.connection);
-
+				new PurchaseMonthlyReport(connection);
 				break;
 			case MenuItemName.MenuItem127 :
+				
 				break;
 			case MenuItemName.MenuItem128 :
 				break;
@@ -1877,6 +1877,7 @@ public class MasterHome extends JFrame implements ActionListener {
 			case MenuItemName.MenuItem147 :
 				break;
 			case MenuItemName.MenuItem148 :
+				new StoreRegistration(connection);
 				break;
 			case MenuItemName.MenuItem149 :
 				break;

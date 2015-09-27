@@ -1,6 +1,5 @@
 package com.lrd.inventory.database;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +12,7 @@ import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.DistributorModel;
 import com.lrd.inventory.model.ProductModel;
 import com.lrd.inventory.model.RackModel;
+import com.lrd.inventory.model.StoreModel;
 
 public class DatabaseUpdate {
 
@@ -142,8 +142,6 @@ public class DatabaseUpdate {
 		}
 	}
 
-	
-	
 	public void updateSalesBillProduct(SalesBillDetailModel billDetail) {
 
 		try {
@@ -158,14 +156,13 @@ public class DatabaseUpdate {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
-	public void updatePurchaseBillPayment(int PurchaseBillId, double paymentAmount) {
+
+	public void updatePurchaseBillPayment(int PurchaseBillId,
+			double paymentAmount) {
 
 		try {
-			stmt.executeUpdate("update purchase_bill set paid_amount=paid_amount+"+paymentAmount+" where bill_id="+PurchaseBillId);
+			stmt.executeUpdate("update purchase_bill set paid_amount=paid_amount+"
+					+ paymentAmount + " where bill_id=" + PurchaseBillId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -174,7 +171,26 @@ public class DatabaseUpdate {
 	public void updatePurchaseOrderStatus(int orderId, String status) {
 		// TODO Auto-generated method stub
 		try {
-			stmt.executeUpdate("update purchase_order set status='"+status+"' where order_id="+orderId);
+			stmt.executeUpdate("update purchase_order set status='" + status
+					+ "' where order_id=" + orderId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateStoreDetails(StoreModel store) {
+		// TODO Auto-generated method stub
+		try {
+			stmt.executeUpdate("update store_details set store_name='"
+					+ store.getStoreName() + "', address='"
+					+ store.getAddress() + "',pin_no= " + store.getPinNo()
+					+ ",city='" + store.getCityName() + "',state='"
+					+ store.getStateName() + "',contact_no='"
+					+ store.getContactNo() + "',email='" + store.getEmailId()
+					+ "',manager_name='" + store.getManagerName()
+					+ "',registration_no='" + store.getRegistrationNo()
+					+ "',pan_no='" + store.getPanNo() + "' where store_id="
+					+ store.getStoreId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

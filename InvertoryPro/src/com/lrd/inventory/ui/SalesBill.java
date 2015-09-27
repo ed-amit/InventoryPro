@@ -9,8 +9,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +39,7 @@ import com.lrd.inventory.model.PaymentModel;
 import com.lrd.inventory.model.CreditorModel;
 import com.lrd.inventory.model.ProductModel;
 import com.lrd.inventory.model.SalesBillDetailModel;
+import com.lrd.inventory.print.PrintBill;
 
 /**
  * @author dharmendra singh
@@ -1200,8 +1199,8 @@ public class SalesBill extends JFrame
 		BillDetailModel billDetail = billDetailList
 				.get(table1.getSelectedRow());
 		calculateNetAmount(
-				(billDetail.getProductRate()-billDetail.getDiscountAmt()) * billDetail.getProductQuantity(),
-				"less");
+				(billDetail.getProductRate() - billDetail.getDiscountAmt())
+						* billDetail.getProductQuantity(), "less");
 		billDetailList.remove(table1.getSelectedRow());
 		loadTableData();
 		itemCount--;
@@ -1508,11 +1507,12 @@ public class SalesBill extends JFrame
 	private void saveAndPrintSalesBill() {
 
 		// 1. for saving general bill info
-		int bill_id = dbinsert.insertSalesBill(setSalesBillModel());
+		SalesBillModel saleBill = setSalesBillModel();
+		int bill_id = dbinsert.insertSalesBill(saleBill);
 
 		// 2. for saving bill payment details
-
-		dbinsert.insertSalesBillPayment(setBillPaymentModel(bill_id));
+		PaymentModel payment = setBillPaymentModel(bill_id);
+		dbinsert.insertSalesBillPayment(payment);
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1540,7 +1540,8 @@ public class SalesBill extends JFrame
 			}
 		}
 
-		// PrintSalesBillMethod();
+		new PrintBill().printSaleBill(saleBill, billDetailList,
+				OtherChargesList, payment);
 
 		resetAll();
 
@@ -1552,11 +1553,12 @@ public class SalesBill extends JFrame
 	 */
 	private void saveAndPrintChallan() {
 		// 1. for saving general bill info
-		int challan_id = dbinsert.insertChallan(setChallanModel());
+		ChallanModel challan = setChallanModel();
+		int challan_id = dbinsert.insertChallan(challan);
 
 		// 2. for saving bill payment details
-
-		dbinsert.insertChallanPayment(setBillPaymentModel(challan_id));
+		PaymentModel payment = setBillPaymentModel(challan_id);
+		dbinsert.insertChallanPayment(payment);
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1585,6 +1587,8 @@ public class SalesBill extends JFrame
 		}
 
 		// PrintSalesBillMethod();
+		new PrintBill().printChallan(challan, billDetailList, OtherChargesList,
+				payment);
 
 		resetAll();
 
@@ -1596,11 +1600,12 @@ public class SalesBill extends JFrame
 	 */
 	private void saveAndPrintSaleOrder() {
 		// 1. for saving general bill info
-		int order_id = dbinsert.insertSalesOrder(setSalesOrderModel());
+		SaleOrderModel saleOrder = setSalesOrderModel();
+		int order_id = dbinsert.insertSalesOrder(saleOrder);
 
 		// 2. for saving bill payment details
-
-		dbinsert.insertSalesOrderPayment(setBillPaymentModel(order_id));
+		PaymentModel payment = setBillPaymentModel(order_id);
+		dbinsert.insertSalesOrderPayment(payment);
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1629,7 +1634,8 @@ public class SalesBill extends JFrame
 		}
 
 		// PrintSalesBillMethod();
-
+		new PrintBill().printSaleOrder(saleOrder, billDetailList,
+				OtherChargesList, payment);
 		resetAll();
 
 	} // end of saveAndPrint block
@@ -1640,11 +1646,11 @@ public class SalesBill extends JFrame
 	 */
 	private void saveAndPrintSaleQuotation() {
 		// 1. for saving general bill info
-		int quotation_id = dbinsert
-				.insertSalesQuotation(setSalesQuotationModel());
+		SaleQuotationModel saleQuotation = setSalesQuotationModel();
+		int quotation_id = dbinsert.insertSalesQuotation(saleQuotation);
 
 		// 2. for saving bill payment details
-
+		
 		// dbinsert.insertSalesPayment(setBillPaymentModel(bill_id));
 
 		// 3. for saving bill payment details
@@ -1662,6 +1668,7 @@ public class SalesBill extends JFrame
 		}
 
 		// PrintSalesBillMethod();
+		new PrintBill().printSaleQuotation(saleQuotation, billDetailList, OtherChargesList);
 
 		resetAll();
 

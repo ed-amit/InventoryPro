@@ -28,6 +28,7 @@ import com.lrd.inventory.model.PurchaseOrderDetailModel;
 import com.lrd.inventory.model.PurchaseOrderModel;
 import com.lrd.inventory.model.PurchaseReturnModel;
 import com.lrd.inventory.model.RackModel;
+import com.lrd.inventory.model.StoreModel;
 import com.lrd.inventory.model.VatModel;
 
 public class DatabaseInsert {
@@ -225,8 +226,8 @@ public class DatabaseInsert {
 				+ billDetail.getWarrantyStartDate() + "', "
 				+ billDetail.getDiscountPercent() + " , "
 				+ billDetail.getDiscountAmt() + ","
-				+ billDetail.getPurchaseRate() + " , " + billDetail.getSubTotal()
-				+ ")";
+				+ billDetail.getPurchaseRate() + " , "
+				+ billDetail.getSubTotal() + ")";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -767,6 +768,22 @@ public class DatabaseInsert {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean insertStoreDetail(StoreModel store) {
+		String query = "insert into store_details values (null, '"
+				+ store.getStoreName() + "', '" + store.getAddress() + "', "
+				+ store.getPinNo() + ", '" + store.getCityName() + "', '"
+				+ store.getStateName() + "', '" + store.getContactNo() + "', '"
+				+ store.getEmailId() + "', '" + store.getManagerName() + "', '"
+				+ store.getRegistrationNo() + "', '" + store.getPanNo() + "');";
+		try {
+			stmt.executeUpdate(query);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

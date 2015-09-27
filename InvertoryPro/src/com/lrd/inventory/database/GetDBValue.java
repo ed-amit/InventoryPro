@@ -23,6 +23,7 @@ import com.lrd.inventory.model.PurchaseBillModel;
 import com.lrd.inventory.model.PurchaseOrderModel;
 import com.lrd.inventory.model.RackModel;
 import com.lrd.inventory.model.SaleOrderModel;
+import com.lrd.inventory.model.StoreModel;
 import com.lrd.inventory.model.VatModel;
 
 public class GetDBValue {
@@ -388,7 +389,8 @@ public class GetDBValue {
 						.getString("warranty_start_date"));
 				billDetailModel.setWarrantyEndDate(result
 						.getString("warranty_end_date"));
-				billDetailModel.setPurchaseRate(result.getDouble("purchase_rate"));
+				billDetailModel.setPurchaseRate(result
+						.getDouble("purchase_rate"));
 				billDetailModel.setSubTotal(result.getDouble("sub_total"));
 
 				billDetailList.add(billDetailModel);
@@ -1036,11 +1038,11 @@ public class GetDBValue {
 			ResultSet result = stmt
 					.executeQuery("select * from purchase_bill_payment where bill_id="
 							+ billId);
-			
+
 			while (result.next()) {
 
 				PaymentModel payment = new PaymentModel();
-				
+
 				payment.setPaymentId(result.getInt("payment_id"));
 				payment.setBankName(result.getString("bank_name"));
 				payment.setCode(result.getString("cheque_no"));
@@ -1049,7 +1051,7 @@ public class GetDBValue {
 				payment.setPaymentDate(result.getString("payment_date"));
 				payment.setPaymentMode(result.getString("Payment_mode"));
 				payment.setRefId(result.getInt("bill_id"));
-				
+
 				list.add(payment);
 			}
 
@@ -1062,7 +1064,40 @@ public class GetDBValue {
 
 	public void checkLogin(String userName, String password) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public ArrayList<StoreModel> getStoreDetail() {
+		// TODO Auto-generated method stub
+		try {
+
+			ArrayList<StoreModel> list = new ArrayList<>();
+			ResultSet result = stmt.executeQuery("select * from store_details");
+
+			while (result.next()) {
+
+				StoreModel store = new StoreModel();
+
+				store.setStoreId(result.getInt("store_id"));
+				store.setStoreName(result.getString("store_name"));
+				store.setAddress(result.getString("address"));
+				store.setPinNo(result.getInt("pin_no"));
+				store.setCity(result.getString("city"));
+				store.setState(result.getString("state"));
+				store.setContactNo(result.getString("contact_no"));
+				store.setEmailId(result.getString("email"));
+				store.setManagerName(result.getString("manager_name"));
+				store.setRegistrationNo(result.getString("registration_no"));
+				store.setPanNo(result.getString("pan_no"));
+
+				list.add(store);
+			}
+
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -1,4 +1,6 @@
-package com.lrd.inventory.ui;
+package com.lrd.inventory.reportui;
+
+
 
 import java.awt.Container;
 import java.awt.Font;
@@ -17,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class PurchaseMonthlyReport  extends JFrame
+public class PurchaseYearlyReport  extends JFrame
 implements
 ItemListener,
 ActionListener
@@ -47,14 +49,13 @@ ActionListener
 	private JComboBox<Object> comboBox3;
 
 	
-	
-	public PurchaseMonthlyReport(Connection connection) {
+	public PurchaseYearlyReport() {
 		// TODO Auto-generated constructor stub
-		 initComponents();
-		
-		
-		
-		
+		 initComponents();	
+	}
+	public PurchaseYearlyReport(Connection connection) {
+		// TODO Auto-generated constructor stub
+		 initComponents();	
 	}
 	// creating UI for Frame
 	private void initComponents() {
@@ -85,7 +86,7 @@ ActionListener
 					panel1.setLayout(null);
 					// ======== panel2 ========
 					{
-						label4 = new JLabel("Monthly Report");
+						JLabel label4 = new JLabel("Purchase Yearly Report");
 						panel2.add(label4);
 						label4.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 20));
 						label4.setBounds(200, 10, 300, 30);
@@ -110,34 +111,26 @@ ActionListener
 						panel3.setLayout(null);
 						// ---- label27 ----
 						
-						label2.setText("Select Month");
-						panel3.add(label2);
-						label2.setBounds(20, 20, 80, 20);
-						
-						panel3.add(comboBox1);
-						comboBox1.setBounds(100, 20, 100, 20);
-						comboBox1.addItem("Select Month ");
-						
-
 						label3.setText("Select Year");
 						panel3.add(label3);
-						label3.setBounds(20, 50, 80, 20);
+						label3.setBounds(20, 20, 80, 20);
 						
 						
 						panel3.add(comboBox2);
-						comboBox2.setBounds(100, 50, 100, 20);
+						comboBox2.setBounds(100, 20, 100, 20);
 						comboBox2.addItem("Select Year");
 						
 						// ---- button2 ----
 						button1.setText("Search");
 						panel3.add(button1);
-						button1.setBounds(250, 20, 80, 20);
+						button1.setBounds(100 ,60, 80, 20);
 						
 						// ---- button2 ----
 						button2.setText("Cancel");
 						panel3.add(button2);
-						button2.setBounds(250, 50, 80, 20);
+						button2.setBounds(200, 60, 80, 20);
 						// panel3.setBackground(Color.GREEN);
+						
 
 						tableModel1.addColumn("Sr.");
 						tableModel1.addColumn("Code");
@@ -183,6 +176,8 @@ ActionListener
 				setSize(610, 630);
 
 	}
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
@@ -192,5 +187,10 @@ ActionListener
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	public static void main(String[] args){
+		new PurchaseYearlyReport();
 	}
 }
