@@ -317,8 +317,10 @@ public class ManageCategory extends JFrame
 			category.setFirmId(1);
 			category.setStoreId(tableid.getStoreId(comboBox1.getSelectedItem()
 					.toString()));
-			dbinsert.insertCategory(category);
-			category.setDefault();
+			if (!dbinsert.insertCategory(category)) {
+				new ValidationMSG(this,
+						"Category already exists in the same Rack.");
+			}
 			reset();
 		}
 
@@ -371,9 +373,13 @@ public class ManageCategory extends JFrame
 				category.setCategoryDesc(textArea1.getText());
 			category.setRackId(tableid.getRackId(comboBox2.getSelectedItem()
 					.toString()));
-			new DatabaseUpdate(connection).updateCategory(category);
-			reset();
-			category = null;
+			if (!new DatabaseUpdate(connection).updateCategory(category)) {
+				new ValidationMSG(this,
+						"Category already exists in the same Rack.");
+			} else {
+				reset();
+				category = null;
+			}
 
 		}
 	}

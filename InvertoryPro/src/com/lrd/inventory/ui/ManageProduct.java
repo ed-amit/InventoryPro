@@ -418,6 +418,7 @@ public class ManageProduct extends JFrame
 			panel1.add(button6);
 			button6.setBounds(510, 580, 90, 30);
 			button6.addActionListener(this);
+			button6.setEnabled(false);
 
 			// ---- button7 ----
 			button7.setText("Clear");
@@ -518,13 +519,13 @@ public class ManageProduct extends JFrame
 	@Override
 	public void keyReleased(KeyEvent event) {
 		if (!(event.getKeyChar() == 27 || event.getKeyChar() == 6)) {
-			String tempStr = textField10.getText();
+			String tempStr = textField10.getText().toLowerCase();
 
 			productDisplayList = new ArrayList<>();
 			if (comboBox7.getSelectedItem().toString()
 					.equals("By Product Name")) {
 				for (ProductModel tempProduct1 : productList) {
-					if (tempProduct1.getProductName().contains(tempStr)) {
+					if (tempProduct1.getProductName().toLowerCase().contains(tempStr)) {
 						productDisplayList.add(tempProduct1);
 					}
 				}
@@ -532,7 +533,7 @@ public class ManageProduct extends JFrame
 			if (comboBox7.getSelectedItem().toString()
 					.equals("By Product Code")) {
 				for (ProductModel tempProduct1 : productList) {
-					if (tempProduct1.getProductCode().contains(tempStr)) {
+					if (tempProduct1.getProductCode().toLowerCase().contains(tempStr)) {
 						productDisplayList.add(tempProduct1);
 					}
 				}
@@ -557,8 +558,8 @@ public class ManageProduct extends JFrame
 			case "Refresh" :
 				reFresh();
 				break;
-			case "Exit" :
-				exit();
+			case "Clear" :
+				reset();
 				break;
 			case "View" :
 				view();
@@ -615,6 +616,12 @@ public class ManageProduct extends JFrame
 		} else if (valid.isEmpty(textField6.getText())) {
 			status = false;
 			new ValidationMSG(this, "Please Insert Sale Price");
+		} else if (Integer.parseInt(textField6.getText())>Integer.parseInt(textField5.getText())) {
+			status = false;
+			new ValidationMSG(this, "Sale Price must be equal or less then MRP");
+		} else if (Integer.parseInt(textField4.getText())>Integer.parseInt(textField5.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please Purchase Price must be less then MRP");
 		} else if (comboBox5.getSelectedIndex() < 0) {
 			status = false;
 			new ValidationMSG(this, "Please Select Vat %");
@@ -730,6 +737,12 @@ public class ManageProduct extends JFrame
 		} else if (valid.isEmpty(textField6.getText())) {
 			status = false;
 			new ValidationMSG(this, "Please Insert Sale Price");
+		} else if (Integer.parseInt(textField6.getText())>Integer.parseInt(textField5.getText())) {
+			status = false;
+			new ValidationMSG(this, "Sale Price must be equal or less then MRP");
+		} else if (Integer.parseInt(textField4.getText())>Integer.parseInt(textField5.getText())) {
+			status = false;
+			new ValidationMSG(this, "Please Purchase Price must be less then MRP");
 		} else if (comboBox5.getSelectedIndex() < 0) {
 			status = false;
 			new ValidationMSG(this, "Please Select Vat %");

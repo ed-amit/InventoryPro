@@ -60,6 +60,8 @@ public class ProductList extends JFrame
 	SpecificFieldValue fieldName = null;
 	Validate valid = null;
 
+	int selectedIndex = 0;
+
 	public ProductList(Connection connection) {
 		this.connection = connection;
 		// productList = new ArrayList<>();
@@ -185,10 +187,29 @@ public class ProductList extends JFrame
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
+	public void keyPressed(KeyEvent event) {
+		if (event.getSource() == table1) {
+			if (event.getKeyChar() == 10) {
+				if (table1.getSelectedRowCount() == 1) {
+					int id = productDisplayList.get(table1.getSelectedRow())
+							.getProductId();
+					
+					new ProductDetails(id, this.connection);
+					try {
+						table1.setRowSelectionInterval(table1.getSelectedRow() - 1,
+								table1.getSelectedRow() - 1);
+					} catch (Exception e) {
+						// e.printStackTrace();
+					}
+				} else {
+					new ValidationMSG(this,
+							"please select single row to view product details");
+				}
+			}
+		}
 	}
 	@Override
-	public void keyTyped(KeyEvent arg0) {
+	public void keyTyped(KeyEvent event) {
 	}
 
 	@Override
@@ -198,8 +219,8 @@ public class ProductList extends JFrame
 				productDisplayList = new ArrayList<>();
 				if (!(valid.isEmpty(textField1.getText()))) {
 					for (ProductModel tempProduct : productList) {
-						if (tempProduct.getProductName().contains(
-								textField1.getText())) {
+						if (tempProduct.getProductName().toLowerCase().contains(
+								textField1.getText().toLowerCase())) {
 							productDisplayList.add(tempProduct);
 						}
 					}
@@ -207,18 +228,6 @@ public class ProductList extends JFrame
 				} else {
 					productDisplayList = productList;
 					loadTableData(productDisplayList);
-				}
-			}
-		}
-
-		if (event.getSource() == table1) {
-			if (event.getKeyChar() == 10) {
-				if (table1.getSelectedRowCount() == 1) {
-					int id = productDisplayList.get(table1.getSelectedRow())
-							.getProductId();
-					table1.setRowSelectionInterval(table1.getSelectedRow()-1, table1.getSelectedRow()-1);
-					new ProductDetails(id, this.connection);
-					
 				}
 			}
 		}
@@ -260,8 +269,8 @@ public class ProductList extends JFrame
 						.getProductId();
 				new DatabaseDelete(connection).deleteProductVat(id);
 				new DatabaseDelete(connection).deleteProduct(id);
-				productList = dbvalue.getProductDetail(tableid.getStoreId(comboBox1
-						.getSelectedItem().toString()));
+				productList = dbvalue.getProductDetail(tableid
+						.getStoreId(comboBox1.getSelectedItem().toString()));
 				productDisplayList = productList;
 				loadTableData(productDisplayList);
 			}

@@ -41,7 +41,7 @@ public class DatabaseUpdate {
 		}
 	}
 
-	public void updateCategory(CategoryModel category) {
+	public boolean updateCategory(CategoryModel category) {
 
 		try {
 			stmt.executeUpdate("update categories set category_name='"
@@ -49,8 +49,10 @@ public class DatabaseUpdate {
 					+ category.getCategoryDesc() + "', rack_id="
 					+ category.getRackId() + " where category_id="
 					+ category.getCategoryId());
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
+			//e.printStackTrace();
 		}
 	}
 
@@ -89,7 +91,7 @@ public class DatabaseUpdate {
 		}
 	}
 
-	public void updateCreditCustomer(CreditorModel creditor) {
+	public boolean updateCreditCustomer(CreditorModel creditor) {
 
 		try {
 			stmt.executeUpdate("update credit_customers set customer_name='"
@@ -100,8 +102,10 @@ public class DatabaseUpdate {
 					+ creditor.getCreditAmt() + ", debit_balance="
 					+ creditor.getDebitAmt() + " where customer_id="
 					+ creditor.getId());
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
+			//e.printStackTrace();
 		}
 	}
 

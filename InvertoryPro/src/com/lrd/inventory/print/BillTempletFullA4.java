@@ -160,7 +160,6 @@ public class BillTempletFullA4 implements Printable {
 		billType = "Sale Quotation";
 		this.billDetailList = billDetailList;
 		// this.OtherChargesList = OtherChargesList;
-		
 
 		if (OtherChargesList.size() > 0) {
 			for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -181,29 +180,29 @@ public class BillTempletFullA4 implements Printable {
 
 		g2d.setPaint(Color.black);
 		if (status) {
-		setBillBorder(g2d, pageFormat);
-		setBillPreDefine(g2d, pageFormat);
-		setBillLabel(g2d, pageFormat);
-		setBillDetails(g2d, pageFormat);
+			setBillBorder(g2d, pageFormat);
+			setBillPreDefine(g2d, pageFormat);
+			setBillLabel(g2d, pageFormat);
+			setBillDetails(g2d, pageFormat);
 
-		if (billType.equals("Vat Invoice")) {
-			setSaleBillInfo(g2d, pageFormat);
-			setSaleBillTotals(g2d, pageFormat);
-		} else if (billType.equals("Sale Invoice")) {
-			setChallanInfo(g2d, pageFormat);
-			setChallanTotals(g2d, pageFormat);
-		} else if (billType.equals("Sale Order")) {
-			setSaleOrderInfo(g2d, pageFormat);
-			setSaleOrderTotals(g2d, pageFormat);
-		} else if (billType.equals("Sale Quotation")) {
-			setSaleQuotationInfo(g2d, pageFormat);
-			setSaleQuotationTotals(g2d, pageFormat);
-		}
+			if (billType.equals("Vat Invoice")) {
+				setSaleBillInfo(g2d, pageFormat);
+				setSaleBillTotals(g2d, pageFormat);
+			} else if (billType.equals("Sale Invoice")) {
+				setChallanInfo(g2d, pageFormat);
+				setChallanTotals(g2d, pageFormat);
+			} else if (billType.equals("Sale Order")) {
+				setSaleOrderInfo(g2d, pageFormat);
+				setSaleOrderTotals(g2d, pageFormat);
+			} else if (billType.equals("Sale Quotation")) {
+				setSaleQuotationInfo(g2d, pageFormat);
+				setSaleQuotationTotals(g2d, pageFormat);
+			}
 
-		setBillType(g2d, pageFormat);
-		
+			setBillType(g2d, pageFormat);
+
 		}
-		status=true;
+		status = true;
 		return 0;
 	}
 
@@ -401,19 +400,18 @@ public class BillTempletFullA4 implements Printable {
 					(int) (pageFormat.getImageableWidth() - 85), positionY);
 			g2d.drawString(saleDetail.getSubTotal() + "",
 					(int) (pageFormat.getImageableWidth() - 40), positionY);
-			
+
 			totalQty += saleDetail.getProductQuantity();
 			totalRate += saleDetail.getProductRate()
 					* saleDetail.getProductQuantity();
 			totalDiscount += saleDetail.getDiscountAmt()
 					* saleDetail.getProductQuantity();
 			totalAmount += saleDetail.getSubTotal();
-			
-			
+
 			positionY += 12;
 			i++;
 		}
-		
+
 	}
 
 	private void setSaleBillTotals(Graphics2D g2d, PageFormat pageFormat) {
@@ -443,7 +441,8 @@ public class BillTempletFullA4 implements Printable {
 				8 * POINTS_PER_INCH + 39);
 
 		g2d.drawString(totalAmount + saleBill.getVatAmt() + totalOtherCharges
-				+ "", (int) (pageFormat.getImageableWidth() - 60),
+				- saleBill.getDiscount() + "",
+				(int) (pageFormat.getImageableWidth() - 60),
 				(int) (pageFormat.getImageableHeight() - 10));
 	}
 
@@ -490,7 +489,8 @@ public class BillTempletFullA4 implements Printable {
 				8 * POINTS_PER_INCH + 39);
 
 		g2d.drawString(totalAmount + challan.getVatAmt() + totalOtherCharges
-				+ "", (int) (pageFormat.getImageableWidth() - 60),
+				- challan.getDiscount() + "",
+				(int) (pageFormat.getImageableWidth() - 60),
 				(int) (pageFormat.getImageableHeight() - 10));
 	}
 
@@ -538,7 +538,8 @@ public class BillTempletFullA4 implements Printable {
 				8 * POINTS_PER_INCH + 39);
 
 		g2d.drawString(totalAmount + saleOrder.getVatAmt() + totalOtherCharges
-				+ "", (int) (pageFormat.getImageableWidth() - 60),
+				- saleOrder.getDiscount() + "",
+				(int) (pageFormat.getImageableWidth() - 60),
 				(int) (pageFormat.getImageableHeight() - 10));
 	}
 
@@ -587,7 +588,7 @@ public class BillTempletFullA4 implements Printable {
 				8 * POINTS_PER_INCH + 39);
 
 		g2d.drawString(totalAmount + saleQuotation.getVatAmt()
-				+ totalOtherCharges + "",
+				+ totalOtherCharges - saleQuotation.getDiscount() + "",
 				(int) (pageFormat.getImageableWidth() - 60),
 				(int) (pageFormat.getImageableHeight() - 10));
 	}

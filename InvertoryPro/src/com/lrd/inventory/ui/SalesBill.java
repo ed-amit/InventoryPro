@@ -19,6 +19,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.lrd.inventory.database.DatabaseInsert;
+import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
@@ -193,6 +194,8 @@ public class SalesBill extends JFrame
 	ArrayList<OtherChargesModel> OtherChargesList = null;
 	ArrayList<CreditorModel> creditors;
 
+	private double productMrp = 0;
+	private double purchaseRate = 0;
 	int itemCount = 0;
 	double netAmount = 0;
 	double totalAmount = 0;
@@ -725,6 +728,7 @@ public class SalesBill extends JFrame
 
 				panel6.add(textField18);
 				textField18.setBounds(110, 80, 150, 20);
+				textField18.addKeyListener(this);
 
 				// ---- label36 ----
 				label36.setText("Rate");
@@ -1002,6 +1006,8 @@ public class SalesBill extends JFrame
 
 			if (event.getSource() == radioButton2) {
 				comboBox4.setEnabled(true);
+				if (comboBox4.getItemCount() > 0)
+					comboBox4.setSelectedIndex(0);
 			}
 
 			// this reset all customer detail when general customer selected
@@ -1127,27 +1133,26 @@ public class SalesBill extends JFrame
 
 			double vatPercent = 0, vatAmt = 0, discountPer = 0, discountAmt = 0, rate = 0;
 
+			double qty = Double.parseDouble(textField18.getText());
+
 			if (!valid.isEmpty(textField23.getText()))
 				rate = Double.parseDouble(textField23.getText());
 			vatPercent = Double.parseDouble(comboBox9.getSelectedItem()
 					.toString());
-			vatAmt = rate * (vatPercent / 100);
+			vatAmt = rate * qty * (vatPercent / 100);
 			if (!valid.isEmpty(textField20.getText()))
 				discountPer = Double.parseDouble(textField20.getText());
 			if (!valid.isEmpty(textField19.getText()))
-				discountAmt = Double.parseDouble(textField19.getText());
+				discountAmt = Double.parseDouble(textField19.getText())*qty;
 
-			double qty = Double.parseDouble(textField18.getText());
-			calculateNetAmount((rate - discountAmt) * qty, "add");
+			calculateNetAmount((rate * qty)-discountAmt, "add");
 			// System.out.println("Rate =  " + rate + "  qty = " + qty);
 
 			billDetail.setProductQuantity(qty);
 			billDetail.setProductRate(rate);
-			billDetail.setMrp(productDisplayList.get(list1.getSelectedIndex())
-					.getMRP());
-			billDetail.setPurchaseRate(productDisplayList.get(
-					list1.getSelectedIndex()).getPurchaseRate());
-			billDetail.setSubTotal((rate - discountAmt) * qty);
+			billDetail.setMrp(productMrp);
+			billDetail.setPurchaseRate(purchaseRate);
+			billDetail.setSubTotal((rate * qty) - discountAmt);
 			billDetail.setVatPercent(vatPercent);
 			billDetail.setVatAmt(vatAmt);
 			billDetail.setDiscountPercent(discountPer);
@@ -1179,17 +1184,18 @@ public class SalesBill extends JFrame
 		comboBox9.addItem(String.valueOf(billDetail.getVatPercent()));
 		comboBox9.setSelectedItem(String.valueOf(billDetail.getVatPercent()));
 		textField20.setText(String.valueOf(billDetail.getDiscountPercent()));
-		textField19.setText(String.valueOf(billDetail.getDiscountAmt()));
+		textField19.setText(String.valueOf(billDetail.getDiscountAmt()/billDetail.getProductQuantity()));
 		textField18.setText(String.valueOf(billDetail.getProductQuantity()));
 		textField17.setText(billDetail.getBatchNo());
 		textField16.setText(billDetail.getProductCode());
 		textField21.setText(billDetail.getProductName());
+		productMrp = billDetail.getMrp();
+		purchaseRate = billDetail.getPurchaseRate();
 		comboBox7.addItem(billDetail.getProductUnit());
 		comboBox7.setSelectedItem(billDetail.getProductUnit());
 		billDetailList.remove(table1.getSelectedRow());
 		calculateNetAmount(
-				(billDetail.getProductRate() - billDetail.getDiscountAmt())
-						* billDetail.getProductQuantity(), "less");
+				(billDetail.getProductRate()* billDetail.getProductQuantity()) - billDetail.getDiscountAmt(), "less");
 		loadTableData();
 		itemCount--;
 		label2.setText(String.valueOf(itemCount));
@@ -1353,8 +1359,9 @@ public class SalesBill extends JFrame
 						&& !valid.isEmpty(textField23.getText())) {
 					double discountAmt = Double.parseDouble(textField19
 							.getText());
-					double mrp = Double.parseDouble(textField23.getText());
-					double discountPercent = (discountAmt * 100) / mrp;
+					double saleRate = Double.parseDouble(textField23.getText());
+					double discountPercent = 0;
+					discountPercent = (discountAmt * 100) / saleRate;
 					textField20.setText(String.format("%.2f", discountPercent));
 				} else {
 					textField20.setText("");
@@ -1367,14 +1374,34 @@ public class SalesBill extends JFrame
 						&& !valid.isEmpty(textField23.getText())) {
 					double discountPercent = Double.parseDouble(textField20
 							.getText());
-					double mrp = Double.parseDouble(textField23.getText());
-					double discountAmt = mrp * (discountPercent / 100);
+					double saleRate = Double.parseDouble(textField23.getText());
+					double discountAmt = saleRate * (discountPercent / 100);
 					textField19.setText(String.format("%.2f", discountAmt));
 				} else {
 					textField19.setText("");
 				}
 
 			}
+
+			/*if (event.getSource() == textField18) {
+				if (!valid.isEmpty(textField18.getText())) {
+					double qty = 0;
+					if (!valid.isEmpty(textField18.getText()))
+						qty = Double.parseDouble(textField18.getText());
+					double discountPercent = 0;
+					if (!valid.isEmpty(textField20.getText()))
+						discountPercent = Double.parseDouble(textField20
+								.getText());
+					double saleRate = Double.parseDouble(textField23.getText());
+					double discountAmt = saleRate * qty
+							* (discountPercent / 100);
+					textField19.setText(String.format("%.2f", discountAmt));
+				} else {
+					textField19.setText("");
+					textField20.setText("");
+				}
+
+			}*/
 
 			// //this calculate discount percent from the discountAmount for
 			// Whole bill
@@ -1424,7 +1451,6 @@ public class SalesBill extends JFrame
 		}
 
 	} // end of key release Method
-
 	/**
 	 * this method is used to show product name in list
 	 * 
@@ -1459,25 +1485,6 @@ public class SalesBill extends JFrame
 
 	}
 
-	/*
-	 * @Override public void mouseClicked(MouseEvent arg0) { }
-	 * 
-	 * @Override public void mouseEntered(MouseEvent arg0) { }
-	 * 
-	 * @Override public void mouseExited(MouseEvent arg0) { }
-	 * 
-	 * @Override public void mousePressed(MouseEvent arg0) { }
-	 * 
-	 * @Override public void mouseReleased(MouseEvent arg0) { for (ProductModel
-	 * prod : productList) { if
-	 * (prod.getProductName().equals(list1.getSelectedValue())) {
-	 * textField16.setText(prod.getProductCode());
-	 * textField21.setText(prod.getProductName());
-	 * comboBox7.setSelectedItem(prod.getUnit());
-	 * textField23.setText(String.format("%.2f", prod.getSaleRate()));
-	 * textField23.setEnabled(false); } } }
-	 */
-
 	/**
 	 * 
 	 * @param bill_id
@@ -1507,12 +1514,19 @@ public class SalesBill extends JFrame
 	private void saveAndPrintSalesBill() {
 
 		// 1. for saving general bill info
-		SalesBillModel saleBill = setSalesBillModel();
+		SalesBillModel saleBill = this.setSalesBillModel();
 		int bill_id = dbinsert.insertSalesBill(saleBill);
 
 		// 2. for saving bill payment details
-		PaymentModel payment = setBillPaymentModel(bill_id);
+		PaymentModel payment = this.setBillPaymentModel(bill_id);
 		dbinsert.insertSalesBillPayment(payment);
+		
+		if(radioButton2.isSelected()){
+			CreditorModel creditor = creditors.get(comboBox4.getSelectedIndex()-1);
+			double creditAmount  = saleBill.getTotalAmt()-payment.getPaidAmt();
+			creditor.setCreditAmt(creditor.getCreditAmt()+creditAmount);
+			new DatabaseUpdate(connection).updateCreditCustomer(creditor);
+		}
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1559,6 +1573,14 @@ public class SalesBill extends JFrame
 		// 2. for saving bill payment details
 		PaymentModel payment = setBillPaymentModel(challan_id);
 		dbinsert.insertChallanPayment(payment);
+		
+		
+		if(radioButton2.isSelected()){
+			CreditorModel creditor = creditors.get(comboBox4.getSelectedIndex()-1);
+			double creditAmount  = challan.getTotalAmt()-payment.getPaidAmt();
+			creditor.setCreditAmt(creditor.getCreditAmt()+creditAmount);
+			new DatabaseUpdate(connection).updateCreditCustomer(creditor);
+		}
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1606,6 +1628,8 @@ public class SalesBill extends JFrame
 		// 2. for saving bill payment details
 		PaymentModel payment = setBillPaymentModel(order_id);
 		dbinsert.insertSalesOrderPayment(payment);
+		
+		
 
 		// 3. for saving bill payment details
 		for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -1650,7 +1674,7 @@ public class SalesBill extends JFrame
 		int quotation_id = dbinsert.insertSalesQuotation(saleQuotation);
 
 		// 2. for saving bill payment details
-		
+
 		// dbinsert.insertSalesPayment(setBillPaymentModel(bill_id));
 
 		// 3. for saving bill payment details
@@ -1668,7 +1692,8 @@ public class SalesBill extends JFrame
 		}
 
 		// PrintSalesBillMethod();
-		new PrintBill().printSaleQuotation(saleQuotation, billDetailList, OtherChargesList);
+		new PrintBill().printSaleQuotation(saleQuotation, billDetailList,
+				OtherChargesList);
 
 		resetAll();
 
@@ -1850,6 +1875,7 @@ public class SalesBill extends JFrame
 					comboBox9.addItem(String.valueOf(prod.getVatPercent()));
 					textField23.setText(String.format("%.2f",
 							prod.getSaleRate()));
+					productMrp = prod.getMRP();
 					textField23.setEnabled(false);
 				}
 			}

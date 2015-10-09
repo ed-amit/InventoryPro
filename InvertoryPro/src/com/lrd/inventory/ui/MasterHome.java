@@ -9,7 +9,10 @@ import java.sql.Statement;
 import javax.swing.*;
 
 import com.lrd.inventory.database.DatabaseConnection;
+import com.lrd.inventory.reportui.PurchaseHalfYearlyReport;
 import com.lrd.inventory.reportui.PurchaseMonthlyReport;
+import com.lrd.inventory.reportui.PurchaseQuartrlyReport;
+import com.lrd.inventory.reportui.PurchaseYearlyReport;
 import com.lrd.inventory.utility.Calculator;
 import com.lrd.inventory.utility.MediaPlayer;
 import com.lrd.inventory.utility.NotePad;
@@ -1781,11 +1784,13 @@ public class MasterHome extends JFrame implements ActionListener {
 				new PurchaseMonthlyReport(connection);
 				break;
 			case MenuItemName.MenuItem127 :
-				
+				new PurchaseQuartrlyReport(connection);
 				break;
 			case MenuItemName.MenuItem128 :
+				new PurchaseHalfYearlyReport(connection);
 				break;
 			case MenuItemName.MenuItem129 :
+				new PurchaseYearlyReport(connection);
 				break;
 			case MenuItemName.MenuItem130 :
 				break;

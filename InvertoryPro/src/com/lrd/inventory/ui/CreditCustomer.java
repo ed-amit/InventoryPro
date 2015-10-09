@@ -323,17 +323,18 @@ public class CreditCustomer extends JFrame
 			creditor.setAddress(textArea1.getText());
 			creditor.setContactNo(textField2.getText());
 			creditor.setCreditAmt(Double.parseDouble(textField3.getText()));
-			creditor.setDebitAmt(Double.parseDouble(textField4.getText()));
+			if (!valid.isEmpty(textField4.getText()))
+				creditor.setDebitAmt(Double.parseDouble(textField4.getText()));
 			creditor.setCreditLimit(Double.parseDouble(textField5.getText()));
 			creditor.setFirmId(1);
 			creditor.setStoreId(tableid.getStoreId(comboBox1.getSelectedItem()
 					.toString()));
-			if(!new DatabaseInsert(this.connection).insertCreditor(creditor)){
+			if (!new DatabaseInsert(this.connection).insertCreditor(creditor)) {
 				new ValidationMSG(this, "Do not insert duplicate name.");
+			} else {
+				loadTableData();
+				reset();
 			}
-			creditor.setDefault();
-			loadTableData();
-			reset();
 		}
 	}
 
@@ -389,10 +390,13 @@ public class CreditCustomer extends JFrame
 				creditor.setCreditAmt(Double.parseDouble(textField3.getText()));
 			creditor.setCreditLimit(Double.parseDouble(textField5.getText()));
 
-			new DatabaseUpdate(connection).updateCreditCustomer(creditor);
-			creditor = null;
-			loadTableData();
-			reset();
+			if (new DatabaseUpdate(connection).updateCreditCustomer(creditor)) {
+				creditor = null;
+				loadTableData();
+				reset();
+			} else {
+				new ValidationMSG(this, "Creditor Name should be unique");
+			}
 		}
 	}
 

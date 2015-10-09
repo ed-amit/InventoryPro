@@ -160,7 +160,6 @@ public class BillTempletHalfA4 implements Printable {
 		billType = "Sale Quotation";
 		this.saleDetailList = saleDetailList;
 		// this.OtherChargesList = OtherChargesList;
-		
 
 		if (OtherChargesList.size() > 0) {
 			for (OtherChargesModel otherCharge : OtherChargesList) {
@@ -234,22 +233,22 @@ public class BillTempletHalfA4 implements Printable {
 				1 * POINTS_PER_INCH, 45, 3 * POINTS_PER_INCH - 23);
 		Rectangle2D.Double border5 = new Rectangle2D.Double(
 				pageFormat.getImageableWidth() - 230, 1 * POINTS_PER_INCH, 45,
-				3 * POINTS_PER_INCH-8);
+				3 * POINTS_PER_INCH - 8);
 		Rectangle2D.Double border6 = new Rectangle2D.Double(
 				pageFormat.getImageableWidth() - 140, 1 * POINTS_PER_INCH, 45,
-				3 * POINTS_PER_INCH-8);
+				3 * POINTS_PER_INCH - 8);
 		Rectangle2D.Double border7 = new Rectangle2D.Double(
 				pageFormat.getImageableWidth() - 50, 1 * POINTS_PER_INCH, 50,
-				3 * POINTS_PER_INCH-8);
+				3 * POINTS_PER_INCH - 8);
 		Rectangle2D.Double border8 = new Rectangle2D.Double(0,
 				4 * POINTS_PER_INCH - 23, pageFormat.getImageableWidth(), 15);
 
 		Rectangle2D.Double border9 = new Rectangle2D.Double(
-				pageFormat.getImageableWidth() - 140, 4 * POINTS_PER_INCH-8, 90,
-				pageFormat.getImageableHeight() - 4 * POINTS_PER_INCH - 7);
+				pageFormat.getImageableWidth() - 140, 4 * POINTS_PER_INCH - 8,
+				90, pageFormat.getImageableHeight() - 4 * POINTS_PER_INCH - 7);
 		Rectangle2D.Double border10 = new Rectangle2D.Double(
-				pageFormat.getImageableWidth() - 50, 4 * POINTS_PER_INCH-8, 50,
-				pageFormat.getImageableHeight() - (4 * POINTS_PER_INCH) - 7);
+				pageFormat.getImageableWidth() - 50, 4 * POINTS_PER_INCH - 8,
+				50, pageFormat.getImageableHeight() - (4 * POINTS_PER_INCH) - 7);
 		Rectangle2D.Double border11 = new Rectangle2D.Double(
 				pageFormat.getImageableWidth() - 140,
 				pageFormat.getImageableHeight() - 15, 70, 15);
@@ -310,7 +309,7 @@ public class BillTempletHalfA4 implements Printable {
 				(int) (pageFormat.getImageableHeight() - 4));
 
 		g2d.drawString("vat %", (int) (pageFormat.getImageableWidth() - 135),
-				4 * POINTS_PER_INCH );
+				4 * POINTS_PER_INCH);
 		g2d.drawString("Other Charges",
 				(int) (pageFormat.getImageableWidth() - 135),
 				4 * POINTS_PER_INCH + 8);
@@ -431,7 +430,7 @@ public class BillTempletHalfA4 implements Printable {
 				4 * POINTS_PER_INCH - 12);
 
 		g2d.drawString("vatamt", (int) (pageFormat.getImageableWidth() - 40),
-				4 * POINTS_PER_INCH );
+				4 * POINTS_PER_INCH);
 		g2d.drawString("Ot amt", (int) (pageFormat.getImageableWidth() - 40),
 				4 * POINTS_PER_INCH + 8);
 		g2d.drawString("Dis amt", (int) (pageFormat.getImageableWidth() - 40),
@@ -475,7 +474,7 @@ public class BillTempletHalfA4 implements Printable {
 				4 * POINTS_PER_INCH - 12);
 
 		g2d.drawString("vatamt", (int) (pageFormat.getImageableWidth() - 40),
-				4 * POINTS_PER_INCH );
+				4 * POINTS_PER_INCH);
 		g2d.drawString("Ot amt", (int) (pageFormat.getImageableWidth() - 40),
 				4 * POINTS_PER_INCH + 8);
 		g2d.drawString("dis amt", (int) (pageFormat.getImageableWidth() - 40),
@@ -519,7 +518,7 @@ public class BillTempletHalfA4 implements Printable {
 				4 * POINTS_PER_INCH - 12);
 
 		g2d.drawString("vatamt", (int) (pageFormat.getImageableWidth() - 40),
-				4 * POINTS_PER_INCH );
+				4 * POINTS_PER_INCH);
 		g2d.drawString("Ot amt", (int) (pageFormat.getImageableWidth() - 40),
 				4 * POINTS_PER_INCH + 8);
 		g2d.drawString("Ot amt", (int) (pageFormat.getImageableWidth() - 40),
@@ -565,7 +564,7 @@ public class BillTempletHalfA4 implements Printable {
 				4 * POINTS_PER_INCH - 12);
 
 		g2d.drawString("vatamt", (int) (pageFormat.getImageableWidth() - 40),
-				4 * POINTS_PER_INCH );
+				4 * POINTS_PER_INCH);
 		g2d.drawString("Ot amt", (int) (pageFormat.getImageableWidth() - 40),
 				4 * POINTS_PER_INCH + 8);
 		g2d.drawString("dis amt", (int) (pageFormat.getImageableWidth() - 40),

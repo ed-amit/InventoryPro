@@ -68,7 +68,7 @@ public class DatabaseInsert {
 	 * 
 	 *            insert CategoryModal data into database
 	 */
-	public void insertCategory(CategoryModel category) {
+	public boolean insertCategory(CategoryModel category) {
 		String query = "insert into categories values (null , '"
 				+ category.getCategoryDesc() + "' , '"
 				+ category.getCategoryName() + "' ," + category.getRackId()
@@ -76,8 +76,10 @@ public class DatabaseInsert {
 				+ ");";
 		try {
 			stmt.executeUpdate(query);
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
+			//e.printStackTrace();
 		}
 	}
 

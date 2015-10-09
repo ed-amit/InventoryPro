@@ -215,6 +215,17 @@ public class ManageVat extends JFrame implements ActionListener {
 
 		vatList = dbValue.getVatDetail();
 		yearList = dbValue.getFinancialYearDetail();
+		/*
+		 * Collections.sort(yearList, new Comparator<FinancialYearModal>() {
+		 * 
+		 * @Override public int compare(FinancialYearModal year1,
+		 * FinancialYearModal year2) {
+		 * 
+		 * if(year1.getStartYear()==year2.getStartYear()) return 0; else return
+		 * year1.getStartYear()-year2.getStartYear();
+		 * 
+		 * } });
+		 */
 		for (int i = 0; i < vatList.size(); i++) {
 			int startYear = 0, endYear = 0;
 			vatModel = vatList.get(i);
@@ -268,6 +279,10 @@ public class ManageVat extends JFrame implements ActionListener {
 		} else if (valid.isEmpty(textField2.getText())) {
 			status = false;
 			new ValidationMSG(this, "Please Insert End Year");
+		} else if (Integer.parseInt(textField1.getText()) >= Integer
+				.parseInt(textField2.getText())) {
+			status = false;
+			new ValidationMSG(this, "Start year should be less then End year");
 		} else if (valid.isEmpty(textField3.getText())) {
 			status = false;
 			new ValidationMSG(this, "Please Insert Vat %");
@@ -282,7 +297,7 @@ public class ManageVat extends JFrame implements ActionListener {
 					Integer.parseInt(textField2.getText())));
 			vatModel.setFirmId(1);
 			vatModel.setVatUpdated(0);
-			if(!dbinsert.insertVat(vatModel)){
+			if (!dbinsert.insertVat(vatModel)) {
 				new ValidationMSG(this, "Do not insert duplicate value");
 			}
 			reset();

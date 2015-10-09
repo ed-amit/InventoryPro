@@ -825,7 +825,7 @@ public class PurchaseBill extends JFrame
 			distributorDisplayList = new ArrayList<>();
 			if (!valid.isEmpty(str)) {
 				for (DistributorModel distributor : distributorList) {
-					if (distributor.getAgencyName().contains(str)) {
+					if (distributor.getAgencyName().toLowerCase().contains(str.toLowerCase())) {
 						distributorDisplayList.add(distributor);
 					}
 				}
@@ -837,7 +837,7 @@ public class PurchaseBill extends JFrame
 			productDisplayList = new ArrayList<>();
 			String tempProductCode = textField6.getText();
 			for (ProductModel tempProduct1 : productList) {
-				if (tempProduct1.getProductCode().contains(tempProductCode)) {
+				if (tempProduct1.getProductCode().toLowerCase().contains(tempProductCode.toLowerCase())) {
 					productDisplayList.add(tempProduct1);
 				}
 			}
@@ -847,7 +847,7 @@ public class PurchaseBill extends JFrame
 			productDisplayList = new ArrayList<>();
 			String tempProductName = textField7.getText();
 			for (ProductModel tempProduct1 : productList) {
-				if (tempProduct1.getProductName().contains(tempProductName)) {
+				if (tempProduct1.getProductName().toLowerCase().contains(tempProductName.toLowerCase())) {
 					productDisplayList.add(tempProduct1);
 				}
 			}
