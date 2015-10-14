@@ -404,8 +404,8 @@ public class BillTempletFullA4 implements Printable {
 			totalQty += saleDetail.getProductQuantity();
 			totalRate += saleDetail.getProductRate()
 					* saleDetail.getProductQuantity();
-			totalDiscount += saleDetail.getDiscountAmt()
-					* saleDetail.getProductQuantity();
+			totalDiscount += saleDetail.getDiscountAmt();
+					
 			totalAmount += saleDetail.getSubTotal();
 
 			positionY += 12;
@@ -478,7 +478,7 @@ public class BillTempletFullA4 implements Printable {
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH - 4);
 
-		g2d.drawString(saleBill.getVatAmt() + "",
+		g2d.drawString(challan.getVatAmt() + "",
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH + 13);
 		g2d.drawString(totalOtherCharges + "",
@@ -520,14 +520,14 @@ public class BillTempletFullA4 implements Printable {
 		g2d.drawString(totalRate + "",
 				(int) (pageFormat.getImageableWidth() - 130),
 				8 * POINTS_PER_INCH - 4);
-		g2d.drawString(totalDiscount + "",
+		g2d.drawString(String.format("%.2f",totalDiscount) + "",
 				(int) (pageFormat.getImageableWidth() - 85),
 				8 * POINTS_PER_INCH - 4);
 		g2d.drawString(totalAmount + "",
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH - 4);
 
-		g2d.drawString(saleBill.getVatAmt() + "",
+		g2d.drawString(saleOrder.getVatAmt() + "",
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH + 13);
 		g2d.drawString(totalOtherCharges + "",
@@ -577,7 +577,7 @@ public class BillTempletFullA4 implements Printable {
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH - 4);
 
-		g2d.drawString(saleBill.getVatAmt() + "",
+		g2d.drawString(saleQuotation.getVatAmt() + "",
 				(int) (pageFormat.getImageableWidth() - 40),
 				8 * POINTS_PER_INCH + 13);
 		g2d.drawString(totalOtherCharges + "",

@@ -79,7 +79,7 @@ public class DatabaseInsert {
 			return true;
 		} catch (SQLException e) {
 			return false;
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -299,7 +299,8 @@ public class DatabaseInsert {
 				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
 				+ payment.getDescription() + "', " + payment.getPaidAmt()
 				+ " , '" + payment.getPaymentDate() + "', '"
-				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+				+ payment.getPaymentMode() + "'," + payment.getStoreId() + ", "
+				+ payment.getRefId() + ");";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -387,7 +388,8 @@ public class DatabaseInsert {
 				+ payment.getBankName() + "', '" + payment.getCode() + "', '"
 				+ payment.getDescription() + "', " + payment.getPaidAmt()
 				+ " , '" + payment.getPaymentDate() + "', '"
-				+ payment.getPaymentMode() + "', " + payment.getRefId() + ");";
+				+ payment.getPaymentMode() + "'," + payment.getStoreId() + ", "
+				+ payment.getRefId() + ");";
 		try {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -563,23 +565,7 @@ public class DatabaseInsert {
 		}
 	}
 
-	/**
-	 * @param productName
-	 * @param productCode
-	 * @param qty
-	 */
-	public void updateProduct(int storeId, String productName,
-			String productCode, double qty) {
-		String query = "update products set QUANTITY=QUANTITY-" + qty
-				+ " where PRODUCT_CODE='" + productCode
-				+ "' and product_name='" + productName + "' and store_id="
-				+ storeId;
-		try {
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	/**
 	 * @param billReturn

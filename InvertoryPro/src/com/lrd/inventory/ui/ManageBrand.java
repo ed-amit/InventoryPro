@@ -239,7 +239,7 @@ public class ManageBrand extends JFrame implements ActionListener, ItemListener 
 				.getSelectedItem().toString()));
 		for (int i = 0; i < brandList.size(); i++) {
 			BrandModel brand = brandList.get(i);
-			tableModel.addRow(new Object[]{i, brand.getBrandName(),
+			tableModel.addRow(new Object[]{i+1, brand.getBrandName(),
 					fieldName.getCategoryNameByID(brand.getCategoryId()),
 					fieldName.getRackName(brand.getRackId())});
 		}

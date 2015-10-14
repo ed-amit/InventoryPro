@@ -252,8 +252,10 @@ public class ProductList extends JFrame
 	public void actionPerformed(ActionEvent event) {
 
 		if (event.getSource() == button3) {
+			productList = dbvalue.getProductDetail(tableid
+					.getStoreId(comboBox1.getSelectedItem().toString()));
 			productDisplayList = productList;
-			loadTableData(productList);
+			loadTableData(productDisplayList);
 			textField1.setText("");
 		}
 

@@ -430,14 +430,14 @@ public class BillBookCredit extends JFrame
 		// / inserting new rows to the table
 		int i = 1;
 		for (SalesBillDetailModel tempbilldetail : billDetailList) {
-			double subtotal = tempbilldetail.getProductQuantity()
-					* tempbilldetail.getProductRate();
+			
 			tableModel3.addRow(new Object[]{i, tempbilldetail.getProductName(),
 					tempbilldetail.getProductQuantity(),
 					tempbilldetail.getProductUnit(),
 					tempbilldetail.getVatPercent(),
 					tempbilldetail.getDiscountAmt(),
-					tempbilldetail.getProductRate(), subtotal});
+					tempbilldetail.getProductRate(), tempbilldetail.getSubTotal()});
+			
 		}
 	}
 

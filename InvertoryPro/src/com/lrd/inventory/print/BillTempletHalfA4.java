@@ -388,8 +388,8 @@ public class BillTempletHalfA4 implements Printable {
 			totalQty += saleDetail.getProductQuantity();
 			totalRate += saleDetail.getProductRate()
 					* saleDetail.getProductQuantity();
-			totalDiscount += saleDetail.getDiscountAmt()
-					* saleDetail.getProductQuantity();
+			totalDiscount += saleDetail.getDiscountAmt();
+					
 			totalAmount += saleDetail.getSubTotal();
 
 			positionY += 12;

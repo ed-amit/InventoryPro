@@ -688,10 +688,10 @@ public class GetDBValue {
 		return challanDetailList;
 	}
 
-	public ArrayList<PurchaseOrderModel> getPurchaseOrder(int orderId) {
+	public ArrayList<PurchaseOrderModel> getPurchaseOrder(int orderId,int storeId) {
 		ArrayList<PurchaseOrderModel> purchaseOrderList = new ArrayList<>();
 		String query = "select * from purchase_order where order_id LIKE '%"
-				+ orderId + "%';";
+				+ orderId + "%' and store_id="+storeId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
@@ -746,10 +746,10 @@ public class GetDBValue {
 		return purchaseOrderList;
 	}
 
-	public ArrayList<PurchaseOrderModel> getPurchaseOrder(String supplierName) {
+	public ArrayList<PurchaseOrderModel> getPurchaseOrder(String supplierName,int storeId) {
 		ArrayList<PurchaseOrderModel> purchaseOrderList = new ArrayList<>();
 		String query = "select * from purchase_order where supplier_name LIKE '%"
-				+ supplierName + "%';";
+				+ supplierName + "%' and store_id="+storeId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {
@@ -775,10 +775,10 @@ public class GetDBValue {
 		return purchaseOrderList;
 	}
 	public ArrayList<PurchaseOrderModel> getPurchaseOrder(String startDate,
-			String endDate) {
+			String endDate,int storeId) {
 		ArrayList<PurchaseOrderModel> purchaseOrderList = new ArrayList<>();
 		String query = "select * from purchase_order where order_date between '"
-				+ startDate + "' and '" + endDate + "'";
+				+ startDate + "' and '" + endDate + "' and store_id="+storeId;
 		try {
 			ResultSet result = stmt.executeQuery(query);
 			while (result.next()) {

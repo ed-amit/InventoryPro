@@ -52,7 +52,7 @@ public class DatabaseUpdate {
 			return true;
 		} catch (SQLException e) {
 			return false;
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -90,6 +90,33 @@ public class DatabaseUpdate {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/**
+	 * @param productName
+	 * @param productCode
+	 * @param qty
+	 */
+	public void updateProduct(int storeId, String productName,
+			String productCode, double qty,String mode) {
+		String query="";
+		if(mode.equals("less")){
+		query = "update products set QUANTITY=QUANTITY-" + qty
+				+ " where PRODUCT_CODE='" + productCode
+				+ "' and product_name='" + productName + "' and store_id="
+				+ storeId;
+		}else if(mode.equals("add")){
+			query = "update products set QUANTITY=QUANTITY+" + qty
+					+ " where PRODUCT_CODE='" + productCode
+					+ "' and product_name='" + productName + "' and store_id="
+					+ storeId;
+		}
+		try {
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public boolean updateCreditCustomer(CreditorModel creditor) {
 
@@ -105,7 +132,7 @@ public class DatabaseUpdate {
 			return true;
 		} catch (SQLException e) {
 			return false;
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -154,7 +181,8 @@ public class DatabaseUpdate {
 					+ billDetail.getVatAmt() + " ,vat_percentage="
 					+ billDetail.getVatPercent() + " ,discount_per="
 					+ billDetail.getDiscountPercent() + " ,discount_rs="
-					+ billDetail.getDiscountAmt() + " where bill_details_id="
+					+ billDetail.getDiscountAmt() + " ,sub_total="
+					+ billDetail.getSubTotal() + " where bill_details_id="
 					+ billDetail.getBillDetailId());
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -140,7 +140,7 @@ public class PurchaseOrder extends JFrame
 		dbValue = new GetDBValue(connection);
 		initComponents();
 		storeName();
-		supplierName();
+		//supplierName();
 		orderId();
 		textField3.setText(new DatePicker().getCurrentDate());
 		productList = dbValue.getProductDetail(tableid.getStoreId(comboBox3
@@ -340,7 +340,7 @@ public class PurchaseOrder extends JFrame
 						textField5.addFocusListener(this);
 
 						list1.addListSelectionListener(this);
-						list1.addFocusListener(this);
+						//list1.addFocusListener(this);
 						// ------scrollPane 3 --------
 						{
 							scrollPane3.setViewportView(list1);
@@ -604,7 +604,8 @@ public class PurchaseOrder extends JFrame
 
 	private void supplierName() {
 		ArrayList<String> supplierNames = (ArrayList<String>) fieldName
-				.getAllSupplierName();
+				.getAllSupplierName(tableid.getStoreId(comboBox3.getSelectedItem().toString()));
+		comboBox5.removeAllItems();
 		comboBox5.addItem("---Select Supplier--");
 		for (String name : supplierNames) {
 			comboBox5.addItem(name);
@@ -622,10 +623,12 @@ public class PurchaseOrder extends JFrame
 			if (event.getSource() == comboBox3) {
 				productList = dbValue.getProductDetail(tableid
 						.getStoreId(comboBox3.getSelectedItem().toString()));
-				
+				supplierName();
 				resetProductField();
 				resetAll();
 				loadTableData();
+				purchaseOrderList=new ArrayList<PurchaseOrderModel>();
+				loadTableData2(purchaseOrderList);
 				textField5.requestFocus();
 				
 			}
@@ -841,6 +844,8 @@ public class PurchaseOrder extends JFrame
 		tempProductCode = "";
 		purchaseOrderDetailList = new ArrayList<>();
 		orderId();
+		resetProductField();
+		loadTableData();
 	}
 
 	private void setPurchaseOrderModel() {
@@ -869,10 +874,7 @@ public class PurchaseOrder extends JFrame
 			purchaseOrderDetailModel.setOrderId(orderId);
 			dbinsert.insertPurchaseOrderDetail(purchaseOrderDetailModel);
 		}
-		purchaseOrderDetailList = new ArrayList<>();
-		resetProductField();
 		resetAll();
-		loadTableData();
 		textField5.requestFocus();
 
 	}
@@ -937,6 +939,7 @@ public class PurchaseOrder extends JFrame
 	}
 
 	private void searchPurchaseOrder() {
+		int storeId = tableid.getStoreId(comboBox3.getSelectedItem().toString());
 		switch (comboBox4.getSelectedIndex()) {
 			case 1 :
 				if (valid.isEmpty(textField7.getText())) {
@@ -946,8 +949,9 @@ public class PurchaseOrder extends JFrame
 				} else {
 					String startDate = textField7.getText();
 					String endDate = textField8.getText();
+					
 					purchaseOrderList = dbValue.getPurchaseOrder(startDate,
-							endDate);
+							endDate,storeId);
 				}
 				break;
 			case 2 :
@@ -955,7 +959,7 @@ public class PurchaseOrder extends JFrame
 					new ValidationMSG(this, "Please Insert Order No");
 				} else {
 					purchaseOrderList = dbValue.getPurchaseOrder(Integer
-							.parseInt(textField9.getText()));
+							.parseInt(textField9.getText()),storeId);
 				}
 				break;
 			case 3 :
@@ -963,7 +967,7 @@ public class PurchaseOrder extends JFrame
 					new ValidationMSG(this, "Please Insert supplier Name");
 				} else {
 					purchaseOrderList = dbValue.getPurchaseOrder(textField10
-							.getText());
+							.getText(),storeId);
 				}
 				break;
 			default :
@@ -1042,11 +1046,6 @@ public class PurchaseOrder extends JFrame
 
 	@Override
 	public void focusGained(FocusEvent event) {
-		if (event.getSource() == list1) {
-			if (list1.getVisibleRowCount() >= 0) {
-				list1.setSelectedIndex(0);
-			}
-		}
 
 		if (event.getSource() == textField5) {
 			textField5.setSelectionStart(0);

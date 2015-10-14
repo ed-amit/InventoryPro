@@ -23,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.lrd.inventory.database.DatabaseInsert;
+import com.lrd.inventory.database.DatabaseUpdate;
 import com.lrd.inventory.database.GetDBValue;
 import com.lrd.inventory.database.SpecificFieldValue;
 import com.lrd.inventory.database.TableId;
@@ -439,9 +440,13 @@ public class PurchaseReturn extends JFrame
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
-		double newQty = Double.parseDouble(textField5.getText());
-		double oldQty = PurchaseBillDetailList.get(table2.getSelectedRow())
-				.getQuantity();
+		double newQty =0,oldQty=0;
+		
+		if (!valid.isEmpty(textField5.getText())) {
+			newQty = Double.parseDouble(textField5.getText());
+			oldQty = PurchaseBillDetailList.get(table2.getSelectedRow())
+					.getQuantity();
+		}
 		switch (event.getActionCommand().toUpperCase()) {
 			case "RETURN" :
 				if (valid.isEmpty(textField5.getText())) {
@@ -529,8 +534,8 @@ public class PurchaseReturn extends JFrame
 				.get(table2.getSelectedRow()).getProductName();
 		String productCode = PurchaseBillDetailList
 				.get(table2.getSelectedRow()).getProductCode();
-		dbinsert.updateProduct(storeId, productName, productCode,
-				Double.parseDouble(textField5.getText()));
+		new DatabaseUpdate(connection).updateProduct(storeId, productName, productCode,
+				Double.parseDouble(textField5.getText()),"less");
 	}
 
 	private void resetAllField() {
@@ -545,7 +550,7 @@ public class PurchaseReturn extends JFrame
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
 		// TODO Auto-generated method stub
-		if(purchaseBillDisplayList.size()==0){
+		if (purchaseBillDisplayList.size() == 0) {
 			table1.clearSelection();
 		}
 		if (event.getSource() == table1.getSelectionModel()) {

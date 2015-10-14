@@ -221,10 +221,10 @@ public class SpecificFieldValue {
 	
 	
 	
-	public List<String> getAllSupplierName(){
+	public List<String> getAllSupplierName(int storeId){
 		List<String> list = new ArrayList<String>();
 		try{
-			result=stmt.executeQuery("select agency_name from distributors");
+			result=stmt.executeQuery("select agency_name from distributors where store_id="+storeId);
 			while(result.next()){
 				list.add(result.getString("agency_name"));
 			}
@@ -241,8 +241,10 @@ public class SpecificFieldValue {
 			result.first();
 			return result.getString("bill_prefix");
 
-		}catch(SQLException e){ e.printStackTrace(); }
-		return null ;
+		}catch(SQLException e){ //e.printStackTrace(); 
+			
+		}
+		return "" ;
 	}
 	
 	
@@ -254,8 +256,10 @@ public class SpecificFieldValue {
 			result.first();
 			return result.getString("challan_prefix");
 
-		}catch(SQLException e){ e.printStackTrace(); }
-		return null ;
+		}catch(SQLException e){ //e.printStackTrace(); 
+			
+		}
+		return "" ;
 	}
 	
 	

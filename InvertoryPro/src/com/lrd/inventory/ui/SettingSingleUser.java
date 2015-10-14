@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +21,7 @@ import javax.swing.JTextField;
 
 import com.lrd.inventory.database.ConnectionTester;
 
-public class SettingSingleUser extends JFrame implements ActionListener {
+public class SettingSingleUser implements ActionListener {
 
 	/**
 	 * 
@@ -59,6 +60,7 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 
 	boolean status;
 	Properties db_properties;
+	JDialog d;
 
 	public SettingSingleUser() {
 		// TODO Auto-generated constructor stub
@@ -66,6 +68,7 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 		getpropetyvalue();
 		//textField1.setEnabled(false);
 	}
+	
 
 	private void initComponents() {
 		panel1 = new JPanel();
@@ -90,7 +93,9 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 		textField6 = new JTextField();
 
 		// ======== this ========
-		setLayout(null);
+		d = new JDialog();
+		d.setLayout(null);
+		d.setModal(true);
 
 		// ======== panel1 ========
 		{
@@ -207,15 +212,16 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 			panel1.add(panel3);
 			panel3.setBounds(0, 60, 650, 465);
 		}
-		add(panel1);
+		d.add(panel1);
 		panel1.setBounds(0, 0, 650, 525);
 
-		setTitle("Configure Connection");
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		pack();
-		setSize(650, 530);
-		setLocationRelativeTo(getOwner());
-		setVisible(true);
+		d.setTitle("Configure Connection");
+		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+		getpropetyvalue();
+		d.pack();
+		d.setSize(650, 530);
+		//d.setLocationRelativeTo(parent);
+		d.setVisible(true);
 
 	}
 
@@ -253,8 +259,8 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 
 		if (e.getSource() == button3) {
 			if (status == true) {
-				new MasterHome("");
-				this.dispose();
+				//new MasterHome("");
+				d.dispose();
 			}
 			
 		}
@@ -307,6 +313,10 @@ public class SettingSingleUser extends JFrame implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	public boolean getdbstatus(){
+		return status;
 	}
 
 
